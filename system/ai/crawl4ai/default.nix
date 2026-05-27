@@ -42,13 +42,14 @@ in {
   config = lib.mkIf cfg.enable {
     virtualisation.oci-containers.containers = {
       crawl4ai = {
-        image = "unclecode/crawl4ai:latest";
+        image = "docker.io/unclecode/crawl4ai:latest";
         environment = config.terra.virtualisation.proxyEnv;
         ports = [ "${toString cfg.port}:11235" ];
         autoRemoveOnStop = false;
         extraOptions = [
           "--shm-size=${cfg.shmSize}"
           "--restart=unless-stopped"
+          "--label=io.containers.autoupdate=registry"
         ];
       };
     };

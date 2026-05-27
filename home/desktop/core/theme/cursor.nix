@@ -1,7 +1,6 @@
-{ pkgs, inputs, ... }:
+{ pkgs, ... }:
 
 let
-  lib = inputs.nixpkgs.lib;
   cursorSize = 24;
   xcursorName = "BreezeX-RosePine-Linux";
   hyprcursorName = "rose-pine-hyprcursor";
@@ -36,8 +35,8 @@ in
     XCURSOR_SIZE=toString cursorSize;
   };
 
-  xdg.configFile."uwsm/env-hyprland".text = lib.mkAfter ''
-    export HYPRCURSOR_THEME=${hyprcursorName}
-    export HYPRCURSOR_SIZE=${toString cursorSize}
-  '';
+  wayland.windowManager.hyprland.settings.env = [
+    "HYPRCURSOR_THEME,${hyprcursorName}"
+    "HYPRCURSOR_SIZE,${toString cursorSize}"
+  ];
 }

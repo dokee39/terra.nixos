@@ -8,8 +8,8 @@
 
   home.shellAliases = {
     # system
-    rbt = "sync; sync; systemctl reboot";
-    std = "sync; sync; systemctl poweroff";
+    rbt = "systemctl reboot";
+    std = "systemctl poweroff";
     scst = "systemctl status";
 
     # git

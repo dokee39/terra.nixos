@@ -19,15 +19,22 @@
   home.username = osConfig.terra.userName;
   home.homeDirectory = "/home/${osConfig.terra.userName}";
 
-  xdg.enable = true;
-  xdg.localBinInPath = true;
+  xdg = {
+    enable = true;
+    localBinInPath = true;
+    userDirs = {
+      enable = true;
+      createDirectories = true;
+      setSessionVariables = true;
+    };
+  };
   home.preferXdgDirectories = true;
 
   programs.ssh = {
     enable = true;
     enableDefaultConfig = false;
 
-    matchBlocks = {
+    settings = {
       "*" = {
         addKeysToAgent = "yes";
         hashKnownHosts = true;
@@ -52,8 +59,12 @@
 
     nix-output-monitor
 
-    rmpc
-
-    tldr
+    tlrc
   ];
+
+  programs.obsidian.enable = true;
+  services.tldr-update = {
+    enable = true;
+    package = pkgs.tlrc;
+  };
 }

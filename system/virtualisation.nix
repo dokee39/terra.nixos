@@ -29,5 +29,14 @@
     users.users.${config.terra.userName}.extraGroups = [ "podman" ];
 
     networking.firewall.trustedInterfaces = [ "podman0" ];
+
+    systemd.timers.podman-auto-update = {
+      wantedBy = [ "timers.target" ];
+      timerConfig = {
+        OnCalendar = "weekly";
+        Persistent = true;
+      };
+    };
   };
+
 }

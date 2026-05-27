@@ -74,10 +74,10 @@
       enable = false;
       monitors.DP-1 = {
         primary = true;
-        resolution =  "highres@highrr";
-        position = "auto";
+        mode =  "2560x1440@120";
+        position = { x = 2560; y = 0; };
         scale = 1;
-        transform = 0;
+        transform = "normal";
         brightd = {
           device = "external";
           brightness.min = 5;

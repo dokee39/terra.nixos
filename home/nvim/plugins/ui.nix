@@ -1,4 +1,4 @@
-{ lib, pkgs, ... }:
+{ lib, pkgs, inputs, osConfig, ... }:
 
 let
   mkRaw = lib.nixvim.mkRaw;
@@ -35,6 +35,7 @@ in
       plugins.blink-pairs = {
         enable = true;
         autoLoad = true;
+        package = inputs.blink-pairs.packages.${osConfig.terra.system}.blink-pairs;
         settings = {
           highlights.groups = [
             "Keyword"

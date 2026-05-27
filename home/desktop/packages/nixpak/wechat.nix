@@ -33,7 +33,12 @@ let
   wechatScope = lib.makeScope pkgs.newScope (_: {
     appimageTools = wechatAppImageTools;
   });
-  wechatPackage = wechatScope.callPackage "${pkgs.path}/pkgs/by-name/we/wechat/package.nix" { };
+  wechatPackage = (wechatScope.callPackage "${pkgs.path}/pkgs/by-name/we/wechat/package.nix" { }).overrideAttrs (old: {
+    buildCommand = builtins.replaceStrings
+      ["--replace-fail AppRun wechat"]
+      ["--replace-quiet AppRun wechat"]
+      old.buildCommand;
+  });
 
   wrapped = mkNixPak {
     config = { sloth, ... }:

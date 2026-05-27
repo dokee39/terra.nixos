@@ -1,4 +1,4 @@
-{ pkgs, inputs, osConfig, ... }:
+{ pkgs, lib, inputs, osConfig, ... }:
 
 let
   customPackages = import ./packages {
@@ -12,24 +12,14 @@ in
   };
 
   imports = [
-    ./hypr
-    ./ags
-    ./cursor.nix
-    ./clipse.nix
-    ./fcitx5.nix
-    ./fontconfig.nix
-    ./mako.nix
-    ./gtk-qt-theme.nix
-    ./tofi.nix
-    ./awww.nix
-    ./brightd.nix
-    ./polkit.nix
-    ./nautilus.nix
-    ./downloads-sorter.nix
-    ./imv.nix
-    ./mpv.nix
-    ./mime.nix
+    ./core
+    ./apps/misc.nix
+    ./apps/nautilus.nix
+    ./apps/mpv.nix
+    ./apps/mpd
   ];
+
+  xdg.portal.enable = lib.mkForce false;
 
   home.packages =
     (with pkgs; [
@@ -40,8 +30,9 @@ in
       hyprpicker
 
       google-chrome
-      osu-lazer
+      osu-lazer-bin
       cherry-studio
+      xwayland-satellite
     ])
     ++ [
       customPackages.mikan

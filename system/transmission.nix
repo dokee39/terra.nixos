@@ -50,8 +50,24 @@
         systemd.tmpfiles.rules = [
           "L+ /home/${userName}/Downloads/transmission - - - - ${config.services.transmission.settings.download-dir}"
           "L+ /home/${userName}/Downloads/torrents - - - - ${config.services.transmission.settings.watch-dir}"
+          "d /var/lib/peerbanhelper 0755 root root -"
         ];
+
         systemd.services.transmission.serviceConfig.StateDirectoryMode = "770";
+        systemd.services.transmission-setup = {
+          wantedBy = [ "transmission.service" ];
+        };
+
+        virtualisation.oci-containers.containers.peerbanhelper = {
+          image = "docker.io/ghostchu/peerbanhelper:latest";
+          autoStart = true;
+          extraOptions = [
+            "--network=host"
+            "--label=io.containers.autoupdate=registry"
+          ];
+          volumes = [ "/var/lib/peerbanhelper:/app/data" ];
+          environment.TZ = "Asia/Shanghai";
+        };
       })
 
       (lib.mkIf (cfg.enable && cfg.rpcSecretFile != null) {
@@ -71,7 +87,11 @@
             rpc-whitelist = "127.0.0.1,192.168.*.*";
             umask = "002";
 
+            download-dir = "/home/${userName}/.transmission/downloads";
+            incomplete-dir-enabled = true;
+            incomplete-dir = "/home/${userName}/.transmission/.incomplete";
             watch-dir-enabled = true;
+            watch-dir = "/home/${userName}/.transmission/watch";
             trash-original-torrent-files = true;
 
             speed-limit-up = cfg.speed.up;
@@ -84,6 +104,10 @@
             alt-speed-enabled = false;
 
             rpc-authentication-required = cfg.rpcSecretFile != null;
+
+            blocklist-enabled = true;
+            blocklist-updates-enabled = true;
+            blocklist-url = "https://raw.githubusercontent.com/PBH-BTN/BTN-Collected-Rules/master/combine/all.txt";
           };
         } // lib.optionalAttrs (cfg.enable && cfg.rpcSecretFile != null) {
           credentialsFile = config.age.secrets.transmission-rpc.path;

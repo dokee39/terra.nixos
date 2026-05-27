@@ -3,7 +3,7 @@
 {
   wayland.windowManager.hyprland.settings = {
     input = {
-      repeat_rate = 36;
+      repeat_rate = 30;
       repeat_delay = 500;
 
       accel_profile = "flat";

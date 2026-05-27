@@ -3,7 +3,7 @@
 {
   wayland.windowManager.hyprland.settings = {
     "$mainMod" = "SUPER";
-    "$terminal" = "uwsm app -- kitty";
+    "$terminal" = "kitty";
     "$workspacectl" = "workspacectl";
 
     bind = [
@@ -65,10 +65,10 @@
       "$mainMod SHIFT, Q, exec, [fullscreen] terminal"
       "$mainMod, C,       exec, hyprkill"
       "$mainMod SHIFT, C, exec, hyprkill --force"
-      "$mainMod, escape,  exec, uwsm stop"
-      "$mainMod, E,       exec, [float] uwsm app -- nautilus --new-window"
+      "$mainMod, escape,  exec, hyprctl dispatch exit"
+      "$mainMod, E,       exec, [float] nautilus --new-window"
       "$mainMod, V,       togglefloating,"
-      "$mainMod, R,       exec, tofi-drun | xargs -r uwsm app --"
+      "$mainMod, R,       exec, tofi-drun --drun-launch=true"
       "$mainMod, T,       togglesplit,"
       "$mainMod, F,       fullscreen, 0"
       "$mainMod SHIFT, F, fullscreenstate, 2 1"
