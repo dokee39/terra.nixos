@@ -3,36 +3,29 @@
 {
   environment.systemPackages = [ pkgs.impala ];
 
+  users.users.${config.terra.userName}.extraGroups = [ "networkmanager" ];
+
   networking = {
     hostName = config.terra.hostName;
     useDHCP = false;
+    networkmanager = {
+      enable = true;
+      wifi.backend = "iwd";
+      dns = "systemd-resolved";
+      dhcp = "internal";
+    };
+    modemmanager.enable = false;
     wireless.iwd = {
       enable = true;
       settings.Settings.AutoConnect = true;
     };
     proxy = {
       default = lib.mkDefault "http://localhost:${toString config.terra.mihomo.port}";
-      noProxy = lib.mkDefault "127.0.0.1,localhost,0.0.0.0,::1";
+      noProxy = lib.mkDefault "127.0.0.1,localhost,0.0.0.0,::1,api.noctalia.dev";
     };
   };
 
-  systemd.network = {
-    enable = true;
-    wait-online.enable = false;
-  };
   services.resolved.enable = true;
-  systemd.network.networks."20-wired" = {
-    matchConfig.Name = "en*";
-    networkConfig.DHCP = "yes";
-    dhcpV4Config.RouteMetric = 100;
-    ipv6AcceptRAConfig.RouteMetric = 100;
-  };
-  systemd.network.networks."30-wireless" = {
-    matchConfig.Name = "wl*";
-    networkConfig.DHCP = "yes";
-    dhcpV4Config.RouteMetric = 600;
-    ipv6AcceptRAConfig.RouteMetric = 600;
-  };
 
   services.avahi = {
     enable = true;

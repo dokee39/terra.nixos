@@ -3,10 +3,6 @@
 {
   programs.niri.settings.input = {
     power-key-handling.enable = false;
-    warp-mouse-to-focus = {
-      enable = true;
-      mode = "center-xy";
-    };
     workspace-auto-back-and-forth = true;
     focus-follows-mouse = {
       enable = true;

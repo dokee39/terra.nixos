@@ -14,6 +14,4 @@ in
     "nautilus-image-converter" = pkgs.callPackage ./nautilus-image-converter.nix {
       src = inputs."nautilus-image-converter";
     };
-
-    brightd = pkgs.callPackage ./brightd { };
   }

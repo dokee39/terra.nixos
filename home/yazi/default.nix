@@ -45,17 +45,17 @@
       plugin = {
         prepend_fetchers = [
           {
-            id = "git";
+            group = "git";
             url = "*";
             run = "git";
           }
           {
-            id = "git";
+            group = "git";
             url = "*/";
             run = "git";
           }
           {
-            id = "mime";
+            group = "mime";
             url = "remote://*";
             run = "mime-ext.remote";
             prio = "high";

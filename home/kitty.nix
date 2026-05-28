@@ -1,8 +1,14 @@
-{ ... }:
+{ config, pkgs, ... }:
 
 {
   programs.kitty = {
     enable = true;
+    package = pkgs.kitty.overrideAttrs (o: {
+      postInstall = (o.postInstall or "") + ''
+        substituteInPlace $out/share/applications/kitty.desktop \
+          --replace-fail "Icon=kitty" "Icon=${config.xdg.configHome}/kitty/kitty.app.png"
+      '';
+    });
 
     themeFile = "rose-pine-moon";
 

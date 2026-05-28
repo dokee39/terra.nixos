@@ -69,22 +69,6 @@ in {
             default = "normal";
             description = "Output rotation and flip.";
           };
-
-          brightd.device = lib.mkOption {
-            type = lib.types.str;
-            default = "external";
-            description = "Backlight device name, or 'external' for DDC/CI.";
-          };
-
-          brightd.brightness.min = lib.mkOption {
-            type = lib.types.int;
-            default = 0;
-          };
-
-          brightd.brightness.max = lib.mkOption {
-            type = lib.types.int;
-            default = 100;
-          };
         };
       });
       default = { };
@@ -168,8 +152,6 @@ in {
         restart_cmd                 = "systemctl reboot";
         sleep_cmd                   = "systemctl suspend-then-hibernate";
         hibernate_cmd               = "systemctl hibernate";
-        brightness_up_cmd           = "brightd ctl inc all 2";
-        brightness_down_cmd         = "brightd ctl dec all 2";
       };
     };
 

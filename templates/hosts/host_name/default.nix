@@ -78,11 +78,6 @@
         position = { x = 2560; y = 0; };
         scale = 1;
         transform = "normal";
-        brightd = {
-          device = "external";
-          brightness.min = 5;
-          brightness.max = 70;
-        };
       };
       wechat.scale = 1;
     };

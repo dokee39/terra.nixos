@@ -19,6 +19,7 @@
       hotkey-overlay.skip-at-startup = true;
       clipboard.disable-primary = true;
       screenshot-path = "~/Pictures/screenshots/screenshot_%Y-%m-%d/screenshot_%Y-%m-%d_%H-%M-%S.png";
+      spawn-at-startup = [ { command = [ "noctalia" ]; } ];
     };
   };
 
@@ -58,13 +59,25 @@
       }
 
       layer-rule {
-          match namespace="^(notifications)$"
+          match namespace="^noctalia-backdrop"
+          place-within-backdrop true
+      }
+
+      layer-rule {
+          match namespace="^noctalia-(bar-[^\"]+|notification|dock|panel|osd)$"
           background-effect {
-              blur true
               xray false
           }
+      }
+
+      layer-rule {
+          match namespace="^noctalia-notifications"
           block-out-from "screen-capture"
-          geometry-corner-radius 18
+      }
+
+      layer-rule {
+          match namespace="^noctalia-dock"
+          geometry-corner-radius 16
       }
     ''
   );

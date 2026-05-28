@@ -25,10 +25,12 @@
     extra-substituters = [ 
       "https://cache.nixos-cuda.org"
       "https://nix-community.cachix.org"
+      "https://noctalia.cachix.org"
     ];
     extra-trusted-public-keys = [
       "cache.nixos-cuda.org:74DUi4Ye579gUqzH4ziL9IyiJBlDpMRn9MBN8oNan9M="
       "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+      "noctalia.cachix.org-1:pCOR47nnMEo5thcxNDtzWpOxNFQsBRglJzxWPp3dkU4="
     ];
     auto-optimise-store = true;
     use-xdg-base-directories = true;

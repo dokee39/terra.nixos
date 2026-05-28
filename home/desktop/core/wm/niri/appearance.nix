@@ -38,8 +38,6 @@
       };
     };
 
-    overview.backdrop-color = "#232136ff";
-
     cursor = {
       hide-after-inactive-ms = 3000;
       hide-when-typing = false;

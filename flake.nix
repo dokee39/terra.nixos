@@ -40,6 +40,10 @@
       url = "git+https://gitlab.gnome.org/coreyberla/nautilus-image-converter.git?ref=master";
       flake = false;
     };
+    noctalia = {
+      url = "github:noctalia-dev/noctalia-shell/v5";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     rose-pine-zellij = {
       url = "github:rose-pine/zellij";
@@ -67,7 +71,7 @@
       flake = false;
     };
     blink-pairs = {
-      url = "github:Saghen/blink.pairs";
+      url = "github:Saghen/blink.pairs?rev=2a7cb15f2c4bbbbe178ebf9f3fdae19aa6d28d39";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
