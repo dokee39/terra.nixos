@@ -67,6 +67,8 @@ in {
     (br "Mod+L"     { focus-column-right = {}; })
     (br "Mod+K"     { focus-window-up-or-bottom = {}; })
     (br "Mod+J"     { focus-window-down-or-top = {}; })
+    (bc 100 "Mod+WheelScrollDown" { focus-window-down-or-column-right = {}; })
+    (bc 100 "Mod+WheelScrollUp"   { focus-window-up-or-column-left = {}; })
 
     (br "Mod+Shift+Left"  { move-column-left = {}; })
     (br "Mod+Shift+Right" { move-column-right = {}; })
@@ -76,6 +78,8 @@ in {
     (br "Mod+Shift+L"     { move-column-right = {}; })
     (br "Mod+Shift+K"     { move-window-up = {}; })
     (br "Mod+Shift+J"     { move-window-down = {}; })
+    (bc 100 "Mod+Shift+WheelScrollDown" { move-column-right = {}; })
+    (bc 100 "Mod+Shift+WheelScrollUp"   { move-column-left = {}; })
 
     # -─ Monitor / Workspace nav ───────────────────────────────────────────
 
@@ -113,9 +117,6 @@ in {
     (br "Mod+Shift+O" { move-column-to-monitor-right = {}; })
     (br "Mod+Shift+I" { move-column-to-workspace-up = {}; })
     (br "Mod+Shift+U" { move-column-to-workspace-down = {}; })
-
-    (bc 150 "Mod+WheelScrollDown" { focus-workspace-down = {}; })
-    (bc 150 "Mod+WheelScrollUp"   { focus-workspace-up = {}; })
 
     # ── Workspace by index ──────────────────────────────────
 

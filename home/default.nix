@@ -3,7 +3,6 @@
 {
   imports = [
     ./shell
-    ./kitty.nix
     ./env.nix
     ./btop.nix
     ./codex.nix
@@ -62,7 +61,6 @@
     tlrc
   ];
 
-  programs.obsidian.enable = true;
   services.tldr-update = {
     enable = true;
     package = pkgs.tlrc;

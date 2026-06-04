@@ -1,9 +1,9 @@
-{ config, pkgs, ... }:
+{ self, config, pkgs-stable, ... }:
 
 {
   programs.kitty = {
     enable = true;
-    package = pkgs.kitty.overrideAttrs (o: {
+    package = pkgs-stable.kitty.overrideAttrs (o: {
       postInstall = (o.postInstall or "") + ''
         substituteInPlace $out/share/applications/kitty.desktop \
           --replace-fail "Icon=kitty" "Icon=${config.xdg.configHome}/kitty/kitty.app.png"
@@ -34,5 +34,5 @@
     };
   };
 
-  xdg.configFile."kitty/kitty.app.png".source = ../assets/rose-pine-kitty-icon.png;
+  xdg.configFile."kitty/kitty.app.png".source = "${self}/assets/rose-pine-kitty-icon.png";
 }

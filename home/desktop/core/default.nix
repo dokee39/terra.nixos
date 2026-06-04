@@ -11,5 +11,6 @@
     ./fcitx5.nix
     ./downloads-sorter.nix
     ./mime.nix
+    ./pipewire.nix
   ];
 }

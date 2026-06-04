@@ -1,6 +1,7 @@
 {
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-26.05";
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -114,12 +115,20 @@
       ];
 
       config = {
-        _module.args = { inherit inputs; };
+        _module.args = {
+          inherit inputs; 
+          inherit (inputs) self;
+        };
         home-manager = {
           useGlobalPkgs = true;
           useUserPackages = true;
           extraSpecialArgs = {
             inherit inputs;
+            inherit (inputs) self;
+            pkgs-stable = import inputs.nixpkgs-stable {
+              inherit (config.nixpkgs.hostPlatform) system;
+              config.allowUnfree = true;
+            };
           };
           sharedModules = [
             inputs.agenix.homeManagerModules.default

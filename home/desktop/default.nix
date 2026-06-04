@@ -13,6 +13,7 @@ in
 
   imports = [
     ./core
+    ./apps/kitty.nix
     ./apps/misc.nix
     ./apps/nautilus.nix
     ./apps/mpv.nix
