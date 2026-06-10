@@ -42,7 +42,7 @@
       flake = false;
     };
     noctalia = {
-      url = "github:noctalia-dev/noctalia-shell/v5";
+      url = "github:noctalia-dev/noctalia";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -116,7 +116,7 @@
 
       config = {
         _module.args = {
-          inherit inputs; 
+          inherit inputs;
           inherit (inputs) self;
         };
         home-manager = {

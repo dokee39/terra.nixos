@@ -31,11 +31,14 @@
     cmake
     bear
 
-    # rust
+    # Rust
     cargo
     rustc
     rustfmt
     clippy
     rust-analyzer
+
+    # Lua
+    lua
   ];
 }

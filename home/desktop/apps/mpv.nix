@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, config, ... }:
 
 {
   programs.mpv = {
@@ -31,6 +31,7 @@
         "subtitles"
       ];
       sub-ass-override = "no";
+      sub-fonts-dir = "Fonts";
 
       cscale = "catmull_rom";
       deband = true;
@@ -40,4 +41,13 @@
       interpolation = true;
     };
   };
+
+  xdg.configFile."mpv/fonts.conf".text = ''
+    <?xml version="1.0"?>
+    <!DOCTYPE fontconfig SYSTEM "fonts.dtd">
+    <fontconfig>
+      <include ignore_missing="yes">/etc/fonts/fonts.conf</include>
+      <dir>${config.home.homeDirectory}/.local/share/anime-fonts</dir>
+    </fontconfig>
+  '';
 }
