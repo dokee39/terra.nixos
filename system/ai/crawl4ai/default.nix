@@ -13,6 +13,16 @@ in {
       type = lib.types.str;
       default = "2g";
     };
+    env_secretFile = lib.mkOption {
+      type = lib.types.nullOr lib.types.path;
+      default = null;
+      description = ''
+        ```
+          CRAWL4AI_API_TOKEN=xxx
+          CRAWL4AI_WRAPPER_LLM_API_KEY=xxx
+        ```
+      '';
+    };
     adapter.port = lib.mkOption {
       type = lib.types.port;
       default = 3002;
@@ -26,13 +36,12 @@ in {
         type = lib.types.str;
         default = "https://api.deepseek.com/v1";
       };
-      apiKey_secretFile = lib.mkOption {
+      env_secretFile = lib.mkOption {
         type = lib.types.nullOr lib.types.path;
         default = null;
         description = ''
-          Path to a secret file containing the LLM API key for web_research.
           ```
-            xxx
+            CRAWL4AI_API_TOKEN=xxx
           ```
         '';
       };
@@ -40,10 +49,18 @@ in {
   };
 
   config = lib.mkIf cfg.enable {
+    age.secrets.crawl4ai-env.file = cfg.env_secretFile;
+    age.secrets.crawl4ai-wrapper-env = {
+      file = cfg.mcp-wrapper.env_secretFile;
+      group = config.terra.ai.mcp.groupName;
+      mode = "0440";
+    };
+
     virtualisation.oci-containers.containers = {
       crawl4ai = {
         image = "docker.io/unclecode/crawl4ai:latest";
         environment = config.terra.virtualisation.proxyEnv;
+        environmentFiles = [ config.age.secrets.crawl4ai-env.path ];
         ports = [ "${toString cfg.port}:11235" ];
         autoRemoveOnStop = false;
         extraOptions = [
@@ -78,12 +95,6 @@ in {
       };
     };
 
-    age.secrets.crawl4ai-wrapper-llm-api-key = {
-      file = cfg.mcp-wrapper.apiKey_secretFile;
-      group = config.terra.ai.mcp.groupName;
-      mode = "0440";
-    };
-
     terra.ai.mcp.servers.crawl4ai = let
       pythonEnv = pkgs.python3.withPackages (ps: with ps; [
         httpx
@@ -91,7 +102,7 @@ in {
         openai
       ]);
       crawl4ai-mcp-wrapper = pkgs.writeShellScriptBin "crawl4ai-mcp-wrapper" ''
-        export CRAWL4AI_WRAPPER_LLM_API_KEY="$(cat ${config.age.secrets.crawl4ai-wrapper-llm-api-key.path})"
+        source "${config.age.secrets.crawl4ai-wrapper-env.path}"
         exec ${pythonEnv}/bin/python ${./mcp-wrapper.py} $@
       '';
     in  {

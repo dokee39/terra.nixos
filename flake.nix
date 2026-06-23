@@ -25,10 +25,6 @@
       url = "github:lxgw/LxgwBright";
       flake = false;
     };
-    awww = {
-      url = "git+https://codeberg.org/LGFae/awww";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     orchis-kde = {
       url = "github:vinceliuice/Orchis-kde";
       flake = false;
@@ -41,10 +37,7 @@
       url = "git+https://gitlab.gnome.org/coreyberla/nautilus-image-converter.git?ref=master";
       flake = false;
     };
-    noctalia = {
-      url = "github:noctalia-dev/noctalia";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    noctalia.url = "github:noctalia-dev/noctalia";
 
     rose-pine-zellij = {
       url = "github:rose-pine/zellij";

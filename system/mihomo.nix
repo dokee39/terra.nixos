@@ -28,6 +28,7 @@ in
     services.mihomo = {
       enable = true;
       tunMode = true;
+      processesInfo = true;
       webui = pkgs.metacubexd;
       configFile = mihomoConfigPath;
     };
@@ -181,6 +182,10 @@ in
                   )
               )
             )
+          ) |
+          .rules = (
+            ["PROCESS-NAME-WILDCARD,*transmission*,DIRECT"]
+            + (.rules // [])
           )
         ' "$tmp" || err "failed to patch subscription config"
 

@@ -1,4 +1,4 @@
-{ ... }:
+{ pkgs, ... }:
 
 {
   imports = [
@@ -10,5 +10,9 @@
     ./mcp.nix
     ./mcp-github.nix
     ./jina-reranker
+  ];
+
+  environment.systemPackages = with pkgs; [
+    cc-switch
   ];
 }

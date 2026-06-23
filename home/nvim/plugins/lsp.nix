@@ -13,8 +13,6 @@ let
   mkRaw = lib.nixvim.mkRaw;
 in {
   lsp = {
-    enable = true;
-
     onAttach = ''
       if client.name == "ruff" then
         client.server_capabilities.hoverProvider = false

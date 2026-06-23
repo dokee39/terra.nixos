@@ -1,9 +1,9 @@
-{ self, config, pkgs-stable, ... }:
+{ self, config, pkgs, ... }:
 
 {
   programs.kitty = {
     enable = true;
-    package = pkgs-stable.kitty.overrideAttrs (o: {
+    package = pkgs.kitty.overrideAttrs (o: {
       postInstall = (o.postInstall or "") + ''
         substituteInPlace $out/share/applications/kitty.desktop \
           --replace-fail "Icon=kitty" "Icon=${config.xdg.configHome}/kitty/kitty.app.png"

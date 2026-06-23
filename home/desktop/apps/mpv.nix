@@ -10,7 +10,7 @@
     ];
     defaultProfiles = [ "high-quality" ];
     config = {
-      hwdec = "auto";
+      hwdec = "nvdec-copy";
 
       screenshot-directory = "~/Downloads";
       screenshot-template = "%F-%{estimated-frame-number:%P}";
@@ -24,12 +24,7 @@
       osc = false;
 
       sub-auto = "fuzzy";
-      sub-file-paths = [
-        "sub"
-        "subs"
-        "subtitle"
-        "subtitles"
-      ];
+      sub-file-paths = "sub:subs:subtitle:subtitles";
       sub-ass-override = "no";
       sub-fonts-dir = "Fonts";
 
@@ -48,6 +43,7 @@
     <fontconfig>
       <include ignore_missing="yes">/etc/fonts/fonts.conf</include>
       <dir>${config.home.homeDirectory}/.local/share/anime-fonts</dir>
+      <dir>${pkgs.mpvScripts.uosc}/share/fonts</dir>
     </fontconfig>
   '';
 }

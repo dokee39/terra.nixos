@@ -1,4 +1,4 @@
-{ inputs, ... }:
+{ inputs, osConfig, ... }:
 
 {
   imports = [ inputs.noctalia.homeModules.default ];
@@ -33,7 +33,7 @@
         margin_edge = 0.0;
         margin_ends = 0.0;
         start = [ "fuzzel" "space_10" "workspaces" ];
-        center = [ "audio_visualizer" "clock" "audio_visualizer" ];
+        center = [ "audio_visualizer_left" "clock" "audio_visualizer_right" ];
         end = [
           "ram"
           "space_20"
@@ -53,6 +53,7 @@
       dock = {
         enabled = true;
         auto_hide = true;
+        reserve_space = false;
         active_monitor_only = true;
         background_opacity = 0.5;
         launcher_icon = "apps";
@@ -139,38 +140,16 @@
         };
       };
 
-      # ── Brightness ──
-      brightness.enable_ddcutil = true;
-
       # ── Weather ──
       weather.auto_locate = true;
 
       # ── Widgets ──
       widget = {
         # Bar items (order matches bar layout: start → center → end)
-        workspaces = {
-          hide_when_empty = true;
-          font_weight = 700;
-          empty_color = "primary";
-          occupied_color = "primary";
-          focused_color = "secondary";
+        launcher = {
+          glyph = "apps";
+          scale = 1.2;
         };
-        clock = {
-          anchor = true;
-          format = "{:%H:%M:%S}";
-          font_weight = 700;
-          scale = 1.12;
-        };
-        audio_visualizer.high_color = "secondary";
-        ram.display = "graph";
-        control-center.glyph = "adjustments";
-        notifications = { };
-        tray = {
-          drawer = true;
-          drawer_columns = 5;
-        };
-
-        # Button-style widgets
         fuzzel = {
           type = "custom_button";
           command = "fuzzel";
@@ -178,9 +157,39 @@
           scale = 1.2;
         };
 
-        launcher = {
-          glyph = "apps";
-          scale = 1.2;
+        workspaces = {
+          hide_when_empty = true;
+          font_weight = 700;
+          empty_color = "primary";
+          occupied_color = "primary";
+          focused_color = "secondary";
+        };
+
+        clock = {
+          anchor = true;
+          format = "{:%H:%M:%S}";
+          font_weight = 700;
+          scale = 1.12;
+        };
+        audio_visualizer_left = {
+          type = "audio_visualizer";
+          color_1 = "secondary";
+        };
+        audio_visualizer_right = {
+          type = "audio_visualizer";
+          color_2 = "secondary";
+        };
+
+        ram.display = "graph";
+
+        volume.scroll_step = 2;
+        brightness.scroll_step = 2;
+        control-center.glyph = "adjustments";
+
+        notifications = { };
+        tray = {
+          drawer = true;
+          drawer_columns = 5;
         };
 
         # Spacers
@@ -189,10 +198,49 @@
           length = 10;
         };
         space_20.type = "spacer";
+      };
 
-        # Standalone widgets
-        media.max_length = 160;
-        sysmon.stat = "ram_used";
+      lockscreen_widgets = {
+        enabled = true;
+        schema_version = 1;
+        widget_order = [
+          "lockscreen-login-box@${osConfig.terra.desktop.primaryMonitor}"
+          "lockscreen-widget-0000000000000001"
+        ];
+
+        grid = {
+          cell_size = 16;
+          major_interval = 4;
+          visible = true;
+        };
+
+        widget = {
+          "lockscreen-login-box@${osConfig.terra.desktop.primaryMonitor}" = {
+            box_height = 0.0;
+            box_width = 0.0;
+            cx = 960.0;
+            cy = 957.0;
+            output = osConfig.terra.desktop.primaryMonitor;
+            rotation = 0.0;
+            type = "login_box";
+          };
+
+          "lockscreen-widget-clock@${osConfig.terra.desktop.primaryMonitor}" = {
+            box_height = 128.0;
+            box_width = 384.0;
+            cx = 1600.0;
+            cy = 220.0;
+            output = osConfig.terra.desktop.primaryMonitor;
+            rotation = 0.0;
+            type = "clock";
+            settings = {
+              background = false;
+              clock_style = "digital";
+              color = "primary";
+              shadow = true;
+            };
+          };
+        };
       };
     };
   };

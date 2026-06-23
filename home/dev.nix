@@ -39,6 +39,6 @@
     rust-analyzer
 
     # Lua
-    lua
+    lua5_4
   ];
 }

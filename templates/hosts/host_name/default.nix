@@ -23,10 +23,11 @@
         enable = true;
         port = 11235;
         shmSize = "2g";
+        env_secretFile = ./path/to/secret/file.age;
         mcp-wrapper = {
           model = "deepseek-v4-flash";
           apiBase = "https://api.deepseek.com/v1";
-          apiKey_secretFile = ./path/to/secret/file.age;
+          env_secretFile = ./path/to/secret/file.age;
         };
       };
       jina-reranker = {

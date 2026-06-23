@@ -146,6 +146,33 @@ in {
 
             # === Outdated or unhelpful official forums ===
             "(.*\\.)?answers\\.microsoft\\.com$"
+
+            # === Dictionary / reference sites ===
+            "(.*\\.)?merriam-webster\\.com$"
+            "(.*\\.)?dictionary\\.cambridge\\.org$"
+            "(.*\\.)?collinsdictionary\\.com$"
+            "(.*\\.)?oxfordlearnersdictionaries\\.com$"
+            "(.*\\.)?thefreedictionary\\.com$"
+            "(.*\\.)?dictionary\\.com$"
+            "(.*\\.)?thesaurus\\.com$"
+            "(.*\\.)?vocabulary\\.com$"
+            "(.*\\.)?etymonline\\.com$"
+            "(.*\\.)?en\\.wiktionary\\.org$"
+            "(.*\\.)?wordreference\\.com$"
+            "(.*\\.)?macmillandictionary\\.com$"
+            "(.*\\.)?ldoceonline\\.com$"
+            "(.*\\.)?britannica\\.com$"
+            "(.*\\.)?yourdictionary\\.com$"
+            "(.*\\.)?lexico\\.com$"
+            "(.*\\.)?iciba\\.com$"
+            "(.*\\.)?dict\\.cn$"
+            "(.*\\.)?youdao\\.com$"
+            "(.*\\.)?fanyi\\.baidu\\.com$"
+            "(.*\\.)?glosbe\\.com$"
+            "(.*\\.)?linguee\\.com$"
+            "(.*\\.)?deepl\\.com$"
+            "(.*\\.)?bab\\.la$"
+            "(.*\\.)?context\\.reverso\\.net$"
           ];
 
           low_priority = [
@@ -160,6 +187,11 @@ in {
 
             # === Tutorial sites still having some value (lowered to be observed) ===
             "(.*\\.)?baeldung\\.com$"
+
+            # === Dictionary / reference sites ===
+            "(.*\\.)?en\\.wiktionary\\.org$"
+            "(.*\\.)?etymonline\\.com$"
+            "(.*\\.)?britannica\\.com$"
           ];
 
           high_priority = [

@@ -166,7 +166,13 @@ in {
             **CRITICAL:** Before outputting the results, please ensure that your answer follows the **RULES** above. Violation of any rule is unacceptable.
           '';
           deepseekPreset = {
-            endpoint = "DeepSeek";
+            promptPrefix = systemPrompt;
+            reasoning_effort = "xhigh";
+            max_tokens = 48000;
+            maxContextTokens = 1048576;
+          };
+          qwenPreset = {
+            endpoint = "OpenCode GO";
             promptPrefix = systemPrompt;
             reasoning_effort = "xhigh";
             max_tokens = 48000;
@@ -180,7 +186,10 @@ in {
               default = true;
               preset = lib.mkMerge [
                 deepseekPreset
-                { model = "deepseek-v4-flash"; }
+                {
+                  endpoint = "DeepSeek";
+                  model = "deepseek-v4-flash";
+                }
               ];
             }
             {
@@ -188,7 +197,72 @@ in {
               label = "DeepSeek V4 Pro";
               preset = lib.mkMerge [
                 deepseekPreset
-                { model = "deepseek-v4-pro"; }
+                {
+                  endpoint = "DeepSeek";
+                  model = "deepseek-v4-pro";
+                }
+              ];
+            }
+            {
+              name = "DeepSeek V4 Flash (OpenCode GO)";
+              label = "DeepSeek V4 Flash (OpenCode GO)";
+              preset = lib.mkMerge [
+                deepseekPreset
+                {
+                  endpoint = "OpenCode GO";
+                  model = "deepseek-v4-flash";
+                }
+              ];
+            }
+            {
+              name = "DeepSeek V4 Pro (OpenCode GO)";
+              label = "DeepSeek V4 Pro (OpenCode GO)";
+              preset = lib.mkMerge [
+                deepseekPreset
+                {
+                  endpoint = "OpenCode GO";
+                  model = "deepseek-v4-pro";
+                }
+              ];
+            }
+            {
+              name = "GLM 5.2";
+              label = "GLM 5.2";
+              preset = {
+                endpoint = "OpenCode GO";
+                model = "glm-5.2";
+                promptPrefix = systemPrompt;
+                reasoning_effort = "xhigh";
+                max_tokens = 48000;
+                maxContextTokens = 1048576;
+              };
+            }
+            {
+              name = "Kimi K2.7";
+              label = "Kimi K2.7";
+              preset = {
+                endpoint = "OpenCode GO";
+                model = "kimi-k2.7";
+                promptPrefix = systemPrompt;
+                reasoning_effort = "xhigh";
+                max_tokens = 32768;
+                maxContextTokens = 262144;
+              };
+            }
+            {
+              name = "Qwen 3.7 Plus";
+              label = "Qwen 3.7 Plus";
+              preset = lib.mkMerge [
+                qwenPreset
+                { model = "qwen3.7-plus"; }
+              ];
+            }
+            {
+              name = "Qwen 3.7 Max";
+              label = "Qwen 3.7 Max";
+              preset = lib.mkMerge [
+                qwenPreset
+                { model = "qwen3.7-max"; }
               ];
             }
           ];
@@ -276,6 +350,24 @@ in {
               };
               dropParams = [ "stop" ];
               modelDisplayLabel = "OpenRouter";
+            }
+            {
+              name = "OpenCode GO";
+              apiKey = "\${OPENCODE_GO_KEY}";
+              baseURL = "https://opencode.ai/zen/go/v1";
+              models = {
+                default = [
+                  "glm-5.2"
+                  "kimi-k2.7"
+                  "deepseek-v4-pro"
+                  "deepseek-v4-flash"
+                  "qwen3.7-max"
+                  "qwen3.7-plus"
+                ];
+                fetch = true;
+              };
+              dropParams = [ "stop" ];
+              modelDisplayLabel = "OpenCode";
             }
           ];
         };

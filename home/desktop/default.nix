@@ -32,7 +32,7 @@ in
 
       google-chrome
       osu-lazer-bin
-      cherry-studio
+      openshot-qt
       xwayland-satellite
     ])
     ++ [

@@ -23,6 +23,7 @@ CRAWL4AI_BASE = f"http://localhost:{_args.port}"
 MODEL = _args.model
 API_BASE = _args.api_base
 API_KEY = os.environ.get("CRAWL4AI_WRAPPER_LLM_API_KEY", "")
+CRAWL4AI_API_TOKEN = os.environ.get("CRAWL4AI_API_TOKEN", "")
 
 _llm: AsyncOpenAI | None = None
 
@@ -119,9 +120,13 @@ async def web_fetch(url: str) -> str:
     """
     try:
         async with httpx.AsyncClient(timeout=60) as client:
+            headers = {}
+            if CRAWL4AI_API_TOKEN:
+               headers["Authorization"] = f"Bearer {CRAWL4AI_API_TOKEN}"
             resp = await client.post(
-                f"{CRAWL4AI_BASE}/md",
-                json={"url": url, "f": "raw"},
+               f"{CRAWL4AI_BASE}/md",
+               json={"url": url, "f": "raw"},
+               headers=headers,
             )
             resp.raise_for_status()
             return resp.json()["markdown"]
@@ -154,9 +159,13 @@ async def web_research(urls: list[str], extract_query: str) -> str:
     async def _fetch_one(url: str) -> tuple[str, str | None]:
         try:
             async with httpx.AsyncClient(timeout=60) as client:
+                headers = {}
+                if CRAWL4AI_API_TOKEN:
+                    headers["Authorization"] = f"Bearer {CRAWL4AI_API_TOKEN}"
                 resp = await client.post(
                     f"{CRAWL4AI_BASE}/md",
                     json={"url": url, "f": "raw"},
+                    headers=headers,
                 )
                 resp.raise_for_status()
                 return url, resp.json()["markdown"]
