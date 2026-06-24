@@ -3,7 +3,7 @@
 let
   navbuddy = pkgs.vimUtils.buildVimPlugin {
     pname = "nvim-navbuddy";
-    version = "unstable";
+    version = "unstable-${inputs.navbuddy.lastModifiedDate}";
     src = inputs.navbuddy;
     dependencies = with pkgs.vimPlugins; [
       nvim-navic

@@ -21,13 +21,6 @@ in {
           JWT_SECRET=xxx
           JWT_REFRESH_SECRET=xxx
           MEILI_MASTER_KEY=xxx
-          SEARXNG_INSTANCE_URL=https://api.example.com
-          SEARXNG_API_KEY=xxx
-          FIRECRAWL_API_URL=https://api.example.com
-          FIRECRAWL_VERSION=v1
-          FIRECRAWL_API_KEY=xxx
-          JINA_API_URL=http://api.example.com/v1/rerank
-          JINA_API_KEY=xxx
           DEEPSEEK_API_KEY=xxx
           MOONSHOT_API_KEY=xxx
           OPENROUTER_KEY=xxx
@@ -70,12 +63,6 @@ in {
         };
 
         memory.disabled = true;
-
-        webSearch = {
-          searchProvider = "searxng";
-          scraperProvider = "firecrawl";
-          rerankerType = "jina";
-        };
 
         mcpSettings.allowedDomains = lib.lists.unique (
           lib.mapAttrsToList (name: server:

@@ -35,6 +35,8 @@ in {
 
         search = {
           formats = [ "html" "json" ];
+          language = "en-US";
+          safe-search = 0;
         };
 
         server = {
@@ -66,11 +68,11 @@ in {
           { name = "ahmia"; disabled = true; }
           { name = "torch"; disabled = true; }
 
-          { name = "google"; weight = 2.0; }
-          { name = "startpage"; weight = 2.0; }
+          { name = "google"; disabled = true; weight = 2.0; }
+          { name = "startpage"; disabled = true; weight = 2.0; }
           { name = "duckduckgo"; weight = 2.0; }
-          { name = "wikipedia"; weight = 3.0; }
-          { name = "wikidata"; weight = 3.0; }
+          { name = "wikipedia"; disabled = true; weight = 3.0; }
+          { name = "wikidata"; disabled = true; weight = 3.0; }
           { name = "library of congress"; disabled = false; }
 
           { name = "crates.io"; disabled = false; weight = 2.0; }

@@ -14,28 +14,6 @@
     };
 
     ai = {
-      searxng = {
-        enable = true;
-        port = 8888;
-        env_secretFile = ./path/to/secret/file.age;
-      };
-      crawl4ai = {
-        enable = true;
-        port = 11235;
-        shmSize = "2g";
-        env_secretFile = ./path/to/secret/file.age;
-        mcp-wrapper = {
-          model = "deepseek-v4-flash";
-          apiBase = "https://api.deepseek.com/v1";
-          env_secretFile = ./path/to/secret/file.age;
-        };
-      };
-      jina-reranker = {
-        enable = true;
-        port = 8086;
-        idleTimeout = 300;
-      };
-
       mongodb.port = 27017;
       meilisearch= {
         port = 7700;
@@ -54,6 +32,12 @@
         github = {
           enable = true;
           pat_secretFile = ./path/to/secret/file.age;
+        };
+        web = {
+          enable = true;
+          crawl4aiPort = 11235;
+          shmSize = "2g";
+          env_secretFile = ./path/to/secret/file.age;
         };
       };
     };

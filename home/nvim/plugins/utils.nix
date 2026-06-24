@@ -8,17 +8,17 @@ let
   };
   beacon = pkgs.vimUtils.buildVimPlugin {
     pname = "beacon.nvim";
-    version = "unstable";
+    version = "unstable-${inputs.beacon.lastModifiedDate}";
     src = inputs.beacon;
   };
   search-replace = pkgs.vimUtils.buildVimPlugin {
     pname = "search-replace.nvim";
-    version = "unstable";
+    version = "unstable-${inputs.search-replace.lastModifiedDate}";
     src = inputs.search-replace;
   };
   im-select = pkgs.vimUtils.buildVimPlugin {
     pname = "im-select.nvim";
-    version = "unstable";
+    version = "unstable-${inputs.im-select.lastModifiedDate}";
     src = inputs.im-select;
   };
   mkRaw = lib.nixvim.mkRaw;

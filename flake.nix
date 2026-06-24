@@ -84,11 +84,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    jina-reranker-v3 = {
-      url = "https://huggingface.co/jinaai/jina-reranker-v3";
-      type = "git";
+    duckduckgo-mcp-server = {
+      url = "github:nickclyde/duckduckgo-mcp-server";
       flake = false;
     };
+    llm-agents.url = "github:numtide/llm-agents.nix";
   };
 
   outputs = inputs: {
@@ -108,6 +108,7 @@
       ];
 
       config = {
+        nixpkgs.overlays = [ inputs.llm-agents.overlays.default ];
         _module.args = {
           inherit inputs;
           inherit (inputs) self;
