@@ -1,0 +1,41 @@
+name: "[upstream:issue_closed] unblock once upstream issue closes"
+description: Track a local override blocked on an upstream GitHub issue being closed.
+title: "[upstream:issue_closed] <type>(<scope>): <action> once issue #<n> closes"
+labels:
+  - "upstream:issue_closed"
+body:
+  - type: textarea
+    id: params
+    attributes:
+      label: Parameters
+      description: Do not edit the comment below; the scanner reads it.
+      value: |
+        <!--
+        upstream-check:
+          repo: <owner/name>
+          number: <issue number>
+        -->
+    validations:
+      required: true
+  - type: textarea
+    id: files
+    attributes:
+      label: Affected files
+      description: One path or permalink per line.
+    validations:
+      required: true
+  - type: textarea
+    id: checklist
+    attributes:
+      label: Checklist
+      value: |
+        - [ ] upstream issue is closed
+        - [ ] local override verified removable
+        - [ ] all affected hosts rebuild cleanly
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: Notes
+      description: What bug the upstream issue tracks and what the local override does.

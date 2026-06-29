@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ ... }:
 
 {
   home.shell.enableFishIntegration = true;
@@ -7,7 +7,7 @@
     enable = true;
 
     interactiveShellInit = ''
-      source ${pkgs.fish}/share/fish/prompts/nim.fish
+      status get-file prompts/nim.fish | source
 
       set -g fish_pager_color_selected_background --background=green
       set -g fish_pager_color_selected_completion brwhite

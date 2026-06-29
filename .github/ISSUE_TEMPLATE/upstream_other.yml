@@ -1,0 +1,36 @@
+name: "[upstream:other] manual upstream tracking"
+description: Track a local override blocked on an upstream condition the scanner cannot check automatically. The workflow ignores this issue.
+title: "[upstream:other] <type>(<scope>): <action> once <condition>"
+labels:
+  - "upstream:other"
+body:
+  - type: markdown
+    attributes:
+      value: |
+        The `upstream:other` label is a manual-tracking marker: the scanner
+        will **not** evaluate this issue. Close it by hand once the upstream
+        condition is met.
+  - type: textarea
+    id: files
+    attributes:
+      label: Affected files
+      description: One path or permalink per line.
+    validations:
+      required: true
+  - type: textarea
+    id: checklist
+    attributes:
+      label: Checklist
+      value: |
+        - [ ] upstream condition met (verified by hand)
+        - [ ] local override verified removable
+        - [ ] all affected hosts rebuild cleanly
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: Notes
+      description: What the upstream condition is and what the local override does.
+    validations:
+      required: true

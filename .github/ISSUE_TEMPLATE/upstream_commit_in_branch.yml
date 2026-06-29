@@ -1,0 +1,42 @@
+name: "[upstream:commit_in_branch] unblock once a commit lands in a branch"
+description: Track a local override blocked on a specific commit reaching a branch or tag.
+title: "[upstream:commit_in_branch] <type>(<scope>): <action> once <short sha> hits <branch>"
+labels:
+  - "upstream:commit_in_branch"
+body:
+  - type: textarea
+    id: params
+    attributes:
+      label: Parameters
+      description: Do not edit the comment below; the scanner reads it.
+      value: |
+        <!--
+        upstream-check:
+          repo: <owner/name>
+          branch: <branch or tag, e.g. main or nixos-unstable>
+          sha: <full 40-char commit SHA>
+        -->
+    validations:
+      required: true
+  - type: textarea
+    id: files
+    attributes:
+      label: Affected files
+      description: One path or permalink per line.
+    validations:
+      required: true
+  - type: textarea
+    id: checklist
+    attributes:
+      label: Checklist
+      value: |
+        - [ ] commit is in the target branch/tag
+        - [ ] local override verified removable
+        - [ ] all affected hosts rebuild cleanly
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: Notes
+      description: What the commit fixes and what the local override does.
