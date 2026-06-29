@@ -11,6 +11,10 @@ in
       src = inputs.mikan;
     };
 
+    aegisub = pkgs.callPackage ./aegisub.nix {
+      src = inputs.aegisub;
+    };
+
     "nautilus-image-converter" = pkgs.callPackage ./nautilus-image-converter.nix {
       src = inputs."nautilus-image-converter";
     };

@@ -1,0 +1,43 @@
+name: Upstream release to track
+description: Track a local override waiting on an upstream release.
+labels:
+  - "upstream:release-version"
+body:
+  - type: textarea
+    id: block
+    attributes:
+      label: upstream-check block
+      description: |
+        Paste the hidden YAML block below. This is what the tracker reads.
+      value: |
+        <!--
+        upstream-check:
+          repo: OWNER/REPO
+          target: ">= X.Y.Z"
+        -->
+      render: markdown
+    validations:
+      required: true
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: What local state exists and what upstream change unblocks it.
+    validations:
+      required: true
+  - type: textarea
+    id: affected
+    attributes:
+      label: Local workaround / affected code
+    validations:
+      required: true
+  - type: textarea
+    id: exit
+    attributes:
+      label: Exit criteria
+      value: |
+        - [ ] upstream release satisfies `target`
+        - [ ] local override removed
+        - [ ] affected hosts rebuild cleanly
+    validations:
+      required: true

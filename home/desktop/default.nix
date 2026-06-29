@@ -32,12 +32,13 @@ in
 
       google-chrome
       osu-lazer-bin
-      openshot-qt
+      pinta
       xwayland-satellite
     ])
-    ++ [
-      customPackages.mikan
-      customPackages.qq
-      customPackages.wechat
-    ];
+    ++ (with customPackages; [
+      mikan
+      qq
+      wechat
+      aegisub
+    ]);
 }

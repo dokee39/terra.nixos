@@ -38,6 +38,10 @@
       flake = false;
     };
     noctalia.url = "github:noctalia-dev/noctalia";
+    aegisub = {
+      url = "github:arch1t3cht/Aegisub/migration03-02";
+      flake = false;
+    };
 
     rose-pine-zellij = {
       url = "github:rose-pine/zellij";
