@@ -37,7 +37,7 @@ in
         "stdio" 
         "--read-only" 
         "--toolsets" 
-        "users,repos,git,labels,code_security,issues,pull_requests,discussions"
+        "repos,git,labels,issues,pull_requests,discussions"
       ];
     };
   };

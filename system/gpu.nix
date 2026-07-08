@@ -108,8 +108,10 @@ in {
     (lib.mkIf gpu.primeOffloadEnabled {
       services.xserver.videoDrivers = [ "modesetting" "nvidia" ];
 
+      hardware.nvidia.powerManagement.finegrained = true;
       hardware.nvidia.prime = {
         offload.enable = true;
+        offload.enableOffloadCmd = true;
         intelBusId = config.terra.gpu.nvidia.prime.intelBusId;
         nvidiaBusId = config.terra.gpu.nvidia.prime.nvidiaBusId;
       };

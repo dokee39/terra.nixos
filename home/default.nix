@@ -9,6 +9,7 @@
     ./yazi
     ./nvim
     ./dev.nix
+    ./pi
   ] ++ lib.optionals osConfig.terra.desktop.enable [
     ./desktop
   ];
@@ -48,6 +49,10 @@
       user.email = "dokee.39@gmail.com";
       init.defaultBranch = "main";
     };
+  };
+  programs.gh = {
+    enable = true;
+    settings.git_protocol = "ssh";
   };
 
   services.udiskie.enable = true;

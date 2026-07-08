@@ -24,12 +24,14 @@
     cr = "cd $(pwd -P)";
     chmox = "chmod u+x";
     z = "zellij";
+    rm = "gomi";
 
     mntfs = "sudo mount -t ntfs3 -o uid=$(id -u),gid=$(id -g),fmask=0133,dmask=0022,windows_names,prealloc,force";
   };
 
   home.packages = with pkgs; [
     bat
+    gomi
   ];
 
   programs.eza = {

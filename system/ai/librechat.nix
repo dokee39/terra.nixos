@@ -60,6 +60,8 @@ in {
           memories = false;
           presets = true;
           multiConvo = true;
+          contextUsage = true;
+          contextCost = true;
         };
 
         memory.disabled = true;
@@ -85,7 +87,7 @@ in {
           parameters = {
             max_tokens = 16384;
             maxContextTokens = 1048576;
-            reasoning_effort = "high";
+            reasoning_effort = "medium";
           };
           trigger = {
             type = "token_ratio";
@@ -151,14 +153,14 @@ in {
           '';
           deepseekPreset = {
             promptPrefix = systemPrompt;
-            reasoning_effort = "xhigh";
+            reasoning_effort = "high";
             max_tokens = 48000;
             maxContextTokens = 1048576;
           };
           qwenPreset = {
             endpoint = "OpenCode GO";
             promptPrefix = systemPrompt;
-            reasoning_effort = "xhigh";
+            reasoning_effort = "high";
             max_tokens = 48000;
             maxContextTokens = 1048576;
           };
@@ -216,7 +218,7 @@ in {
                 endpoint = "OpenCode GO";
                 model = "glm-5.2";
                 promptPrefix = systemPrompt;
-                reasoning_effort = "xhigh";
+                reasoning_effort = "high";
                 max_tokens = 48000;
                 maxContextTokens = 1048576;
               };
@@ -228,7 +230,7 @@ in {
                 endpoint = "OpenCode GO";
                 model = "kimi-k2.7";
                 promptPrefix = systemPrompt;
-                reasoning_effort = "xhigh";
+                reasoning_effort = "high";
                 max_tokens = 32768;
                 maxContextTokens = 262144;
               };

@@ -69,7 +69,7 @@
       flake = false;
     };
     blink-pairs = {
-      url = "github:Saghen/blink.pairs?rev=2a7cb15f2c4bbbbe178ebf9f3fdae19aa6d28d39";
+      url = "github:Saghen/blink.pairs";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -92,7 +92,6 @@
       url = "github:nickclyde/duckduckgo-mcp-server";
       flake = false;
     };
-    llm-agents.url = "github:numtide/llm-agents.nix";
   };
 
   outputs = inputs: {
@@ -112,7 +111,6 @@
       ];
 
       config = {
-        nixpkgs.overlays = [ inputs.llm-agents.overlays.default ];
         _module.args = {
           inherit inputs;
           inherit (inputs) self;

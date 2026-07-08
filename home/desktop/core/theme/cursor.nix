@@ -31,8 +31,8 @@ in
   };
 
   home.sessionVariables = {
-    XCURSOR_THEME=xcursorName;
-    XCURSOR_SIZE=toString cursorSize;
+    XCURSOR_THEME = xcursorName;
+    XCURSOR_SIZE  = toString cursorSize;
   };
 
   wayland.windowManager.hyprland.settings.env = [

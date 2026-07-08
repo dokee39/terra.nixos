@@ -1,0 +1,14 @@
+{
+  "providers": {
+    "opencode-go": {
+      "compat": {
+        "sendSessionAffinityHeaders": true
+      }
+    },
+    "deepseek": {
+      "compat": {
+        "sendSessionAffinityHeaders": true
+      }
+    }
+  }
+}

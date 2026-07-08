@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ pkgs, ... }:
 
 {
   i18n.inputMethod = {
@@ -34,7 +34,8 @@
           pinyin = {
             globalSection = {
               PageSize = 5;
-              CloudPinyinEnabled = "True";
+              CloudPinyinEnabled = "False";
+              FirstRun = "False";
             };
             sections = {
               Fuzzy = {
@@ -82,8 +83,8 @@
   };
 
   home.sessionVariables = {
-    XMODIFIERS="@im=fcitx";
-    QT_IM_MODULE="fcitx";
-    QT_IM_MODULES="wayland;fcitx";
+    XMODIFIERS    = "@im=fcitx";
+    QT_IM_MODULE  = "fcitx";
+    QT_IM_MODULES = "wayland;fcitx";
   };
 }
