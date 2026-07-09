@@ -1,0 +1,45 @@
+name: detect-package-changes
+
+on:
+  push:
+    paths: [flake.lock]
+
+permissions:
+  contents: read
+
+jobs:
+  diff:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 2
+
+      - uses: cachix/install-nix-action@v31
+        with:
+          extra-nix-config: |
+            access-tokens = github.com=${{ github.token }}
+
+      - name: Validate configuration
+        run: nix flake check .github/tests/test-flake
+
+      - name: Check previous commit
+        id: prev
+        run: |
+          if git rev-parse HEAD~1 >/dev/null 2>&1; then
+            echo "ok=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Get nixpkgs revisions
+        id: revs
+        if: steps.prev.outputs.ok
+        run: |
+          OLD=$(git show HEAD~1:flake.lock | jq -r '.nodes.nixpkgs.locked.rev')
+          NEW=$(jq -r '.nodes.nixpkgs.locked.rev' flake.lock)
+          echo "old=$OLD" >> "$GITHUB_OUTPUT"
+          echo "new=$NEW" >> "$GITHUB_OUTPUT"
+          [ "$OLD" != "$NEW" ] && echo "changed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Diff packages
+        if: steps.revs.outputs.changed
+        run: .github/scripts/diff-packages.sh "${{ steps.revs.outputs.old }}" "${{ steps.revs.outputs.new }}"

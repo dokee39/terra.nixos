@@ -6,44 +6,43 @@
   terra = {
     userName = "user_name";
     authorizedSshKeys = [ ];
-    nix.githubPat_secretFile = ./path/to/secret/file.age;
+    nix.githubPat_secretFile = ./.empty;
     mihomo = {
       port = 7890;
       tunDevice = "tun0";
-      subscriptionUrl_secretFile = ./path/to/secret/file.age;
+      subscriptionUrl_secretFile = ./.empty;
     };
 
     ai = {
       mongodb.port = 27017;
       meilisearch= {
         port = 7700;
-        masterKey_secretFile = ./path/to/secret/file.age;
+        masterKey_secretFile = ./.empty;
       };
 
       librechat = {
         enable = true;
         port = 3080;
-        credentials_secretFile = ./path/to/secret/file.age;
-        meilisearchMasterKey_secretFile = ./path/to/secret/file.age;
+        credentials_secretFile = ./.empty;
       };
 
       mcp = {
         groupName = "mcp";
         github = {
           enable = true;
-          pat_secretFile = ./path/to/secret/file.age;
+          pat_secretFile = ./.empty;
         };
         web = {
           enable = true;
           crawl4aiPort = 11235;
           shmSize = "2g";
-          env_secretFile = ./path/to/secret/file.age;
+          env_secretFile = ./.empty;
         };
       };
     };
 
     transmission = {
-      enable = false;
+      enable = true;
       speed = {
         up = 200;
         down = 2000;
@@ -52,28 +51,37 @@
         up = 2000;
         down = 10000;
       };
-      rpc_secretFile = ./path/to/secret/file.age;
+      rpc_secretFile = ./.empty;
     };
 
     desktop = {
-      enable = false;
+      enable = true;
+
       monitors.DP-1 = {
         primary = true;
-        mode =  "2560x1440@120";
-        position = { x = 2560; y = 0; };
+        mode = {
+          width = 2560;
+          height = 1440;
+          refresh = 120;
+        };
+        position = {
+          niri = { x = -1080; y = 0; };
+          hyprland = "auto-left";
+        };
         scale = 1;
         transform = "normal";
       };
+
       wechat.scale = 1;
     };
 
     gpu = {
-      intelIgpu.enable = false;
+      intelIgpu.enable = true;
       nvidia = {
-        enable = false;
+        enable = true;
         prime = {
-          intelBusId = null;
-          nvidiaBusId = null;
+          intelBusId = "PCI:0@0:2:0";
+          nvidiaBusId = "PCI:1@0:0:0";
         };
       };
     };

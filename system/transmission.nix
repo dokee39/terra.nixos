@@ -32,7 +32,7 @@
       };
     };
 
-    rpcSecretFile = lib.mkOption {
+    rpc_secretFile = lib.mkOption {
       type = lib.types.nullOr lib.types.path;
       default = null;
       description = "Path to a secret file containing `transmission-rpc.json`.";
@@ -70,8 +70,8 @@
         };
       })
 
-      (lib.mkIf (cfg.enable && cfg.rpcSecretFile != null) {
-        age.secrets.transmission-rpc.file = config.terra.transmission.rpcSecretFile;
+      (lib.mkIf (cfg.enable && cfg.rpc_secretFile != null) {
+        age.secrets.transmission-rpc.file = config.terra.transmission.rpc_secretFile;
       })
 
       {
@@ -103,13 +103,13 @@
             alt-speed-down = cfg.alt-speed.down;
             alt-speed-enabled = false;
 
-            rpc-authentication-required = cfg.rpcSecretFile != null;
+            rpc-authentication-required = cfg.rpc_secretFile != null;
 
             blocklist-enabled = true;
             blocklist-updates-enabled = true;
             blocklist-url = "https://raw.githubusercontent.com/PBH-BTN/BTN-Collected-Rules/master/combine/all.txt";
           };
-        } // lib.optionalAttrs (cfg.enable && cfg.rpcSecretFile != null) {
+        } // lib.optionalAttrs (cfg.enable && cfg.rpc_secretFile != null) {
           credentialsFile = config.age.secrets.transmission-rpc.path;
         };
       }

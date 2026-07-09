@@ -1,16 +1,16 @@
 {
   inputs = {
-    nixos.url = "github:dokee39/nixos";
-    nixpkgs.follows = "nixos/nixpkgs";
+    terra.url = "github:dokee39/terra.nixos";
+    nixpkgs.follows = "terra/nixpkgs";
   };
 
-  outputs = { nixpkgs, nixos, ... }: let
+  outputs = { nixpkgs, terra, ... }: let
     lib = nixpkgs.lib;
     hosts = builtins.attrNames (builtins.readDir ./hosts);
     mkHost = hostName: lib.nixosSystem {
       modules = [
         ./hosts/${hostName}
-        nixos.nixosModules.default
+        terra.terraModules.default
         { terra.hostName = hostName; }
       ];
     };

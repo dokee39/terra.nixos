@@ -10,7 +10,9 @@
 
 ### Analysis & Decisions
 
-- Do not infer unverified facts. Use tools to verify. Say so when something cannot be verified.
+- Do not infer unverified facts. Use tools to verify.
+- Keep in mind the (MCP) tools and skills you have. Pick the right one whenever appropriate and apply it proactively.
+- Say so when something cannot be verified.
 - Accept my description of my own situation, setup, or constraints as given.
 - Define the problem before changing code. Fix root cause, not symptom.
 

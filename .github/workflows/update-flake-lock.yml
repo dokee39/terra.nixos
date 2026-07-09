@@ -15,13 +15,25 @@ jobs:
 
     steps:
       - uses: actions/checkout@v6
+
       - uses: cachix/install-nix-action@v31
+        with:
+          extra-nix-config: |
+            access-tokens = github.com=${{ github.token }}
+
       - run: nix flake update
+
+      - name: Validate configuration with updated nixpkgs
+        run: |
+          REV=$(jq -r '.nodes.nixpkgs.locked.rev' flake.lock)
+          cd .github/tests/test-flake
+          nix flake lock --override-input nixpkgs "github:NixOS/nixpkgs/$REV"
+          nix flake check
+
       - run: |
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-          git add flake.lock
+          git add flake.lock .github/tests/test-flake/flake.lock
           git diff --cached --quiet && exit 0
           git commit -m "[bot] chore: update flake.lock"
           git push origin HEAD:main
-
