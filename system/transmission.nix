@@ -37,6 +37,14 @@
       default = null;
       description = "Path to a secret file containing `transmission-rpc.json`.";
     };
+    floodEnv_secretFile = lib.mkOption {
+      type = lib.types.nullOr lib.types.path;
+      default = null;
+      description = ''
+        FLOOD_OPTION_TRUSER=transmission
+        FLOOD_OPTION_TRPASS=<rpc_secret>
+      '';
+    };
   };
 
   config =
@@ -74,10 +82,13 @@
         age.secrets.transmission-rpc.file = config.terra.transmission.rpc_secretFile;
       })
 
+      (lib.mkIf (cfg.enable && cfg.floodEnv_secretFile != null) {
+        age.secrets.flood-env.file = config.terra.transmission.floodEnv_secretFile;
+      })
+
       {
         services.transmission = {
           enable = cfg.enable;
-          webHome = pkgs.flood-for-transmission;
           openPeerPorts = true;
           openRPCPort = true;
           downloadDirPermissions = "770";
@@ -112,6 +123,15 @@
         } // lib.optionalAttrs (cfg.enable && cfg.rpc_secretFile != null) {
           credentialsFile = config.age.secrets.transmission-rpc.path;
         };
+
+        services.flood = lib.mkIf cfg.enable {
+          enable = true;
+          extraArgs = [ "--trurl=http://localhost:9091/transmission/rpc" ];
+        };
+
+        systemd.services.flood.serviceConfig.EnvironmentFile = lib.mkIf
+          (cfg.enable && cfg.floodEnv_secretFile != null)
+          [ config.age.secrets.flood-env.path ];
       }
     ];
 }

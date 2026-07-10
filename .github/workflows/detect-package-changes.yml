@@ -18,34 +18,19 @@ jobs:
 
       - uses: cachix/install-nix-action@v31
         with:
-          extra-nix-config: |
+          extra_nix_config: |
             access-tokens = github.com=${{ github.token }}
 
       - name: Validate configuration
         run: nix flake check .github/tests/test-flake
 
-      - name: Check previous commit
-        id: prev
-        run: |
-          if git rev-parse HEAD~1 >/dev/null 2>&1; then
-            echo "ok=true" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Get nixpkgs revisions
-        id: revs
-        if: steps.prev.outputs.ok
-        run: |
-          OLD=$(git show HEAD~1:flake.lock | jq -r '.nodes.nixpkgs.locked.rev')
-          NEW=$(jq -r '.nodes.nixpkgs.locked.rev' flake.lock)
-          echo "old=$OLD" >> "$GITHUB_OUTPUT"
-          echo "new=$NEW" >> "$GITHUB_OUTPUT"
-          [ "$OLD" != "$NEW" ] && echo "changed=true" >> "$GITHUB_OUTPUT"
-
       - name: Detect package changes
-        id: diff
-        if: steps.revs.outputs.changed
         env:
-          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          GH_TOKEN: ${{ github.token }}
         run: |
-          pip install pyyaml openai --quiet
-          python3 .github/scripts/detect-package-changes.py "${{ steps.revs.outputs.old }}" "${{ steps.revs.outputs.new }}"
+          if ! git rev-parse HEAD~1 >/dev/null 2>&1; then
+            echo "Only one commit in history. Skipping diff."
+            exit 0
+          fi
+          pip install pyyaml --quiet
+          python3 .github/scripts/detect-package-changes.py

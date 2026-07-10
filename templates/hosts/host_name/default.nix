@@ -52,6 +52,7 @@
         down = 10000;
       };
       rpc_secretFile = ./.empty;
+      floodEnv_secretFile = ./.empty;
     };
 
     desktop = {
@@ -93,7 +94,7 @@
   boot.loader.timeout = 1;
 
   system.autoUpgrade = {
-    enable = false;
+    enable = true;
     flake = "github:yourname/your-config#${config.terra.hostName}";
     dates = "Sun *-*-* 04:40:00";
     operation = "boot";
@@ -107,6 +108,6 @@
     };
   };
 
-  programs.coolercontrol.enable = false;
-  services.lact.enable = false;
+  programs.coolercontrol.enable = true;
+  services.lact.enable = true;
 }

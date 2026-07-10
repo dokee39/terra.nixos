@@ -165,10 +165,10 @@ in {
 
     # ── Brightness ──────────────────────────────────────────
 
-    (blc 150 "XF86MonBrightnessDown" { spawn = [ "noctalia" "msg" "brightness-down" "current" "2" ]; })
-    (blc 150 "XF86MonBrightnessUp"   { spawn = [ "noctalia" "msg" "brightness-up" "current" "2" ]; })
+    (blc 50 "XF86MonBrightnessDown" { spawn = [ "noctalia" "msg" "brightness-down" "current" "2" ]; })
+    (blc 50 "XF86MonBrightnessUp"   { spawn = [ "noctalia" "msg" "brightness-up" "current" "2" ]; })
 
-    (blc 150 "Mod+B"       { spawn = [ "noctalia" "msg" "brightness-down" "current" "2" ]; })
-    (blc 150 "Mod+Shift+B" { spawn = [ "noctalia" "msg" "brightness-up" "current" "2" ]; })
+    (blc 50 "Mod+B"       { spawn = [ "noctalia" "msg" "brightness-down" "current" "2" ]; })
+    (blc 50 "Mod+Shift+B" { spawn = [ "noctalia" "msg" "brightness-up" "current" "2" ]; })
   ];
 }

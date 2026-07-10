@@ -54,18 +54,18 @@
       "--info=inline"
     ];
 
-    fileWidgetOptions = [
+    fileWidget.options = [
       "--walker-skip=.git,node_modules,target,result"
       "--preview=bat -n --color=always {}"
       "--bind=ctrl-/:change-preview-window(hidden|right,60%)"
     ];
 
-    changeDirWidgetOptions = [
+    changeDirWidget.options = [
       "--walker-skip=.git,node_modules,target,result"
       "--preview=eza --tree --level=2 --color=always {} | head -200"
     ];
 
-    historyWidgetOptions = [
+    historyWidget.options = [
       "--sort"
       "--exact"
     ];

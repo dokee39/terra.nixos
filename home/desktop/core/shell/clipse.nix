@@ -7,7 +7,7 @@
   services.clipse = {
     enable = true;
 
-    keyBindings = {
+    settings.keyBindings = {
       up = "k";
       down = "j";
       end = "ctrl+l";
@@ -21,7 +21,7 @@
       togglePinned = "v";
     };
 
-    imageDisplay = {
+    settings.imageDisplay = {
       type = "kitty";
       scaleX = 18;
       scaleY = 18;
