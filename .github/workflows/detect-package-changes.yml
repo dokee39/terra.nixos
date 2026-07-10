@@ -6,6 +6,7 @@ on:
 
 permissions:
   contents: read
+  issues: write
 
 jobs:
   diff:
@@ -40,6 +41,11 @@ jobs:
           echo "new=$NEW" >> "$GITHUB_OUTPUT"
           [ "$OLD" != "$NEW" ] && echo "changed=true" >> "$GITHUB_OUTPUT"
 
-      - name: Diff packages
+      - name: Detect package changes
+        id: diff
         if: steps.revs.outputs.changed
-        run: .github/scripts/diff-packages.sh "${{ steps.revs.outputs.old }}" "${{ steps.revs.outputs.new }}"
+        env:
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+        run: |
+          pip install pyyaml openai --quiet
+          python3 .github/scripts/detect-package-changes.py "${{ steps.revs.outputs.old }}" "${{ steps.revs.outputs.new }}"
