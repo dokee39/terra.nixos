@@ -1,7 +1,6 @@
 { ... }: {
   imports = [
     ./wm/niri
-    ./wm/hypr
     ./shell/noctalia.nix
     ./shell/launcher.nix
     ./shell/clipse.nix

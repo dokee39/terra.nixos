@@ -27,26 +27,14 @@ in {
           };
 
           position = lib.mkOption {
-            type = lib.types.submodule {
+            type = lib.types.nullOr (lib.types.submodule {
               options = {
-                niri = lib.mkOption {
-                  type = lib.types.nullOr (lib.types.submodule {
-                    options = {
-                      x = lib.mkOption { type = lib.types.int; };
-                      y = lib.mkOption { type = lib.types.int; };
-                    };
-                  });
-                  default = null;
-                  description = "niri position { x, y } in logical pixels. null = auto.";
-                };
-                hyprland = lib.mkOption {
-                  type = lib.types.nullOr lib.types.str;
-                  default = null;
-                  description = "Hyprland position string, e.g. '1920x0'. null = auto.";
-                };
+                x = lib.mkOption { type = lib.types.int; };
+                y = lib.mkOption { type = lib.types.int; };
               };
-            };
-            default = {};
+            });
+            default = null;
+            description = "Monitor position { x, y } in logical pixels. null = auto.";
           };
 
           scale = lib.mkOption {
@@ -56,17 +44,19 @@ in {
           };
 
           transform = lib.mkOption {
-            type = lib.types.enum [
-              "normal"
-              "90"
-              "180"
-              "270"
-              "flipped"
-              "flipped-90"
-              "flipped-180"
-              "flipped-270"
-            ];
-            default = "normal";
+            type = lib.types.submodule {
+              options = {
+                rotation = lib.mkOption {
+                  type = lib.types.enum [ 0 90 180 270 ];
+                  default = 0;
+                };
+                flipped = lib.mkOption {
+                  type = lib.types.bool;
+                  default = false;
+                };
+              };
+            };
+            default = { };
             description = "Output rotation and flip.";
           };
         };
@@ -105,7 +95,6 @@ in {
       }
     ];
   } // lib.mkIf cfg.enable {
-    programs.hyprland.enable = true;
     services.displayManager.sessionPackages = [ pkgs.niri ];
     services.displayManager.ly = {
       enable = true;
@@ -160,12 +149,10 @@ in {
       xdgOpenUsePortal = true;
       extraPortals = with pkgs; [
         xdg-desktop-portal-gtk
-        xdg-desktop-portal-hyprland
         xdg-desktop-portal-gnome
       ];
       config = {
         common.default = [ "gtk" "gnome" ];
-        hyprland.default = [ "hyprland" "gtk" ];
       };
     };
 

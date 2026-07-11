@@ -25,7 +25,4 @@
     NIXOS_OZONE_WL = "1";
   };
 
-  wayland.windowManager.hyprland.settings.env = lib.mkIf osConfig.terra.desktop.enable [
-      ''__GLX_VENDOR_LIBRARY_NAME,"nvidia"''
-  ];
 }

@@ -65,12 +65,9 @@
           height = 1440;
           refresh = 120;
         };
-        position = {
-          niri = { x = -1080; y = 0; };
-          hyprland = "auto-left";
-        };
+        position = { x = -1080; y = 0; };
         scale = 1;
-        transform = "normal";
+        transform = { rotation = 0; flipped = false; };
       };
 
       wechat.scale = 1;

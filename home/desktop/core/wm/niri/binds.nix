@@ -17,13 +17,14 @@ in {
   programs.niri.settings.binds = lib.listToAttrs [
     # ── Launch ──────────────────────────────────────────────
 
-    (b  "Mod+Q"     { spawn = [ "kitty" ]; })
-    (b  "Mod+R"     { spawn = [ "fuzzel" ]; })
-    (b  "Mod+E"     { spawn = [ "nautilus" "--new-window" ]; })
-    (b  "Mod+P"     { spawn = [ "kitty" "--class" "clipse" "-e" "clipse" ]; })
-    (b  "Mod+M"     { spawn = [ "kitty" "-T" "rmpc" "-e" "rmpc" ]; })
-    (b  "Mod+N"     { spawn = [ "noctalia" "msg" "bar-toggle" ]; })
-    (b  "Mod+Grave" { spawn = [ "noctalia" "msg" "panel-toggle" "session" ]; })
+    (b  "Mod+Q"       { spawn = [ "kitty" ]; })
+    (b  "Mod+R"       { spawn = [ "fuzzel" ]; })
+    (b  "Mod+E"       { spawn = [ "nautilus" "--new-window" ]; })
+    (b  "Mod+P"       { spawn = [ "kitty" "--class" "clipse" "-e" "clipse" ]; })
+    (b  "Mod+M"       { spawn = [ "kitty" "-T" "rmpc" "-e" "rmpc" ]; })
+    (b  "Mod+N"       { spawn = [ "noctalia" "msg" "bar-toggle" ]; })
+    (b  "Mod+Grave"   { spawn = [ "noctalia" "msg" "panel-toggle" "session" ]; })
+    (b  "Mod+Shift+P" { spawn = [ "hyprpicker" "-a" ]; })
 
     # ── Window lifecycle ────────────────────────────────────
 
