@@ -1,11 +1,6 @@
 { pkgs, osConfig, ... }:
 
 {
-  home.packages = [ pkgs.rtk ];
-  home.sessionVariables = {
-    PI_SKIP_VERSION_CHECK  = "1";
-  };
-
   programs.pi-coding-agent = {
     enable = true;
 
@@ -18,8 +13,8 @@
       enableInstallTelemetry = false;
       enableAnalytics = false;
 
-      defaultProvider = "opencode-go";
-      defaultModel = "glm-5.2";
+      defaultProvider = "deepseek";
+      defaultModel = "deepseek-v4-flash";
       defaultThinkingLevel = "high";
 
       autocompleteMaxVisible = 10;
@@ -36,6 +31,22 @@
 
       theme = "rose-pine";
     };
+  };
+
+  home.packages = let                                                                            
+    pichat = pkgs.writeShellScriptBin "pichat" ''
+      origin_cwd="$(pwd)"
+      cd /tmp
+      pi --session-dir ~/.pi/chat-sessions \
+         --append-system-prompt ${./APPEND_SYSTEM.md} \
+         --append-system-prompt ${./chat-instruction.md} \
+         "$@"
+      cd "$origin_cwd"
+    '';
+  in [ pkgs.rtk pichat ];
+
+  home.sessionVariables = {
+    PI_SKIP_VERSION_CHECK  = "1";
   };
 
   home.file.".pi/agent/APPEND_SYSTEM.md".source = ./APPEND_SYSTEM.md;

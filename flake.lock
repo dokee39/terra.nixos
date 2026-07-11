@@ -651,6 +651,22 @@
         "type": "github"
       }
     },
+    "pi-web": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1783645941,
+        "narHash": "sha256-Dqc5L2z/lvI/P43G/F5j9WPpL2Fv63XGUEMz5DdiuTM=",
+        "owner": "agegr",
+        "repo": "pi-web",
+        "rev": "82f94425e82cec05694b1cfd211842bf592697d5",
+        "type": "github"
+      },
+      "original": {
+        "owner": "agegr",
+        "repo": "pi-web",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
         "aegisub": "aegisub",
@@ -675,6 +691,7 @@
         "nixvim": "nixvim",
         "noctalia": "noctalia",
         "orchis-kde": "orchis-kde",
+        "pi-web": "pi-web",
         "rose-pine-zellij": "rose-pine-zellij",
         "search-replace": "search-replace"
       }

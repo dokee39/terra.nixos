@@ -7,7 +7,7 @@ Trace: $ARGUMENTS
 1. Define the scope — what code, behavior, or question are you tracing.
 2. Read all relevant files in full (no truncation).
 3. If this is a bug: read test files for the affected area too — they may reveal expected behavior that the implementation violates.
-4. Use available tools or skills to gather any additional context as needed.
+4. Use available tools or skills to gather any additional context as needed. (e.g. Use the github skill for any GitHub-related context, or web search for external references.)
 5. Trace the flow:
    - Map the execution path / call chain from entry to exit
    - Identify key data transformations and state changes
