@@ -1,0 +1,13 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "web-tool"
+version = "0.1.0"
+description = "CLI web search (DuckDuckGo) and fetch (trafilatura)"
+requires-python = ">=3.11"
+dependencies = []
+
+[project.scripts]
+web-tool = "web_tool.cli:main"

@@ -13,34 +13,6 @@
       subscriptionUrl_secretFile = ./.empty;
     };
 
-    ai = {
-      mongodb.port = 27017;
-      meilisearch= {
-        port = 7700;
-        masterKey_secretFile = ./.empty;
-      };
-
-      librechat = {
-        enable = true;
-        port = 3080;
-        credentials_secretFile = ./.empty;
-      };
-
-      mcp = {
-        groupName = "mcp";
-        github = {
-          enable = true;
-          pat_secretFile = ./.empty;
-        };
-        web = {
-          enable = true;
-          crawl4aiPort = 11235;
-          shmSize = "2g";
-          env_secretFile = ./.empty;
-        };
-      };
-    };
-
     transmission = {
       enable = true;
       speed = {

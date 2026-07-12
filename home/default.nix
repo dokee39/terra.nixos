@@ -5,7 +5,6 @@
     ./shell
     ./env.nix
     ./btop.nix
-    ./codex.nix
     ./yazi
     ./nvim
     ./dev.nix

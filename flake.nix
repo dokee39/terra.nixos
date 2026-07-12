@@ -82,6 +82,11 @@
       url = "github:nickclyde/duckduckgo-mcp-server";
       flake = false;
     };
+
+    pi-web = {
+      url = "github:agegr/pi-web";
+      flake = false;
+    };
   };
 
   outputs = inputs: {

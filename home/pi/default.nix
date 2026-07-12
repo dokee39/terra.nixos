@@ -1,9 +1,96 @@
-{ pkgs, osConfig, ... }:
+{ pkgs, lib, inputs, ... }:
 
+let
+  mapleMonoFont = pkgs.maple-mono.NF-CN-unhinted;
+
+  pi-web = pkgs.buildNpmPackage {
+    pname = "pi-web";
+    version = "unstable-${inputs.pi-web.lastModifiedDate}";
+    src = inputs.pi-web;
+
+    npmDepsFetcherVersion = 2;
+    makeCacheWritable = true;
+    npmFlags = [ "--legacy-peer-deps" ];
+    npmDepsHash = "sha256-MffdpqEw2PGHYyrWvLaFrWlhtTS91P7C5HBC599k2no=";
+
+    postPatch = ''
+      mkdir -p app/fonts
+      for f in Regular Medium SemiBold Bold; do
+        cp "${mapleMonoFont}/share/fonts/truetype/MapleMono-NF-CN-$f.ttf" app/fonts/MapleMono-NF-CN-$f.ttf
+      done
+      substituteInPlace app/layout.tsx \
+        --replace 'import { Noto_Sans_Mono } from "next/font/google";' 'import localFont from "next/font/local";' \
+        --replace 'const notoSansMono = Noto_Sans_Mono({' 'const notoSansMono = localFont({' \
+        --replace '  subsets: ["latin", "cyrillic"],' '  src: [
+    { path: "./fonts/MapleMono-NF-CN-Regular.ttf", weight: "400", style: "normal" },
+    { path: "./fonts/MapleMono-NF-CN-Medium.ttf", weight: "500", style: "normal" },
+    { path: "./fonts/MapleMono-NF-CN-SemiBold.ttf", weight: "600", style: "normal" },
+    { path: "./fonts/MapleMono-NF-CN-Bold.ttf", weight: "700", style: "normal" },
+  ],'
+    '';
+
+    meta = {
+      description = "Web UI for the pi coding agent";
+      homepage = "https://github.com/agegr/pi-web";
+      license = lib.licenses.mit;
+    };
+  };
+
+  pi-wrapper = pkgs.writeShellScriptBin "pi" ''
+    if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+      exec ${lib.getExe pkgs.pi-coding-agent} --extension npm:@ayulab/pi-rewind  "$@"
+    else
+      exec ${lib.getExe pkgs.pi-coding-agent} "$@"
+    fi
+  '';
+
+  pichat = pkgs.writeShellScriptBin "pichat" ''
+    args=(); here=
+    for a; do [ "$a" = "--here" ] && here=1 || args+=("$a"); done
+    [ "$here" ] || cd /tmp
+    pi --append-system-prompt ${./APPEND_SYSTEM.md} \
+       --append-system-prompt ${./chat-instruction.md} \
+       "''${args[@]}"
+    [ "$here" ] || cd - > /dev/null
+  '';
+
+  duckduckgo-mcp-server-pkg = pkgs.python3Packages.buildPythonPackage {
+    pname = "duckduckgo-mcp-server";
+    version = "unstable-${inputs.duckduckgo-mcp-server.lastModifiedDate}";
+    src = inputs.duckduckgo-mcp-server;
+    pyproject = true;
+    build-system = [ pkgs.python3Packages.hatchling ];
+    dependencies = with pkgs.python3Packages; [
+      beautifulsoup4
+      httpx
+      httpcore
+      mcp
+      typer
+      rich
+      starlette
+      uvicorn
+      curl-cffi
+    ];
+    doCheck = false;
+  };
+
+  web-tool = pkgs.python3Packages.buildPythonApplication {
+    pname = "web-tool";
+    version = "0.1.0";
+    src = ./web-tool;
+    pyproject = true;
+    build-system = [ pkgs.python3Packages.hatchling ];
+    dependencies = [
+      duckduckgo-mcp-server-pkg
+      pkgs.python3Packages.curl-cffi
+      pkgs.python3Packages.trafilatura
+    ];
+  };
+in
 {
   programs.pi-coding-agent = {
     enable = true;
-
+    package = pi-wrapper;
     extraPackages = [ pkgs.nodejs ];
 
     settings = {
@@ -21,9 +108,8 @@
 
       packages = [
         "npm:@firstpick/pi-themes-bundle"
-        "npm:@ayulab/pi-rewind"
+        # "npm:@ayulab/pi-rewind"
         "npm:@aliou/pi-guardrails"
-        "npm:pi-mcp-adapter"
         "npm:pi-rtk-optimizer"
         "npm:pi-cache-optimizer"
         "npm:@juicesharp/rpiv-btw"
@@ -33,17 +119,7 @@
     };
   };
 
-  home.packages = let                                                                            
-    pichat = pkgs.writeShellScriptBin "pichat" ''
-      origin_cwd="$(pwd)"
-      cd /tmp
-      pi --session-dir ~/.pi/chat-sessions \
-         --append-system-prompt ${./APPEND_SYSTEM.md} \
-         --append-system-prompt ${./chat-instruction.md} \
-         "$@"
-      cd "$origin_cwd"
-    '';
-  in [ pkgs.rtk pichat ];
+  home.packages = [ pkgs.rtk pichat pi-web web-tool ];
 
   home.sessionVariables = {
     PI_SKIP_VERSION_CHECK  = "1";
@@ -51,10 +127,7 @@
 
   home.file.".pi/agent/APPEND_SYSTEM.md".source = ./APPEND_SYSTEM.md;
   home.file.".pi/agent/models.json".source = ./models.json;
-  home.file.".pi/agent/mcp.json".text = builtins.toJSON {
-    mcpServers = (removeAttrs osConfig.terra.ai.mcp.servers [ "github" ]);
-  };
-
+  home.file.".pi/agent/extensions/web-tools.ts".source = ./extensions/web-tools.ts;
   home.file.".pi/agent/skills" = {
     source = ./skills;
     recursive = true;
@@ -62,5 +135,23 @@
   home.file.".pi/agent/prompts" = {
     source = ./prompts;
     recursive = true;
+  };
+
+  systemd.user.services.pi-web = {
+    Unit = {
+      Description = "Web UI for pi coding agent";
+      After = [ "network.target" ];
+    };
+
+    Service = {
+      Type = "simple";
+      ExecStart = "${pi-web}/bin/pi-web --hostname 127.0.0.1";
+      Restart = "on-failure";
+      RestartSec = 5;
+    };
+
+    Install = {
+      WantedBy = [ "default.target" ];
+    };
   };
 }

@@ -12,7 +12,6 @@
     ./ram.nix
     ./steam.nix
     ./transmission.nix
-    ./ai
     ./virtualisation.nix
   ];
 

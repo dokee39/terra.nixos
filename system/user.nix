@@ -78,6 +78,7 @@
     git
     curl
     wget
+    xh
 
     tree
     vim
@@ -97,6 +98,7 @@
 
     ripgrep
     jq
+    yq-go
     fd
   ] ++ [
     inputs.nix-alien.packages.${config.terra.system}.nix-alien
@@ -104,8 +106,4 @@
   ];
 
   environment.wordlist.enable = true;
-  environment.etc."codex/config.toml".text = ''
-    [tui]
-    status_line = ["model-with-reasoning", "context-remaining", "current-dir", "five-hour-limit", "weekly-limit"]
-  '';
 }

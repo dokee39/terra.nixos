@@ -21,10 +21,6 @@
       type = lib.types.path;
       description = "Path to a secret file containing the GitHub PAT for nix.";
     };
-    codex.githubPat_secretFile = lib.mkOption {
-      type = lib.types.path;
-      description = "Path to a secret file containing the GitHub PAT for codex.";
-    };
 
     system = lib.mkOption {
       type = lib.types.str;
