@@ -1,0 +1,40 @@
+{
+  "mikan": {
+    "type": "binary",
+    "version": "v2.3.0",
+    "url": "https://github.com/iota9star/mikan_flutter/releases/download/v2.3.0/linux-release.zip",
+    "hash": "sha256-B0Qletp5nhKicVUEGIEceMl7dS5xbpLcIsYxdYPJ8X8="
+  },
+  "pi-web": {
+    "type": "source",
+    "version": "v0.7.11",
+    "owner": "agegr",
+    "repo": "pi-web",
+    "rev": "v0.7.11",
+    "hash": "sha256-IlBnd/69TQocieP8f41ZplU9/1JlzlN2E5y51Mapg0E="
+  },
+  "duckduckgo-mcp-server": {
+    "type": "source",
+    "version": "v0.5.0",
+    "owner": "nickclyde",
+    "repo": "duckduckgo-mcp-server",
+    "rev": "v0.5.0",
+    "hash": "sha256-zjKe2Hwm2AaF/LnVwJIkA8nO2e19CEB2e5IVkNsK5X4="
+  },
+  "aegisub": {
+    "type": "source",
+    "version": "migration04-01",
+    "owner": "arch1t3cht",
+    "repo": "Aegisub",
+    "rev": "migration04-01",
+    "hash": "sha256-sLPVPspyY++FLq5Q72Ij4JiKBKGzVEY1JxUswcuZhN8="
+  },
+  "noctalia": {
+    "type": "flake",
+    "version": "v5.0.0-beta2",
+    "owner": "noctalia-dev",
+    "repo": "noctalia",
+    "rev": "32bcfb9c9783874c5c0f9709e3f741b07e54ca65",
+    "hash": "sha256-yqkHIypClzlztMmt4HVytCdU8Kqy3EqHJotHtbyFulI="
+  }
+}

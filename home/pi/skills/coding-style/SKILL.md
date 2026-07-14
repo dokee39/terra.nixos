@@ -11,7 +11,7 @@ Code is read more than it's written. These rules prevent the most common AI-gene
 
 ### No over-engineering
 
-Don't create classes, factories, or wrappers for things that work as plain functions. Don't wrap default values in a factory function that just spreads them. Wait for the third occurrence before extracting shared logic.
+Don't create classes, factories, or wrappers for things that work as plain functions. Don't wrap default values in a factory function that just spreads them. Wait for the third occurrence before extracting shared logic. Before abstracting: has this pattern appeared three times? No → keep inline.
 
 ```python
 # BAD — class for a one-line operation
@@ -77,7 +77,7 @@ Rust: unnecessary `.clone()` on values not reused. C++: `else` after `return`/`t
 
 ### No redundant guards
 
-Don't add null/type checks, fallback values, or error handling for scenarios the type system, prior checks, or caller's contract already rules out.
+Don't add null/type checks, fallback values, or error handling for scenarios the type system, prior checks, or caller's contract already rules out. Before adding a guard: can the type system, a prior check, or caller's contract rule this case out? Yes → no guard.
 
 ```python
 # BAD — name is str, not Optional
@@ -245,4 +245,32 @@ def extract_user(data):
 
 ### No scope creep
 
-Don't modify unrelated files, reintroduce deliberately removed code, or create new files for one-off functions. Default bar for a new file: 3+ functions with a distinct responsibility not covered by any existing file.
+Don't modify unrelated files, reintroduce deliberately removed code, or create new files for one-off functions. Default bar for a new file: 3+ functions with a distinct responsibility not covered by any existing file. Before touching a file outside the task scope: does this change belong to the current task? No → stop.
+
+### No structural layering
+
+Don't extend an existing condition, function, or type when the new case is semantically distinct. Split rather than append.
+
+```python
+# BAD — same branch accumulates unrelated cases
+if not items or len(items) == 0 or expanded:
+    return format_fetch_result(result, expanded, theme)
+
+# GOOD — each case has its own path
+if items is None:
+    return format_fetch_result(result, expanded, theme)
+if len(items) == 0:
+    return "No results"
+if expanded:
+    return render_full(text)
+```
+
+```python
+# BAD — function accumulates optional params
+def fetch(url, timeout=30, retries=3, headers=None):
+    ...
+
+# GOOD — group related options
+def fetch(url, timeout=30, **extra):
+    ...
+```

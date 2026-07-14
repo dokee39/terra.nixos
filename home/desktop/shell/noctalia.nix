@@ -1,7 +1,7 @@
-{ inputs, osConfig, ... }:
+{ inputs, sources, osConfig, ... }:
 
 {
-  imports = [ inputs.noctalia.homeModules.default ];
+  imports = [ sources.noctalia.homeModules.default ];
 
   programs.noctalia = {
     enable = true;

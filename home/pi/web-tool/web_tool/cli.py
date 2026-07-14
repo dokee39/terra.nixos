@@ -1,6 +1,7 @@
 import argparse
 import asyncio
 import contextlib
+import json
 import logging
 import os
 import sys
@@ -9,8 +10,16 @@ from web_tool.filter_utils import filter_and_rank
 
 
 class _CLI:
+    def __init__(self):
+        self.error_occurred = False
+        self.last_error = ""
+
     async def info(self, msg): ...
-    async def error(self, msg): ...
+
+    async def error(self, msg):
+        self.error_occurred = True
+        self.last_error = msg
+        print(f"[web-tool] error: {msg}", file=sys.stderr)
 
 
 async def cmd_search(args):
@@ -28,9 +37,15 @@ async def cmd_search(args):
     results = await searcher.search(args.query, ctx, max_results=args.max_results)
     results = filter_and_rank(results)
 
-    if args.json:
-        import json
+    if not results and ctx.error_occurred:
+        msg = f"search failed: {ctx.last_error}"
+        if args.json:
+            print(json.dumps({"type": "search_error", "reason": msg}, ensure_ascii=False))
+        else:
+            print(f"Warning: {msg}", file=sys.stderr)
+        return
 
+    if args.json:
         data = [
             {
                 "title": r.title,
@@ -40,21 +55,20 @@ async def cmd_search(args):
             }
             for r in results
         ]
-        print(json.dumps(data, indent=2, ensure_ascii=False))
+        print(json.dumps({"type": "results", "results": data}, indent=2, ensure_ascii=False))
     else:
         print(searcher.format_results_for_llm(results).strip())
-
-
-def _fail(msg: str):
-    print(msg, file=sys.stderr)
-    sys.exit(1)
 
 
 def cmd_fetch(args):
     from urllib.parse import urlsplit
 
     if urlsplit(args.url).scheme not in ("http", "https"):
-        _fail(f"Error: unsupported URL scheme, only http/https allowed: {args.url}")
+        if args.json:
+            print(json.dumps({"type": "bad_scheme", "reason": f"unsupported URL scheme: {args.url}"}, ensure_ascii=False))
+        else:
+            print(f"Error: unsupported URL scheme: {args.url}", file=sys.stderr)
+        sys.exit(1)
 
     from curl_cffi import requests
     import trafilatura
@@ -69,13 +83,24 @@ def cmd_fetch(args):
         resp.raise_for_status()
         html = resp.text
     except requests.exceptions.HTTPError as e:
-        _fail(f"Error: HTTP {e.response.status_code}")
+        status = e.response.status_code
+        if args.json:
+            print(json.dumps({"type": "http_error", "reason": f"HTTP {status}", "http_code": status}, ensure_ascii=False))
+        else:
+            print(f"Warning: HTTP {status}", file=sys.stderr)
+        return
     except requests.exceptions.Timeout:
-        _fail(f"Error: request to {args.url} timed out")
+        if args.json:
+            print(json.dumps({"type": "timeout", "reason": "request timed out after 60s"}, ensure_ascii=False))
+        else:
+            print(f"Warning: timeout: {args.url}", file=sys.stderr)
+        return
     except requests.exceptions.ConnectionError:
-        _fail(f"Error: cannot connect to {args.url}")
-    except Exception as e:
-        _fail(f"Error: {e}")
+        if args.json:
+            print(json.dumps({"type": "connection_error", "reason": f"cannot connect to {args.url}"}, ensure_ascii=False))
+        else:
+            print(f"Warning: connection failed: {args.url}", file=sys.stderr)
+        return
 
     markdown = trafilatura.extract(
         html,
@@ -83,8 +108,15 @@ def cmd_fetch(args):
         include_comments=False,
     )
     if not markdown:
-        print(f"No extractable content from {args.url}", file=sys.stderr)
-    print((markdown or "").strip())
+        if args.json:
+            print(json.dumps({"type": "no_content", "reason": "no extractable content found"}, ensure_ascii=False))
+        else:
+            print("Warning: no extractable content found", file=sys.stderr)
+        return
+    if args.json:
+        print(json.dumps({"type": "content", "content": markdown.strip()}, ensure_ascii=False))
+    else:
+        print(markdown.strip())
 
 
 def main():
@@ -103,6 +135,7 @@ def main():
 
     fp = sub.add_parser("fetch", help="Fetch URL content and extract main text")
     fp.add_argument("url", help="URL to fetch (starts with http:// or https://)")
+    fp.add_argument("--json", action="store_true", help="Output JSON")
 
     args = parser.parse_args()
 

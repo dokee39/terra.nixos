@@ -12,6 +12,7 @@ Review: $ARGUMENTS
    - **Security** — injection risks, untrusted input, credential exposure, missing validation
    - **Performance** — unnecessary work, inefficient loops, N+1 queries, blocking I/O
    - **Maintainability** — duplication, naming, readability, consistency with project conventions
+   - **Structural layering** — accreted conditions merging distinct cases, parameter bloat, switch arms grouping unrelated values
 5. Output format per finding: `[High|Medium|Low] file:line — description`
 6. If tests or build fail, your review must account for those failures.
 7. Do not modify files or implement anything.

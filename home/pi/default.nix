@@ -1,12 +1,17 @@
-{ pkgs, lib, inputs, ... }:
+{ pkgs, lib, sources, ... }:
 
 let
   mapleMonoFont = pkgs.maple-mono.NF-CN-unhinted;
 
   pi-web = pkgs.buildNpmPackage {
     pname = "pi-web";
-    version = "unstable-${inputs.pi-web.lastModifiedDate}";
-    src = inputs.pi-web;
+    version = sources.pi-web.version;
+    src = pkgs.fetchFromGitHub {
+      owner = sources.pi-web.owner;
+      repo  = sources.pi-web.repo;
+      rev   = sources.pi-web.rev;
+      hash  = sources.pi-web.hash;
+    };
 
     npmDepsFetcherVersion = 2;
     makeCacheWritable = true;
@@ -53,41 +58,10 @@ let
        "''${args[@]}"
     [ "$here" ] || cd - > /dev/null
   '';
-
-  duckduckgo-mcp-server-pkg = pkgs.python3Packages.buildPythonPackage {
-    pname = "duckduckgo-mcp-server";
-    version = "unstable-${inputs.duckduckgo-mcp-server.lastModifiedDate}";
-    src = inputs.duckduckgo-mcp-server;
-    pyproject = true;
-    build-system = [ pkgs.python3Packages.hatchling ];
-    dependencies = with pkgs.python3Packages; [
-      beautifulsoup4
-      httpx
-      httpcore
-      mcp
-      typer
-      rich
-      starlette
-      uvicorn
-      curl-cffi
-    ];
-    doCheck = false;
-  };
-
-  web-tool = pkgs.python3Packages.buildPythonApplication {
-    pname = "web-tool";
-    version = "0.1.0";
-    src = ./web-tool;
-    pyproject = true;
-    build-system = [ pkgs.python3Packages.hatchling ];
-    dependencies = [
-      duckduckgo-mcp-server-pkg
-      pkgs.python3Packages.curl-cffi
-      pkgs.python3Packages.trafilatura
-    ];
-  };
 in
 {
+  imports = [ ./web-tool ];
+
   programs.pi-coding-agent = {
     enable = true;
     package = pi-wrapper;
@@ -119,7 +93,7 @@ in
     };
   };
 
-  home.packages = [ pkgs.rtk pichat pi-web web-tool ];
+  home.packages = [ pkgs.rtk pichat pi-web ];
 
   home.sessionVariables = {
     PI_SKIP_VERSION_CHECK  = "1";

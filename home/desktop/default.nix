@@ -1,8 +1,8 @@
-{ pkgs, lib, inputs, osConfig, ... }:
+{ pkgs, lib, inputs, osConfig, sources, ... }:
 
 let
   customPackages = import ./packages {
-    inherit pkgs inputs osConfig;
+    inherit pkgs inputs osConfig sources;
   };
 in
 
@@ -12,7 +12,17 @@ in
   };
 
   imports = [
-    ./core
+    ./mime.nix
+    ./services/downloads-sorter.nix
+    ./services/fcitx5.nix
+    ./services/pipewire.nix
+    ./shell/clipse.nix
+    ./shell/launcher.nix
+    ./shell/noctalia.nix
+    ./theme/cursor.nix
+    ./theme/fontconfig.nix
+    ./theme/gtk-qt-theme.nix
+    ./wm/niri
     ./apps/kitty.nix
     ./apps/misc.nix
     ./apps/nautilus.nix

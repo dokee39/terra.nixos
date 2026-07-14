@@ -1,4 +1,4 @@
-{ lib, pkgs, src }:
+{ lib, pkgs, source }:
 
 let
   luajit' = pkgs.luajit.override { enable52Compat = true; };
@@ -6,9 +6,13 @@ in
 
 pkgs.stdenv.mkDerivation (finalAttrs: {
   pname = "aegisub";
-  version = "migration03-02";
-
-  inherit src;
+  version = source.version;
+  src = pkgs.fetchFromGitHub {
+    owner = source.owner;
+    repo  = source.repo;
+    rev   = source.rev;
+    hash  = source.hash;
+  };
 
   nativeBuildInputs = with pkgs; [
     meson
@@ -75,7 +79,7 @@ pkgs.stdenv.mkDerivation (finalAttrs: {
   '';
 
   meta = {
-    description = "Advanced subtitle editor (arch1t3cht migration03-02)";
+    description = "Advanced subtitle editor (arch1t3cht fork)";
     homepage = "https://github.com/arch1t3cht/Aegisub";
     license = lib.licenses.bsd3;
     mainProgram = "aegisub";

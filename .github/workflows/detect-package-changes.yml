@@ -2,7 +2,7 @@ name: detect-package-changes
 
 on:
   push:
-    paths: [flake.lock]
+    paths: [flake.lock, sources.json]
 
 permissions:
   contents: read
@@ -21,16 +21,12 @@ jobs:
           extra_nix_config: |
             access-tokens = github.com=${{ github.token }}
 
-      - name: Validate configuration
-        run: nix flake check .github/tests/test-flake
-
       - name: Detect package changes
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          if ! git rev-parse HEAD~1 >/dev/null 2>&1; then
-            echo "Only one commit in history. Skipping diff."
-            exit 0
+          body=$(python3 .github/scripts/detect-package-changes.py)
+          if [ -n "$body" ]; then
+            title="[bot][$(date +%F)] Update Report"
+            gh issue create --label package-changes --title "$title" --body "$body"
           fi
-          pip install pyyaml --quiet
-          python3 .github/scripts/detect-package-changes.py

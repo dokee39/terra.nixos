@@ -1,0 +1,76 @@
+name: update
+
+on:
+  schedule:
+    - cron: 7 4 * * 0
+      timezone: Asia/Shanghai
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: cachix/install-nix-action@v31
+        with:
+          extra_nix_config: |
+            access-tokens = github.com=${{ github.token }}
+
+      - run: cp flake.lock /tmp/flake.lock.old
+      - run: cp sources.json /tmp/sources.json.old
+
+      - name: Update external sources
+        run: python3 .github/scripts/update-sources.py
+
+      - run: nix flake update
+
+      - name: Validate configuration with updated nixpkgs
+        run: |
+          REV=$(jq -r '.nodes.nixpkgs.locked.rev' flake.lock)
+          cd .github/tests/test-flake
+          nix flake lock --override-input nixpkgs "github:NixOS/nixpkgs/$REV"
+          nix flake check
+
+      - name: Validate root flake
+        run: nix flake check --all-systems
+
+      - name: Report flake errors
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh issue create \
+            --label bug \
+            --title "[bot][$(date +%F)] Flake Check Failed" \
+            --body "Auto-update failed validation. See workflow: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+
+      - name: Generate changelog
+        run: |
+          python3 .github/scripts/detect-package-changes.py \
+            --diff /tmp/flake.lock.old flake.lock \
+            --diff-sources /tmp/sources.json.old sources.json \
+            --plain \
+            > /tmp/commit-body.md
+
+      - run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add flake.lock sources.json .github/tests/test-flake/flake.lock
+          git diff --cached --quiet && exit 0
+          body=$(cat /tmp/commit-body.md)
+          title_parts=""
+          git diff --cached --name-only | grep -q '^sources\.json$' && title_parts="${title_parts} and sources"
+          git diff --cached --name-only | grep -q -E '(^|/)flake\.lock$' && title_parts="flake.lock${title_parts}"
+          [ -z "$title_parts" ] && title_parts="dependencies"
+          if [ -n "$body" ]; then
+            git commit -m "[bot] chore: update ${title_parts}" -m "$body"
+          else
+            git commit -m "[bot] chore: update ${title_parts}"
+          fi
+          git push origin HEAD:${{ github.ref_name }}

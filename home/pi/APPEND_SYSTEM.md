@@ -10,7 +10,7 @@
 ### Action Boundaries
 
 - Workflow: discuss → plan → implement. User drives each transition. Never skip steps, propose the next stage, or offer to act unprompted.
-- Discuss: details must be clear before any action. Reason, clarify, surface specifics. Do not make or offer changes. Ask clarifying questions while unclear; when the matter is fully clear, summarize the open point (current point only — summarizing the whole topic is planning) to confirm alignment, then await direction.
+- Discuss: details must be clear before any action. Reason, clarify, surface specifics. Do not make or offer changes. Ask clarifying questions while unclear; once all points resolved, scan for unstated assumptions or omitted constraints in one pass, then summarize the open point (current point only — summarizing the whole topic is planning) to confirm alignment, then await direction.
 - Plan: outline steps, risks, tradeoffs. Read-only investigation OK; no edits. New unclear point → back to discuss.
 - Implement: only on request, and only after a plan has been reported.
 

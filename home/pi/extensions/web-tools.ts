@@ -48,17 +48,29 @@ function formatSearchResult(
   theme: { fg: (color: string, s: string) => string },
 ): string {
   const items = result.details?.results;
-  if (!items || items.length === 0 || expanded) {
+
+  // Non-JSON fallback from web-tool: pass to fetch formatter
+  if (items === undefined) {
     return formatFetchResult(result, expanded, theme);
   }
 
+  if (items.length === 0) {
+    return `\n${theme.fg("warning", "No search results found")}`;
+  }
+
+  if (expanded) {
+    // Full details: titles, URLs, snippets
+    const text = (result.content[0]?.text ?? "").trim();
+    return `\n${text.split("\n").map((l) => theme.fg("toolOutput", l)).join("\n")}`;
+  }
+
+  // Collapsed: title list only
   let output = `\nFound ${items.length} search results:\n`;
   output += `\n${items.map((r) => `${r.position}. ${r.title}`).join("\n")}`;
-  const key = getKeybindings().getKeys("app.tools.expand").join("/");
   output +=
     "\n" +
     theme.fg("muted", "(") +
-    theme.fg("dim", key) +
+    theme.fg("dim", getKeybindings().getKeys("app.tools.expand").join("/")) +
     theme.fg("muted", " to expand)");
   return output;
 }
@@ -66,17 +78,19 @@ function formatSearchResult(
 function formatFetchResult(
   result: {
     content: { type: string; text?: string }[];
-    details?: { truncation?: { truncated: boolean; outputLines: number; totalLines: number; maxBytes?: number } };
+    details?: { truncation?: { truncated: boolean; outputLines: number; totalLines: number; maxBytes?: number }; warning?: string };
   },
   expanded: boolean,
   theme: { fg: (color: string, s: string) => string },
+  isError = false,
 ): string {
   const lines = (result.content[0]?.text ?? "").trim().split("\n");
   const maxLines = expanded ? lines.length : PREVIEW_LINES;
   const displayLines = lines.slice(0, maxLines);
   const remaining = lines.length - maxLines;
 
-  let output = `\n${displayLines.map((l) => theme.fg("toolOutput", l)).join("\n")}`;
+  const lineColor = isError ? "error" : result.details?.warning ? "warning" : "toolOutput";
+  let output = `\n${displayLines.map((l) => theme.fg(lineColor, l)).join("\n")}`;
   if (remaining > 0) {
     output +=
       theme.fg("muted", `\n... (${remaining} more lines, `) +
@@ -115,14 +129,26 @@ than 'Python').`,
     }),
     async execute(_id, params, signal) {
       const r = await pi.exec("web-tool", ["search", "--json", "-n", "10", params.query], { signal });
-      if (r.code !== 0) throw new Error(r.stderr || "web-tool search failed");
 
-      let items: SearchResultItem[];
+      let data: any;
       try {
-        items = JSON.parse(r.stdout) as SearchResultItem[];
+        data = JSON.parse(r.stdout);
       } catch {
+        if (r.code !== 0) {
+          throw new Error(
+            `**IMPORTANT**: Stop the current task and report this error to the user. Do not retry.\n\n${r.stderr || "web-tool search failed"}`
+          );
+        }
         return { content: [{ type: "text", text: r.stdout }], details: {} };
       }
+
+      if (data.type === "search_error") {
+        throw new Error(
+          `**IMPORTANT**: Stop the current task and report this error to the user. Do not retry.\n\n${data.reason}`
+        );
+      }
+
+      const items = data.results ?? [];
 
       const lines: string[] = [`Found ${items.length} search results:\n`];
       for (const item of items) {
@@ -142,7 +168,11 @@ than 'Python').`,
     },
     renderResult(result, { expanded }, theme, context) {
       const text = context.lastComponent ?? new Text("", 0, 0);
-      text.setText(formatSearchResult(result, expanded, theme));
+      if (context.isError) {
+        text.setText(formatFetchResult(result, expanded, theme, true));
+      } else {
+        text.setText(formatSearchResult(result, expanded, theme));
+      }
       return text;
     },
   });
@@ -165,14 +195,27 @@ available (e.g. GitHub tool or skill for code/files/commits).`,
       }),
     }),
     async execute(_id, params, signal) {
-      const r = await pi.exec("web-tool", ["fetch", params.url], { signal });
-      if (r.code !== 0) throw new Error(r.stderr || "web-tool fetch failed");
+      const r = await pi.exec("web-tool", ["fetch", "--json", params.url], { signal });
 
-      const content = r.stdout.trimEnd();
-      if (!content) {
-        return { content: [{ type: "text", text: "" }], details: {} };
+      let data: any;
+      try {
+        data = JSON.parse(r.stdout);
+      } catch {
+        if (r.code !== 0) {
+          throw new Error(r.stderr || "web-tool fetch failed");
+        }
+        return { content: [{ type: "text", text: r.stdout }], details: {} };
       }
 
+      if (data.type === "bad_scheme") {
+        throw new Error(data.reason || "invalid URL");
+      }
+
+      if (data.type !== "content") {
+        return { content: [{ type: "text", text: data.reason ?? r.stdout }], details: { warning: data.reason ?? "" } };
+      }
+
+      const content = data.content ?? "";
       const truncation = truncateHead(content, {
         maxLines: WEB_FETCH_MAX_LINES,
         maxBytes: WEB_FETCH_MAX_BYTES,
@@ -210,7 +253,7 @@ available (e.g. GitHub tool or skill for code/files/commits).`,
     },
     renderResult(result, { expanded }, theme, context) {
       const text = context.lastComponent ?? new Text("", 0, 0);
-      text.setText(formatFetchResult(result, expanded, theme));
+      text.setText(formatFetchResult(result, expanded, theme, context.isError));
       return text;
     },
   });

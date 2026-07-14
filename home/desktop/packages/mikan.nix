@@ -1,12 +1,15 @@
-{ lib, pkgs, src }:
+{ lib, pkgs, source }:
 
 pkgs.stdenvNoCC.mkDerivation {
   pname = "mikan";
-  version = "latest";
-
-  inherit src;
+  version = source.version;
+  src = pkgs.fetchurl {
+    url = source.url;
+    hash = source.hash;
+  };
 
   nativeBuildInputs = with pkgs; [
+    unzip
     autoPatchelfHook
     makeWrapper
     copyDesktopItems
@@ -27,8 +30,6 @@ pkgs.stdenvNoCC.mkDerivation {
     libxi
   ];
 
-  dontUnpack = true;
-
   desktopItems = [
     (pkgs.makeDesktopItem {
       name = "io.nichijou.flutter.mikan";
@@ -44,11 +45,16 @@ pkgs.stdenvNoCC.mkDerivation {
     })
   ];
 
+  sourceRoot = ".";
+
   installPhase = ''
     runHook preInstall
 
     mkdir -p $out/opt/mikan $out/bin
-    cp -r ${src}/. $out/opt/mikan/
+
+    cp -r mikan   $out/opt/mikan/
+    cp -r lib     $out/opt/mikan/
+    cp -r data    $out/opt/mikan/
     chmod +x $out/opt/mikan/mikan
 
     install -Dm444 \
@@ -61,6 +67,8 @@ pkgs.stdenvNoCC.mkDerivation {
   preFixup = ''
     addAutoPatchelfSearchPath $out/opt/mikan/lib
   '';
+
+  autoPatchelfIgnoreMissingDeps = [ "libjvm.so" ];
 
   postFixup = ''
     makeWrapper $out/opt/mikan/mikan $out/bin/mikan \

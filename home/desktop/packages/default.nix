@@ -1,4 +1,4 @@
-{ pkgs, inputs, osConfig, ... }:
+{ pkgs, inputs, osConfig, sources, ... }:
 
 let
   nixpakPackages = import ./nixpak {
@@ -8,11 +8,11 @@ in
   nixpakPackages
   // {
     mikan = pkgs.callPackage ./mikan.nix {
-      src = inputs.mikan;
+      source = sources.mikan;
     };
 
     aegisub = pkgs.callPackage ./aegisub.nix {
-      src = inputs.aegisub;
+      source = sources.aegisub;
     };
 
     "nautilus-image-converter" = pkgs.callPackage ./nautilus-image-converter.nix {
