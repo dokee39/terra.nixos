@@ -1,4 +1,4 @@
-{ pkgs, osConfig, ... }:
+{ pkgs, lib, osConfig, ... }:
 
 {
   programs.yazi = {
@@ -25,11 +25,14 @@
       end
     '';
 
-    keymap = {
+    keymap = let
+      shellPkg = osConfig.users.users.${osConfig.terra.userName}.shell or pkgs.bashInteractive;
+      shellExe = lib.getExe shellPkg;
+    in {
       mgr.prepend_keymap = [
         {
           on = "S";
-          run = "shell --block -- ${osConfig.terra.shellExe}";
+          run = "shell --block -- ${shellExe}";
           desc = "Open fish in current directory";
         }
       ];

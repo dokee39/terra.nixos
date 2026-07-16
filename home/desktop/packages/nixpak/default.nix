@@ -7,8 +7,8 @@ let
   };
 
   desktopContext = {
-    nvidiaEnabled = osConfig.terra._internal.gpu.nvidiaEnabled;
-    wechatScaleFactor = osConfig.terra.desktop.wechat.scale;
+    nvidiaEnabled = osConfig.terra.gpu.internal.nvidiaEnabled;
+    wechatScaleFactor = osConfig.terra.apps.wechat.scale;
   };
 in
 {

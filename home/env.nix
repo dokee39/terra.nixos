@@ -18,7 +18,7 @@
 
     SCONSFLAGS = "-j8";
     MAKEFLAGS = "-j";
-  } // lib.optionalAttrs (osConfig.terra.desktop.enable && osConfig.terra._internal.gpu.nvidiaEnabled) {
+  } // lib.optionalAttrs (osConfig.terra.desktop.enable && osConfig.terra.gpu.internal.nvidiaEnabled) {
     LIBVA_DRIVER_NAME = "nvidia";
     NVD_BACKEND = "direct";
   } // lib.optionalAttrs osConfig.terra.desktop.enable {

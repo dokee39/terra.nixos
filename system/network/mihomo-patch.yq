@@ -1,0 +1,91 @@
+.port = 7890 |
+
+.tun.enable = true |
+.tun.device = "__TUN_DEVICE__" |
+.tun.stack = "mixed" |
+.tun."auto-route" = true |
+.tun."auto-redirect" = true |
+.tun."auto-detect-interface" = true |
+
+.["proxy-groups"] |= (
+  (. // [])
+  | map(
+      select(
+        .name != "⚡ 自动切换" and
+        .name != "⚡ 自动切换-日本" and
+        .name != "⚡ 自动切换-香港"
+      )
+    )
+) |
+
+.["proxy-groups"] = (
+  [
+    {
+      "name": "⚡ 自动切换-日本",
+      "type": "url-test",
+      "include-all-proxies": true,
+      "filter": "日本",
+      "exclude-filter": "免费",
+      "url": "https://www.gstatic.com/generate_204",
+      "expected-status": 204,
+      "interval": 120,
+      "tolerance": 100,
+      "lazy": false,
+      "timeout": 2000,
+      "max-failed-times": 3
+    },
+    {
+      "name": "⚡ 自动切换-香港",
+      "type": "url-test",
+      "include-all-proxies": true,
+      "filter": "香港",
+      "exclude-filter": "免费",
+      "url": "https://www.gstatic.com/generate_204",
+      "expected-status": 204,
+      "interval": 120,
+      "tolerance": 100,
+      "lazy": false,
+      "timeout": 2000,
+      "max-failed-times": 3
+    },
+    {
+      "name": "⚡ 自动切换",
+      "type": "fallback",
+      "proxies": [
+        "⚡ 自动切换-日本",
+        "⚡ 自动切换-香港"
+      ],
+      "url": "https://www.gstatic.com/generate_204",
+      "expected-status": 204,
+      "interval": 120,
+      "lazy": false,
+      "timeout": 2000,
+      "max-failed-times": 3
+    }
+  ] + .["proxy-groups"]
+) |
+
+with(.["proxy-groups"][] | select(.name == "🔰 选择节点");
+  .type = "select" |
+  .proxies = (
+    [
+      "⚡ 自动切换",
+      "⚡ 自动切换-日本",
+      "⚡ 自动切换-香港"
+    ] +
+    (
+      (.proxies // [])
+      | map(
+          select(
+            . != "⚡ 自动切换" and
+            . != "⚡ 自动切换-日本" and
+            . != "⚡ 自动切换-香港"
+          )
+        )
+    )
+  )
+) |
+.rules = (
+  ["PROCESS-NAME-WILDCARD,*transmission*,DIRECT"]
+  + (.rules // [])
+)

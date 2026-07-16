@@ -72,8 +72,6 @@
       url = "github:keaising/im-select.nvim";
       flake = false;
     };
-
-    # --- AI / Pi ---
   };
 
   outputs = inputs: let
@@ -109,7 +107,6 @@
     terraModules.default = { config, ... }: {
       imports = [
         ./system
-        ./terra.nix
         inputs.agenix.nixosModules.default
         inputs.home-manager.nixosModules.home-manager
       ];

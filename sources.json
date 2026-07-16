@@ -1,17 +1,17 @@
 {
   "mikan": {
     "type": "binary",
-    "version": "v2.3.0",
-    "url": "https://github.com/iota9star/mikan_flutter/releases/download/v2.3.0/linux-release.zip",
-    "hash": "sha256-B0Qletp5nhKicVUEGIEceMl7dS5xbpLcIsYxdYPJ8X8="
+    "version": "v2.3.4",
+    "url": "https://github.com/iota9star/mikan_flutter/releases/download/v2.3.4/linux-release.zip",
+    "hash": "sha256-AsrSg5Yx5riuJSBscYz1x0d4Dsm+6Jnm08EhGHSK8Hc="
   },
   "pi-web": {
     "type": "source",
-    "version": "v0.7.11",
+    "version": "v0.7.12",
     "owner": "agegr",
     "repo": "pi-web",
-    "rev": "v0.7.11",
-    "hash": "sha256-IlBnd/69TQocieP8f41ZplU9/1JlzlN2E5y51Mapg0E="
+    "rev": "v0.7.12",
+    "hash": "sha256-xTgPwOvO80XievbXzjrJTWGmoT0IwX1pHLXCeT7h+/k="
   },
   "duckduckgo-mcp-server": {
     "type": "source",

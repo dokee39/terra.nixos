@@ -19,7 +19,13 @@
       hotkey-overlay.skip-at-startup = true;
       clipboard.disable-primary = true;
       screenshot-path = "~/Pictures/screenshots/screenshot_%Y-%m-%d/screenshot_%Y-%m-%d_%H-%M-%S.png";
-      spawn-at-startup = [ { command = [ "noctalia" ]; } ];
+      spawn-at-startup = [
+        { command = [ "noctalia" ]; }
+        # HACK: Restart xdg-desktop-portal so it inherits WAYLAND_DISPLAY from
+        # systemd after niri's import_environment (portals activated during
+        # early boot via dbus-broker miss display env vars).
+        { command = [ "systemctl" "--user" "try-restart" "xdg-desktop-portal.service" ]; }
+      ];
     };
   };
 

@@ -5,13 +5,7 @@ description: Read-only GitHub operations via the `gh` CLI — always use this sk
 
 ## Setup
 
-Verify `gh` is installed and authenticated:
-
-```bash
-gh auth status
-```
-
-If not authenticated, guide the user to run `gh auth login`. If not installed, guide the user to install from https://cli.github.com.
+`gh` must be installed and authenticated. If a command fails with auth error, run `gh auth status` and report the result to the user.
 
 ## Usage
 
@@ -23,33 +17,34 @@ Append `-R owner/repo` when targeting a specific repository.
 
 ```bash
 gh repo view owner/repo               # Repository overview
-gh repo list owner                    # List user/organization repos
-gh search repos "topic:..."           # Search repositories
 
-gh issue list -R owner/repo           # List issues
-gh issue view <num> -R owner/repo     # View issue details
-gh issue status -R owner/repo         # Issue summary
+gh api repos/o/r/contents/<path>?ref=<ref> -q '.content' | base64 -d  # View file at branch/tag
+gh api repos/o/r/contents/<dir> -q '.[] | "\(.type): \(.name)"'       # List directory
 
-gh pr list -R owner/repo              # List pull requests
-gh pr view <num> -R owner/repo        # View PR details
-gh pr diff <num> -R owner/repo        # View PR diff
-gh pr status -R owner/repo            # PR summary
+gh release list -R owner/repo         # List releases
+gh label list -R owner/repo           # List labels
 
-gh label list -R owner/repo           # List repository labels
+gh search repos "query"                                # Search repositories
+gh search code "query" -R owner/repo                   # Search code
+gh search issues "query" -R owner/repo --state=open    # Search issues or PRs
+
+gh issue view <num> -R owner/repo -c                   # View issue details
+gh pr view <num> -R owner/repo -c                      # View PR details
+gh pr diff <num> -R owner/repo                         # View PR diff
 ```
 
 ### Advanced Operations
 
-For commands not covered above, use only read-only subcommands:
+Other read-only subcommands available: `commits`, `branches`, `tags`, `compare`, `discussion`, `secret`, `variable`, `ruleset`, `attestation`, and more. Run `gh <subcommand> --help` for flags and usage.
 
-**Git data:** `gh api repos/o/r/commits`, `branches`, `tags`, `compare/main...branch`, `gh search commits`, `gh release list`, `gh release view`
+Common patterns:
+- `--json <fields>` for machine-readable output
+- `-q <jq>` to extract specific values from JSON
+- `--paginate` for multi-page results via `gh api`
+- `-R owner/repo` targets any repository
 
-**Label:** `gh api repos/o/r/labels/<name>` (single label details)
+For full git access (blame, log, grep, large files), clone to `/tmp`:
+```
+gh repo clone owner/repo /tmp/repo-name -- --depth=1
+```
 
-**Discussion:** `gh discussion list`, `gh discussion view`
-
-**Search:** `gh search issues`, `gh search prs`, `gh search code`, `gh search commits`, `gh search repos`
-
-**Raw API:** `gh api repos/o/r/<endpoint>` (GET only; use `--paginate` for multi-page results)
-
-For any subcommand's flags, run `gh <subcommand> --help` or `gh api --help`. Use `--json <fields>` for structured output and `-q <jq>` to extract specific values.

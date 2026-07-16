@@ -5,26 +5,24 @@
 
   terra = {
     userName = "user_name";
-    authorizedSshKeys = [ ];
-    nix.githubPat_secretFile = ./.empty;
+    boot.grubTimeOut = 1;
     mihomo = {
-      port = 7890;
       tunDevice = "tun0";
-      subscriptionUrl_secretFile = ./.empty;
     };
 
-    transmission = {
-      enable = true;
-      speed = {
-        up = 200;
-        down = 2000;
+    apps = {
+      wechat.scale = 1;
+      transmission = {
+        enable = true;
+        speed = {
+          up = 200;
+          down = 2000;
+        };
+        alt-speed = {
+          up = 2000;
+          down = 10000;
+        };
       };
-      alt-speed = {
-        up = 2000;
-        down = 10000;
-      };
-      rpc_secretFile = ./.empty;
-      floodEnv_secretFile = ./.empty;
     };
 
     desktop = {
@@ -41,8 +39,6 @@
         scale = 1;
         transform = { rotation = 0; flipped = false; };
       };
-
-      wechat.scale = 1;
     };
 
     gpu = {

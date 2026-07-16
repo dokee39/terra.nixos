@@ -1,4 +1,4 @@
-{ pkgs, lib, inputs, osConfig, sources, ... }:
+{ pkgs, inputs, osConfig, sources, ... }:
 
 let
   customPackages = import ./packages {
@@ -30,7 +30,10 @@ in
     ./apps/mpd
   ];
 
-  xdg.portal.enable = lib.mkForce false;
+   xdg.portal.extraPortals = with pkgs; [
+     xdg-desktop-portal-gtk
+     xdg-desktop-portal-gnome
+   ];
 
   home.packages =
     (with pkgs; [

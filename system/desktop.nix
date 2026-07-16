@@ -73,14 +73,6 @@ in {
       null
       (builtins.attrNames cfg.monitors);
     };
-
-    wechat.scale = lib.mkOption {
-      type = lib.types.nullOr lib.types.number;
-      default = lib.mkDefault (
-        let p = cfg.primaryMonitor; in
-        if p != null then cfg.monitors.${p}.scale else null
-      );
-    };
   };
 
   config = {

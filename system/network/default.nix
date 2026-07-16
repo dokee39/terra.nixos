@@ -1,6 +1,8 @@
 { config, lib, pkgs, ... }:
 
 {
+  imports = [ ./mihomo.nix ];
+
   environment.systemPackages = [ pkgs.impala ];
 
   users.users.${config.terra.userName}.extraGroups = [ "networkmanager" ];
@@ -20,7 +22,7 @@
       settings.Settings.AutoConnect = true;
     };
     proxy = {
-      default = lib.mkDefault "http://localhost:${toString config.terra.mihomo.port}";
+      default = lib.mkDefault "http://localhost:7890";
       noProxy = lib.mkDefault "127.0.0.1,localhost,0.0.0.0,::1,api.noctalia.dev";
     };
   };
