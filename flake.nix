@@ -1,4 +1,6 @@
 {
+  description = "Personal NixOS configuration";
+
   inputs = {
     # --- Core ---
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
@@ -76,7 +78,7 @@
 
   outputs = inputs: let
     fetchFlake = name: src: let
-      srcPath = builtins.fetchTree {
+      srcPath = fetchTree {
         type = "github";
         owner = src.owner;
         repo = src.repo;
@@ -96,43 +98,64 @@
         then fetchFlake name src
         else src)
       sourcesRaw;
-  in {
-    templates.default = {
-      path = ./templates;
-      description = "flake.nix for new computers";
-      welcomeText = ''
-        Welcome to NixOS!
-      '';
-    };
-    terraModules.default = { config, ... }: {
-      imports = [
+
+    lib = inputs.nixpkgs.lib;
+    hosts = builtins.attrNames (builtins.readDir ./hosts);
+    mkHost = hostName: lib.nixosSystem {
+      modules = [
+        ./hosts/${hostName}
+        { terra.hostName = hostName; }
         ./system
         inputs.agenix.nixosModules.default
         inputs.home-manager.nixosModules.home-manager
-      ];
-
-      config = {
-        _module.args = {
-          inherit inputs sources;
-          inherit (inputs) self;
-        };
-        home-manager = {
-          useGlobalPkgs = true;
-          useUserPackages = true;
-          extraSpecialArgs = {
+        ({ config, ... }: {
+          _module.args = {
             inherit inputs sources;
             inherit (inputs) self;
-            pkgs-stable = import inputs.nixpkgs-stable {
-              inherit (config.nixpkgs.hostPlatform) system;
-              config.allowUnfree = true;
-            };
           };
-          sharedModules = [
-            inputs.agenix.homeManagerModules.default
-          ];
-          users.${config.terra.userName} = import ./home;
-        };
-      };
+          home-manager = {
+            useGlobalPkgs = true;
+            useUserPackages = true;
+            extraSpecialArgs = {
+              inherit inputs sources;
+              inherit (inputs) self;
+              pkgs-stable = import inputs.nixpkgs-stable {
+                inherit (config.nixpkgs.hostPlatform) system;
+                config.allowUnfree = true;
+              };
+            };
+            sharedModules = [
+              inputs.agenix.homeManagerModules.default
+            ];
+            users.${config.terra.userName} = import ./home;
+          };
+        })
+      ];
     };
+  in {
+    apps.x86_64-linux.install-minimal = let
+      pkgs = import inputs.nixpkgs {
+        system = "x86_64-linux";
+        config.allowUnfree = true;
+      };
+      installMinimal = pkgs.writeShellApplication {
+        name = "install-minimal";
+        runtimeInputs = with pkgs; [
+          coreutils
+          git
+          gnused
+          nix
+          nixos-install-tools
+          util-linux
+        ];
+        text = builtins.readFile ./scripts/install-minimal;
+      };
+    in {
+      type = "app";
+      program = "${installMinimal}/bin/install-minimal";
+      meta.description = "Install a minimal Terra NixOS system";
+    };
+
+    nixosConfigurations = lib.genAttrs hosts mkHost;
   };
 }

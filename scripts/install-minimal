@@ -1,0 +1,94 @@
+set -euo pipefail
+
+usage() {
+  printf 'Usage: install-minimal HOSTNAME USERNAME\n' >&2
+}
+
+die() {
+  printf 'install-minimal: %s\n' "$1" >&2
+  exit 1
+}
+
+if (( $# != 2 )); then
+  usage
+  exit 2
+fi
+
+hostName="$1"
+userName="$2"
+
+if (( EUID != 0 )); then
+  die "must run as root"
+fi
+
+if [[ ! "$hostName" =~ ^[a-zA-Z0-9][a-zA-Z0-9-]*$ ]]; then
+  die "invalid hostname: $hostName"
+fi
+
+if [[ ! "$userName" =~ ^[a-z_][a-z0-9_-]*$ ]]; then
+  die "invalid username: $userName"
+fi
+
+mountpoint -q /mnt || die "/mnt is not mounted"
+if [[ -d /sys/firmware/efi ]] && ! mountpoint -q /mnt/boot; then
+  die "/mnt/boot is not mounted on this UEFI system"
+fi
+
+if [[ -e "/mnt/home/$userName/.config/nixos" ]]; then
+  die "target repository already exists: /mnt/home/$userName/.config/nixos"
+fi
+
+workDir="$(mktemp -d)"
+trap 'rm -rf "$workDir"' EXIT
+repoDir="$workDir/terra.nixos"
+hostDir="$repoDir/hosts/$hostName"
+
+printf 'Cloning repository...\n'
+git clone --depth=1 https://github.com/dokee39/terra.nixos.git "$repoDir"
+
+if [[ -e "$hostDir" ]]; then
+  die "host already exists in repository: $hostName"
+fi
+
+mkdir -p "$hostDir"
+cp "$repoDir/templates/minimal.nix" "$hostDir/default.nix"
+sed -i "s/\"user_name\"/\"$userName\"/" "$hostDir/default.nix"
+
+printf 'Generating hardware configuration...\n'
+nixos-generate-config \
+  --root /mnt \
+  --show-hardware-config \
+  > "$hostDir/hardware.nix"
+
+printf 'Installing NixOS...\n'
+nixos-install \
+  --root /mnt \
+  --flake "path:$repoDir#$hostName"
+
+printf 'Copying repository to target system...\n'
+targetRepo="/mnt/home/$userName/.config/nixos"
+mkdir -p "$(dirname "$targetRepo")"
+cp -a "$repoDir" "$targetRepo"
+nixos-enter --root /mnt -c \
+  "chown -R $userName:$userName /home/$userName/.config/nixos"
+
+rm -rf /mnt/etc/nixos
+ln -s "/home/$userName/.config/nixos" /mnt/etc/nixos
+
+printf 'Set password for %s...\n' "$userName"
+nixos-enter --root /mnt -c "passwd $userName"
+
+cat <<EOF
+
+Installation complete.
+
+After reboot:
+  cp ~/.config/nixos/templates/default.nix \\
+    ~/.config/nixos/hosts/$hostName/default.nix
+  ${EDITOR:-vi} ~/.config/nixos/hosts/$hostName/default.nix
+
+Before enabling secrets:
+  1. Add new machine SSH host key to secrets/keys.nix.
+  2. Re-encrypt required secrets.
+  3. Run nixos-rebuild with the $hostName configuration.
+EOF

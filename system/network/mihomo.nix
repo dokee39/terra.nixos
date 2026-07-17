@@ -11,7 +11,7 @@ in
     };
   };
 
-  config = {
+  config = lib.mkIf config.terra.secrets.enable {
     age.secrets.mihomo-subscription-url.file = ../../secrets/mihomo-subscription-url.age;
 
     services.mihomo = {

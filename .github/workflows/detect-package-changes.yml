@@ -25,7 +25,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          body=$(python3 .github/scripts/detect-package-changes.py)
+          body=$(python3 scripts/detect-package-changes.py)
           if [ -n "$body" ]; then
             title="[bot][$(date +%F)] Update Report"
             gh issue create --label package-changes --title "$title" --body "$body"

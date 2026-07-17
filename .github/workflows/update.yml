@@ -2,8 +2,7 @@ name: update
 
 on:
   schedule:
-    - cron: 7 4 * * 0
-      timezone: Asia/Shanghai
+    - cron: 7 20 * * 6
   workflow_dispatch:
 
 permissions:
@@ -16,26 +15,23 @@ jobs:
 
     steps:
       - uses: actions/checkout@v6
+        with:
+          fetch-depth: 2
 
       - uses: cachix/install-nix-action@v31
         with:
           extra_nix_config: |
             access-tokens = github.com=${{ github.token }}
 
-      - run: cp flake.lock /tmp/flake.lock.old
-      - run: cp sources.json /tmp/sources.json.old
+      - name: Checkpoint current state
+        run: |
+          git add flake.lock sources.json
+          git commit --allow-empty -m "checkpoint"
 
       - name: Update external sources
-        run: python3 .github/scripts/update-sources.py
+        run: python3 scripts/update-sources.py
 
       - run: nix flake update
-
-      - name: Validate configuration with updated nixpkgs
-        run: |
-          REV=$(jq -r '.nodes.nixpkgs.locked.rev' flake.lock)
-          cd .github/tests/test-flake
-          nix flake lock --override-input nixpkgs "github:NixOS/nixpkgs/$REV"
-          nix flake check
 
       - name: Validate root flake
         run: nix flake check --all-systems
@@ -47,21 +43,27 @@ jobs:
         run: |
           gh issue create \
             --label bug \
-            --title "[bot][$(date +%F)] Flake Check Failed" \
+            --title "[bot][$(date +%F)] Update Failed" \
             --body "Auto-update failed validation. See workflow: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
 
       - name: Generate changelog
         run: |
-          python3 .github/scripts/detect-package-changes.py \
-            --diff /tmp/flake.lock.old flake.lock \
-            --diff-sources /tmp/sources.json.old sources.json \
+          git add flake.lock sources.json
+          if git diff --cached --quiet; then
+            git reset --soft HEAD~1
+            exit 0
+          fi
+          git commit -m "update-checkpoint"
+          python3 scripts/detect-package-changes.py \
+            --diff HEAD~1 HEAD \
             --plain \
             > /tmp/commit-body.md
+          git reset --soft HEAD~2
 
       - run: |
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-          git add flake.lock sources.json .github/tests/test-flake/flake.lock
+          git add flake.lock sources.json
           git diff --cached --quiet && exit 0
           body=$(cat /tmp/commit-body.md)
           title_parts=""

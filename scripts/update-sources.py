@@ -20,7 +20,7 @@ import sys
 from pathlib import Path
 from urllib.parse import urlparse
 
-REPO_ROOT = Path(__file__).resolve().parent.parent.parent
+REPO_ROOT = Path(__file__).resolve().parent.parent
 SOURCES_FILE = REPO_ROOT / "sources.json"
 
 
