@@ -15,6 +15,12 @@
       action = "<cmd> q <cr>";
       options.desc = "quit";
     }
+    {
+      mode = "n";
+      key = "<C-CR>";
+      action = "<cmd> setlocal wrap! <CR>";
+      options.desc = "toggle word wrap";
+    }
 
     # clear search highlights & stop active snippet
     {

@@ -1,4 +1,4 @@
-{ pkgs, lib, sources, ... }:
+{ pkgs, lib, ... }:
 
 let
   pi-wrapper = pkgs.writeShellScriptBin "pi" ''
@@ -33,8 +33,8 @@ in
       enableInstallTelemetry = false;
       enableAnalytics = false;
 
-      defaultProvider = "deepseek";
-      defaultModel = "deepseek-v4-flash";
+      defaultProvider = "openai-codex";
+      defaultModel = "gpt-5.6-luna";
       defaultThinkingLevel = "high";
 
       autocompleteMaxVisible = 10;
@@ -44,7 +44,6 @@ in
         "npm:@aliou/pi-guardrails"
         "npm:pi-rtk-optimizer"
         "npm:pi-cache-optimizer"
-        "npm:@juicesharp/rpiv-btw"
       ];
 
       theme = "rose-pine";

@@ -200,7 +200,7 @@ in {
       autocmd = {
         enabled = true;
         events = mkRaw ''{ "CursorHold" }'';
-        updatetime = 200;
+        updatetime = 50;
       };
     };
   };

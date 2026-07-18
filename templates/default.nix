@@ -52,6 +52,7 @@
   # system.autoUpgrade = {
   #   enable = false;
   #   flake = "github:dokee39/terra.nixos#${config.terra.hostName}";
+  #   upgrade = false;
   #   operation = "boot";
   #   dates = "Sun 12:30";
   # };

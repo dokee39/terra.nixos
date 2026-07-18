@@ -1,4 +1,4 @@
-{ inputs, sources, osConfig, ... }:
+{ config, inputs, sources, osConfig, ... }:
 
 {
   imports = [ sources.noctalia.homeModules.default ];
@@ -22,7 +22,7 @@
       };
 
       # ── Wallpaper ──
-      wallpaper.directory = "/home/dokee/Pictures/Wallpapers";
+      wallpaper.directory = "${config.home.homeDirectory}/Pictures/Wallpapers";
 
       # ── Top Bar ──
       bar.main = {
@@ -80,7 +80,7 @@
 
       # ── Shell ──
       shell = {
-        avatar_path = "/home/dokee/Pictures/dokee.png";
+        avatar_path = "${config.home.homeDirectory}/Pictures/dokee.png";
         font_family = "Maple Mono NF CN";
         corner_radius_scale = 1.5;
         date_format = "%A, %F";

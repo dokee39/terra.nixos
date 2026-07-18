@@ -30,6 +30,7 @@ in
     ./apps/mpd
   ];
 
+  # HACK: add xdg-portal-gtk for niri-flake
   xdg.portal.extraPortals = with pkgs; [
     xdg-desktop-portal-gtk
     xdg-desktop-portal-gnome

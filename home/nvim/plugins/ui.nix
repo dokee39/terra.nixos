@@ -202,10 +202,6 @@ in
             lualine_y = mkRaw ''{
               {
                 "encoding",
-                cond = function() return vim.bo.fileformat ~= 'unix' end
-              },
-              {
-                "fileformat",
                 cond = function()
                   local enc = vim.bo.fileencoding
                   if enc == "" then
@@ -213,6 +209,10 @@ in
                   end
                   return enc:lower() ~= 'utf-8'
                 end
+              },
+              {
+                "fileformat",
+                cond = function() return vim.bo.fileformat ~= 'unix' end
               },
               {
                 "filetype",

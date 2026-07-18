@@ -1,6 +1,7 @@
 local M = {}
 
 local uv = vim.uv
+local ns = vim.api.nvim_create_namespace("faster-jk")
 
 local defaults = {
   threshold = 120, -- ms
@@ -32,6 +33,22 @@ end
 local function threshold_ns()
   return M.opts.threshold * 1000000
 end
+
+local function is_motion_mode(mode)
+  return mode == "n" or mode == "v" or mode == "V" or mode == "\22"
+end
+
+vim.on_key(function(_, typed)
+  if not typed or typed == "" then
+    return
+  end
+
+  if not is_motion_mode(vim.api.nvim_get_mode().mode)
+    or (typed ~= "j" and typed ~= "k")
+  then
+    reset()
+  end
+end, ns)
 
 function M.setup(opts)
   opts = opts or {}

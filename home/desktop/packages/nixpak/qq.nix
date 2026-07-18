@@ -7,6 +7,7 @@
   writeShellApplication,
   inotify-tools,
   coreutils,
+  findutils,
   desktopContext ? {},
   ...
 }:
@@ -57,6 +58,7 @@ let
     runtimeInputs = [
       inotify-tools
       coreutils
+      findutils
     ];
 
     text = ''

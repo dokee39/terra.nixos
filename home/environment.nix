@@ -24,5 +24,4 @@
   } // lib.optionalAttrs osConfig.terra.desktop.enable {
     NIXOS_OZONE_WL = "1";
   };
-
 }

@@ -4,13 +4,12 @@ let
 in {
   plugins = {
     friendly-snippets.enable = true;
-    blink-cmp-dictionary.enable = true;
     colorful-menu.enable = true;
 
     blink-cmp = {
       enable = true;
       luaConfig.pre = ''
-        local function dict_keyword_tail(line, col)
+        local function completion_keyword_tail(line, col)
           local keyword = line:sub(1, col):match("([%w_-]+)$") or ""
           local base = keyword:gsub("[_-]+$", "")
           local segment = base:match("([^-_]+)$") or ""
@@ -22,8 +21,26 @@ in {
           return keyword, tail
         end
 
+        local function is_ascii_keyword(ctx)
+          local bounds = ctx.get_bounds("full")
+          local keyword = ctx.line:sub(bounds.start_col, bounds.start_col + bounds.length - 1)
+          return not keyword:find("[^%w_-]")
+        end
+
+        local function to_lsp_character(line, byte_col, item)
+          local client = item.client_id and vim.lsp.get_client_by_id(item.client_id)
+          local encoding = client and client.offset_encoding or "utf-8"
+
+          if encoding == "utf-8" then
+            return byte_col
+          end
+
+          return vim.str_utfindex(line, encoding, byte_col, false)
+        end
+
+        -- TODO: migrate to ctx.pos after nixpkgs updates blink.cmp
         local function patch_midword_completion(ctx, items, opts)
-          local keyword, tail = dict_keyword_tail(ctx.line, ctx.cursor[2])
+          local keyword, tail = completion_keyword_tail(ctx.line, ctx.cursor[2])
           if tail == "" then
             return items
           end
@@ -34,7 +51,7 @@ in {
           local prefix = keyword:sub(1, #keyword - #tail)
           local right = ctx.line:sub(col + 1):match("^([%w_-]*)") or ""
 
-          for i, item in ipairs(items) do
+          for _, item in ipairs(items) do
             local text = (item.textEdit and item.textEdit.newText) or item.insertText or item.label
             if text ~= nil and text ~= "" then
               local starts_with_tail = text:sub(1, #tail) == tail
@@ -51,11 +68,16 @@ in {
                 end
 
                 item.filterText = prefix .. text
-                item.sortText = item.sortText or string.format("%08d", i)
 
                 local range = {
-                  start = { line = row, character = start_col },
-                  ["end"] = { line = row, character = end_col },
+                  start = {
+                    line = row,
+                    character = to_lsp_character(ctx.line, start_col, item),
+                  },
+                  ["end"] = {
+                    line = row,
+                    character = to_lsp_character(ctx.line, end_col, item),
+                  },
                 }
 
                 if item.textEdit and not opts.force_plain_range then
@@ -125,57 +147,36 @@ in {
             "snippets"
             "path"
             "buffer"
-            "dictionary"
           ];
 
           providers = {
-            lsp.transform_items = mkRaw ''
-              function(ctx, items)
-                local CompletionItemKind = require("blink.cmp.types").CompletionItemKind
-                items = vim.tbl_filter(function(item)
-                  return item.kind ~= CompletionItemKind.Text
-                end, items)
-                return patch_midword_completion(ctx, items, {
-                  require_tail_match = true,
-                })
-              end
-            '';
-
-            buffer.transform_items = mkRaw ''
-              function(ctx, items)
-                return patch_midword_completion(ctx, items, {
-                  require_tail_match = true,
-                })
-              end
-            '';
-
-            snippets.score_offset = 0;
-
-            dictionary = {
-              score_offset = -15;
-              module = "blink-cmp-dictionary";
-              name = "Dict";
-              min_keyword_length = 3;
-              max_items = 10;
+            lsp = {
+              should_show_items = mkRaw ''function(ctx) return is_ascii_keyword(ctx) end'';
               transform_items = mkRaw ''
                 function(ctx, items)
+                  local CompletionItemKind = require("blink.cmp.types").CompletionItemKind
+                  items = vim.tbl_filter(function(item)
+                    return item.kind ~= CompletionItemKind.Text
+                  end, items)
                   return patch_midword_completion(ctx, items, {
-                    require_tail_match = false,
-                    force_plain_range = true,
+                    require_tail_match = true,
                   })
                 end
               '';
-
-              opts = {
-                dictionary_files = mkRaw ''function() return { vim.env.WORDLIST } end'';
-                get_prefix = mkRaw ''
-                  function(ctx)
-                    local _, tail = dict_keyword_tail(ctx.line, ctx.cursor[2])
-                    return tail
-                  end
-                '';
-              };
             };
+
+            buffer = {
+              should_show_items = mkRaw ''function(ctx) return is_ascii_keyword(ctx) end'';
+              transform_items = mkRaw ''
+                function(ctx, items)
+                  return patch_midword_completion(ctx, items, {
+                    require_tail_match = true,
+                  })
+                end
+              '';
+            };
+
+            snippets.score_offset = 0;
 
             cmdline.min_keyword_length = 3;
           };

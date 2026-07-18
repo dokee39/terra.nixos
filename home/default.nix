@@ -3,7 +3,7 @@
 {
   imports = [
     ./shell
-    ./env.nix
+    ./environment.nix
     ./btop.nix
     ./yazi
     ./nvim

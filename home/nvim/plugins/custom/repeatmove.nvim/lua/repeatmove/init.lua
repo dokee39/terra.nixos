@@ -93,7 +93,6 @@ local function normalize_group(group)
 
   for _, pair in ipairs(move_pairs) do
     result[#result + 1] = {
-      move = { pair[1], pair[2] },
       move_raw = { termcodes(pair[1]), termcodes(pair[2]) },
       repeat_pairs = normalized_repeat_pairs,
     }

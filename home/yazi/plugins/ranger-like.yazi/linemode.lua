@@ -21,26 +21,39 @@ local get_entry = ya.sync(function(state, url)
   return state.linemode_entries[url]
 end)
 
+-- Keep older async results from overwriting newer loads or prefetches.
 local begin_load = ya.sync(function(state, url, sig)
   state.linemode_loading = state.linemode_loading or {}
+  state.linemode_latest = state.linemode_latest or {}
 
-  if state.linemode_loading[url] == sig then
+  local loading = state.linemode_loading[url]
+  if loading and loading.sig == sig then
     return false
   end
 
-  state.linemode_loading[url] = sig
+  state.linemode_revision = (state.linemode_revision or 0) + 1
+  local revision = state.linemode_revision
+  state.linemode_loading[url] = { sig = sig, revision = revision }
+  state.linemode_latest[url] = revision
   return true
 end)
 
 local finish_load = ya.sync(function(state, url, sig, text)
   state.linemode_entries = state.linemode_entries or {}
   state.linemode_loading = state.linemode_loading or {}
+  state.linemode_latest = state.linemode_latest or {}
 
-  if state.linemode_loading[url] ~= sig then
+  local loading = state.linemode_loading[url]
+  if not loading or loading.sig ~= sig then
     return
   end
 
   state.linemode_loading[url] = nil
+  if state.linemode_latest[url] ~= loading.revision then
+    return
+  end
+
+  state.linemode_latest[url] = nil
   state.linemode_entries[url] = {
     sig = sig,
     text = text,
@@ -52,27 +65,51 @@ end)
 
 local fail_load = ya.sync(function(state, url, sig)
   state.linemode_loading = state.linemode_loading or {}
+  state.linemode_latest = state.linemode_latest or {}
 
-  if state.linemode_loading[url] ~= sig then
+  local loading = state.linemode_loading[url]
+  if not loading or loading.sig ~= sig then
     return
   end
 
   state.linemode_loading[url] = nil
+  if state.linemode_latest[url] == loading.revision then
+    state.linemode_latest[url] = nil
+  end
 end)
 
-local finish_prefetch = ya.sync(function(state, items)
+local begin_prefetch = ya.sync(function(state, urls)
+  state.linemode_latest = state.linemode_latest or {}
+  state.linemode_revision = (state.linemode_revision or 0) + 1
+
+  local revision = state.linemode_revision
+  for _, url in ipairs(urls) do
+    state.linemode_latest[url] = revision
+  end
+
+  return revision
+end)
+
+local finish_prefetch = ya.sync(function(state, revision, items)
   state.linemode_entries = state.linemode_entries or {}
   state.linemode_loading = state.linemode_loading or {}
+  state.linemode_latest = state.linemode_latest or {}
 
   local now = ya.time()
 
   for _, item in ipairs(items) do
-    state.linemode_loading[item.url] = nil
-    state.linemode_entries[item.url] = {
-      sig = item.sig,
-      text = item.text,
-      refreshed_at = now,
-    }
+    if state.linemode_latest[item.url] == revision then
+      local loading = state.linemode_loading[item.url]
+      if not loading or loading.revision < revision then
+        state.linemode_loading[item.url] = nil
+        state.linemode_latest[item.url] = nil
+        state.linemode_entries[item.url] = {
+          sig = item.sig,
+          text = item.text,
+          refreshed_at = now,
+        }
+      end
+    end
   end
 
   ui.render()
@@ -157,6 +194,11 @@ function M.prefetch(cwd)
       return
     end
 
+    local urls = {}
+    for _, file in ipairs(files) do
+      urls[#urls + 1] = tostring(file.url)
+    end
+    local revision = begin_prefetch(urls)
     local items = {}
 
     for _, file in ipairs(files) do
@@ -170,7 +212,7 @@ function M.prefetch(cwd)
       end
     end
 
-    finish_prefetch(items)
+    finish_prefetch(revision, items)
   end)
 end
 
