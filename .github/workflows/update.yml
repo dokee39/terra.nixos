@@ -6,6 +6,7 @@ on:
   workflow_dispatch:
 
 permissions:
+  actions: write
   contents: write
   issues: write
 
@@ -22,6 +23,11 @@ jobs:
         with:
           extra_nix_config: |
             access-tokens = github.com=${{ github.token }}
+
+      - name: Configure Git identity
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
 
       - name: Checkpoint current state
         run: |
@@ -60,9 +66,10 @@ jobs:
             > /tmp/commit-body.md
           git reset --soft HEAD~2
 
-      - run: |
-          git config user.name github-actions[bot]
-          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+      - name: Commit and push updates
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
           git add flake.lock sources.json
           git diff --cached --quiet && exit 0
           body=$(cat /tmp/commit-body.md)
@@ -76,3 +83,5 @@ jobs:
             git commit -m "[bot] chore: update ${title_parts}"
           fi
           git push origin HEAD:${{ github.ref_name }}
+          gh workflow run detect-package-changes.yml \
+            --ref "${{ github.ref_name }}"

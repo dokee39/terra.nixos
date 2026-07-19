@@ -3,6 +3,7 @@ name: detect-package-changes
 on:
   push:
     paths: [flake.lock, sources.json]
+  workflow_dispatch:
 
 permissions:
   contents: read
