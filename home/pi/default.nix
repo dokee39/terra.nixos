@@ -1,12 +1,20 @@
 { pkgs, lib, ... }:
 
 let
+  pi-bin = lib.getExe pkgs.pi-coding-agent;
+
   pi-wrapper = pkgs.writeShellScriptBin "pi" ''
+    case "''${1-}" in
+      install|remove|uninstall|update|list|config)
+        exec ${pi-bin} "$@"
+        ;;
+    esac
+
     if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
-      exec ${lib.getExe pkgs.pi-coding-agent} --extension npm:@ayulab/pi-rewind  "$@"
-    else
-      exec ${lib.getExe pkgs.pi-coding-agent} "$@"
+      exec ${pi-bin} --extension npm:@ayulab/pi-rewind "$@"
     fi
+
+    exec ${pi-bin} "$@"
   '';
   pichat = pkgs.writeShellScriptBin "pichat" ''
     args=(); here=
