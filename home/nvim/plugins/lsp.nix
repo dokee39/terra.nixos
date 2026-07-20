@@ -21,6 +21,7 @@ in {
 
     servers = {
       nixd.enable = true;
+
       lua_ls = {
         enable = true;
         config.settings = {
@@ -31,6 +32,7 @@ in {
           };
         };
       };
+
       clangd = {
         enable = true;
         config = {
@@ -41,9 +43,11 @@ in {
           ];
         };
       };
+
       ts_ls.enable = true;
       cssls.enable = true;
       jsonls.enable = true;
+
       ruff.enable = true;
       basedpyright = {
         enable = true;
@@ -59,6 +63,8 @@ in {
           };
         };
       };
+
+      wgsl_analyzer.enable = true;
     };
 
     keymaps = [
