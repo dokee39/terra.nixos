@@ -66,14 +66,16 @@ nixos-install \
   --flake "path:$repoDir#$hostName"
 
 printf 'Copying repository to target system...\n'
-targetRepo="/mnt/home/$userName/.config/nixos"
-mkdir -p "$(dirname "$targetRepo")"
+targetRepo="/mnt/etc/nixos"
+rm -rf "$targetRepo"
 cp -a "$repoDir" "$targetRepo"
-nixos-enter --root /mnt -c \
-  "chown -R $userName:$userName /home/$userName/.config/nixos"
 
-rm -rf /mnt/etc/nixos
-ln -s "/home/$userName/.config/nixos" /mnt/etc/nixos
+userConfig="/mnt/home/$userName/.config/nixos"
+mkdir -p "$(dirname "$userConfig")"
+ln -s /etc/nixos "$userConfig"
+
+nixos-enter --root /mnt -c \
+  "chown -R $userName:$userName /etc/nixos"
 
 printf 'Set password for %s...\n' "$userName"
 nixos-enter --root /mnt -c "passwd $userName"

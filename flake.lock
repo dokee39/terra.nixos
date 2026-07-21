@@ -39,10 +39,33 @@
         "type": "github"
       }
     },
+    "blink-cmp": {
+      "inputs": {
+        "blink-lib": [
+          "blink-lib"
+        ],
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1784110137,
+        "narHash": "sha256-QE41xQY9G8ghgByfv6ANxEIgbCnuOh4YJFqFF9npOqU=",
+        "owner": "Saghen",
+        "repo": "blink.cmp",
+        "rev": "0f54bd78892f587db4dcf100a23eaddfc2a9df7d",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Saghen",
+        "repo": "blink.cmp",
+        "rev": "0f54bd78892f587db4dcf100a23eaddfc2a9df7d",
+        "type": "github"
+      }
+    },
     "blink-lib": {
       "inputs": {
         "nixpkgs": [
-          "blink-pairs",
           "nixpkgs"
         ]
       },
@@ -57,12 +80,15 @@
       "original": {
         "owner": "saghen",
         "repo": "blink.lib",
+        "rev": "b127d48bf8e9ac9cf41f6e0fbead317503f76558",
         "type": "github"
       }
     },
     "blink-pairs": {
       "inputs": {
-        "blink-lib": "blink-lib",
+        "blink-lib": [
+          "blink-lib"
+        ],
         "nixpkgs": [
           "nixpkgs"
         ]
@@ -535,6 +561,8 @@
       "inputs": {
         "agenix": "agenix",
         "beacon": "beacon",
+        "blink-cmp": "blink-cmp",
+        "blink-lib": "blink-lib",
         "blink-pairs": "blink-pairs",
         "home-manager": "home-manager_2",
         "im-select": "im-select",

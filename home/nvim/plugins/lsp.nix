@@ -20,7 +20,30 @@ in {
     '';
 
     servers = {
-      nixd.enable = true;
+      nixd = {
+        enable = true;
+        config.settings = {
+          nixd = {
+            nixpkgs.expr = ''
+              import ((builtins.getFlake "/etc/nixos").inputs.nixpkgs) { }
+            '';
+
+            options = {
+              nixos.expr = ''
+                (builtins.getFlake "/etc/nixos")
+                  .nixosConfigurations."nixos-pc"
+                  .options
+              '';
+
+              home-manager.expr = ''
+                (builtins.getFlake "/etc/nixos")
+                  .nixosConfigurations."nixos-pc"
+                  .options."home-manager".users.type.getSubOptions []
+              '';
+            };
+          };
+        };
+      };
 
       lua_ls = {
         enable = true;

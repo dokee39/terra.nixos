@@ -20,9 +20,9 @@ Installer will:
 
 - generate hardware configuration
 - install minimal system
-- copy repository to `/home/<username>/.config/nixos`
+- copy repository to `/etc/nixos`
 - set repository ownership
-- create `/etc/nixos` symlink
+- create `/home/<username>/.config/nixos` symlink to `/etc/nixos`
 - prompt for root and user passwords
 
 Installer does not partition or format disks.

@@ -54,9 +54,19 @@
       url = "github:nix-community/nixvim";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    blink-lib = {
+      url = "github:saghen/blink.lib?rev=b127d48bf8e9ac9cf41f6e0fbead317503f76558";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    blink-cmp = {
+      url = "github:Saghen/blink.cmp?rev=0f54bd78892f587db4dcf100a23eaddfc2a9df7d";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.blink-lib.follows = "blink-lib";
+    };
     blink-pairs = {
       url = "github:Saghen/blink.pairs";
       inputs.nixpkgs.follows = "nixpkgs";
+      inputs.blink-lib.follows = "blink-lib";
     };
     beacon = {
       url = "github:DanilaMihailov/beacon.nvim";

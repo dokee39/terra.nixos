@@ -52,6 +52,8 @@ in
         "npm:@aliou/pi-guardrails"
         "npm:pi-rtk-optimizer"
         "npm:pi-cache-optimizer"
+        "npm:@narumitw/pi-codex-usage"
+        "npm:@diegopetrucci/pi-openai-fast"
       ];
 
       theme = "rose-pine";
