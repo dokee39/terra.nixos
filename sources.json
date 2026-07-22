@@ -36,5 +36,29 @@
     "repo": "noctalia",
     "rev": "32bcfb9c9783874c5c0f9709e3f741b07e54ca65",
     "hash": "sha256-yqkHIypClzlztMmt4HVytCdU8Kqy3EqHJotHtbyFulI="
+  },
+  "maple-bright-regular": {
+    "type": "binary",
+    "version": "v7.9-2.922",
+    "url": "https://github.com/bahayonghang/MapleLXGWBright/releases/download/v7.9-2.922/MapleBright-Regular.ttf",
+    "hash": "sha256-wSuewaACIk9Jm0+6QeY3Gw0rn0SHo8suoQg4ihQCAP0="
+  },
+  "maple-bright-medium": {
+    "type": "binary",
+    "version": "v7.9-2.922",
+    "url": "https://github.com/bahayonghang/MapleLXGWBright/releases/download/v7.9-2.922/MapleBright-Medium.ttf",
+    "hash": "sha256-YLvPM4um0RhJ6fozxDGTNJpVR+zfhSGBpGdryHe1S68="
+  },
+  "maple-bright-italic": {
+    "type": "binary",
+    "version": "v7.9-2.922",
+    "url": "https://github.com/bahayonghang/MapleLXGWBright/releases/download/v7.9-2.922/MapleBright-Italic.ttf",
+    "hash": "sha256-xUoLEg8g3FWA0CTWme37VfEW22tzEOEwIZ8Pu2E7uKA="
+  },
+  "maple-bright-medium-italic": {
+    "type": "binary",
+    "version": "v7.9-2.922",
+    "url": "https://github.com/bahayonghang/MapleLXGWBright/releases/download/v7.9-2.922/MapleBright-MediumItalic.ttf",
+    "hash": "sha256-TFUx9P85nG4bu9UfQWo5SjAmAzk25IR17beZtj9lnVM="
   }
 }

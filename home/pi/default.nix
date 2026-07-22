@@ -52,7 +52,7 @@ in
         "npm:@aliou/pi-guardrails"
         "npm:pi-rtk-optimizer"
         "npm:pi-cache-optimizer"
-        "npm:@narumitw/pi-codex-usage"
+        # "npm:@narumitw/pi-usage"
         "npm:@diegopetrucci/pi-openai-fast"
       ];
 
