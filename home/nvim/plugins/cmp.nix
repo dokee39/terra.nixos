@@ -31,6 +31,7 @@ in {
         };
 
         completion = {
+          keyword.range = "full";
           list.selection.preselect = false;
           ghost_text.enabled = true;
           menu = {
@@ -65,7 +66,7 @@ in {
           "<A-Tab>" = [ "snippet_forward" "fallback" ];
           "<A-S-Tab>" = [ "snippet_backward" "fallback" ];
           "<A-k>" = [ "show_signature" "hide_signature" "fallback" ];
-          "<CR>" = [ "select_and_accept" "fallback" ];
+          "<CR>" = [ "accept" "fallback" ];
         };
 
         sources = {
