@@ -1,4 +1,4 @@
-{ config, ... }:
+{ config, pkgs, ... }:
 
 {
   programs.rmpc.enable = true;
@@ -17,5 +17,19 @@
       restore_paused    "yes"
       replaygain        "auto"
     '';
+  };
+
+  systemd.user.services.mpd-mpris = {                                        
+    Unit = {                                                                 
+      Description = "MPRIS bridge for MPD";                                  
+      After = [ "mpd.service" ];                                             
+    };                                                                       
+                                                                            
+    Service = {                                                              
+      ExecStart = "${pkgs.mpd-mpris}/bin/mpd-mpris";                         
+      Restart = "on-failure";                                                
+    };                                                                       
+                                                                            
+    Install.WantedBy = [ "default.target" ];                                 
   };
 }

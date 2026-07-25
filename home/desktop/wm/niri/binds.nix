@@ -162,7 +162,7 @@ in {
     (blr     "Mod+X"       { spawn = [ "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "2%-" ]; })
     (blr     "Mod+Shift+X" { spawn = [ "wpctl" "set-volume" "-l" "1" "@DEFAULT_AUDIO_SINK@" "2%+" ]; })
     (bl      "Mod+Z"       { spawn = [ "mute-pause" ]; })
-    (bl      "Mod+Shift+Z" { spawn = [ "rmpc-control" "togglepause" ]; })
+    (bl      "Mod+Shift+Z" { spawn = [ "rmpc" "togglepause" ]; })
 
     # ── Brightness ──────────────────────────────────────────
 

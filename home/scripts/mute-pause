@@ -2,6 +2,7 @@
 
 if wpctl get-volume @DEFAULT_AUDIO_SINK@ | grep -qv MUTED; then
   playerctl --all-players pause 2>/dev/null
+  rmpc pause 2>/dev/null
 fi
 
 wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle
