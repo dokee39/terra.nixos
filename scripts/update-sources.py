@@ -32,6 +32,11 @@ def _gh_api(endpoint: str) -> dict:
     return json.loads(r.stdout)
 
 
+def _gh_error(error: subprocess.CalledProcessError) -> str:
+    detail = (error.stderr or "").strip()
+    return f"{error}: {detail}" if detail else str(error)
+
+
 def _prefetch(url: str) -> str:
     r = subprocess.run(
         ["nix", "store", "prefetch-file", "--json", url],
@@ -72,7 +77,7 @@ def _check_new_version(owner: str, repo: str, current_version: str) -> str | Non
     try:
         release = _gh_api(f"repos/{owner}/{repo}/releases/latest")
     except subprocess.CalledProcessError as e:
-        print(f"  [skip] GitHub API failed: {e}", file=sys.stderr)
+        print(f"  [skip] GitHub API failed: {_gh_error(e)}", file=sys.stderr)
         return None
 
     latest_tag = release.get("tag_name", "")
@@ -156,7 +161,7 @@ def _update_binary(entry: dict) -> bool:
     try:
         release = _gh_api(f"repos/{owner}/{repo_name}/releases/latest")
     except subprocess.CalledProcessError as e:
-        print(f"  [skip] GitHub API failed: {e}", file=sys.stderr)
+        print(f"  [skip] GitHub API failed: {_gh_error(e)}", file=sys.stderr)
         return False
 
     new_url = None

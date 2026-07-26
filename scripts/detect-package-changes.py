@@ -42,6 +42,13 @@ def _parse_locks(content: str) -> dict[str, dict[str, str | int | None]]:
     return nodes
 
 
+def _root_input_rev(content: str, input_name: str) -> str:
+    data = json.loads(content)
+    root = data["nodes"][data["root"]]
+    node_name = root["inputs"][input_name]
+    return data["nodes"][node_name]["locked"]["rev"]
+
+
 def _input_url(entry: dict[str, str | int | None]) -> str:
     if entry.get("type") == "github" and entry.get("owner") and entry.get("repo"):
         return f"https://github.com/{entry['owner']}/{entry['repo']}"
@@ -197,8 +204,8 @@ def main() -> None:
                 })
 
     # Part B: nixpkgs attr version diff
-    old_nixpkgs = old_lock.get("nixpkgs", {}).get("rev", "")
-    new_nixpkgs = new_lock.get("nixpkgs", {}).get("rev", "")
+    old_nixpkgs = _root_input_rev(old_content, "nixpkgs")
+    new_nixpkgs = _root_input_rev(new_content, "nixpkgs")
     if not old_nixpkgs or not new_nixpkgs:
         print("Error: nixpkgs rev missing from flake.lock", file=sys.stderr)
         sys.exit(1)
