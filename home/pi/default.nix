@@ -1,4 +1,4 @@
-{ pkgs, lib, ... }:
+{ pkgs, pkgs-stable, lib, ... }:
 
 let
   pi-bin = lib.getExe pkgs.pi-coding-agent;
@@ -60,7 +60,8 @@ in
     };
   };
 
-  home.packages = [ pkgs.rtk pichat ];
+  # HACK: rtk 0.43.0 build error
+  home.packages = [ pkgs-stable.rtk pichat ];
 
   home.sessionVariables = {
     PI_SKIP_VERSION_CHECK  = "1";

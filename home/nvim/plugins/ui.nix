@@ -37,6 +37,12 @@ in
         autoLoad = true;
         package = inputs.blink-pairs.packages.${osConfig.terra.system}.blink-pairs;
         settings = {
+          mappings.wrap = {
+            "<C-b>" = false;
+            "<C-S-b>" = false;
+            "<A-w>" = "motion";
+            "<A-S-w>" = "motion_reverse";
+          };
           highlights.groups = [
             "Keyword"
             "DiagnosticError"

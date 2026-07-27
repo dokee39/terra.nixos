@@ -99,6 +99,18 @@ def _nix_attr_version(attr: str, rev: str) -> str | None:
     return _EVAL_ERROR
 
 
+def _nix_attr_homepage(attr: str, rev: str) -> str | None:
+    r = subprocess.run(
+        [
+            "nix", "eval", "--json", "--apply",
+            "pkg: if pkg.meta ? homepage then pkg.meta.homepage else null",
+            f"github:NixOS/nixpkgs/{rev}#{attr}",
+        ],
+        capture_output=True, text=True, check=True, timeout=60,
+    )
+    return json.loads(r.stdout)
+
+
 def _fmt_ver(v: str | None) -> str:
     if v is None:
         return "(missing)"
@@ -218,11 +230,14 @@ def main() -> None:
             old_ver = _nix_attr_version(attr, old_nixpkgs)
             new_ver = _nix_attr_version(attr, new_nixpkgs)
             if old_ver != new_ver:
-                pkg_changes.append({
+                change = {
                     "name": attr,
                     "old": _fmt_ver(old_ver),
                     "new": _fmt_ver(new_ver),
-                })
+                }
+                if not args.plain:
+                    change["homepage"] = _nix_attr_homepage(attr, new_nixpkgs)
+                pkg_changes.append(change)
 
     # Part C: sources.json diff — always from the same refs as flake.lock
     sources_changes: list[dict] = []
@@ -295,7 +310,9 @@ def main() -> None:
         else:
             body += "| Package | Old | New |\n|---------|-----|-----|\n"
             for c in pkg_changes:
-                url = f"https://search.nixos.org/packages?channel=unstable&query={c['name']}"
+                url = c.get("homepage") or (
+                    f"https://search.nixos.org/packages?channel=unstable&query={c['name']}"
+                )
                 name = f"[{c['name']}]({url})"
                 body += f"| {name} | {c['old']} | {c['new']} |\n"
         body += "\n"
