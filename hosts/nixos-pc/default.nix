@@ -1,5 +1,5 @@
-{ config, ... }: {
-  imports = [ 
+{ config, pkgs, pkgs-stable, ... }: {
+  imports = [
     ./hardware.nix
   ];
 
@@ -64,7 +64,13 @@
     nct6687d
   ];
 
-  services.lact.enable = true;
+  services.lact = {
+    enable = true;
+    # HACK: lact 0.9.1 build error
+    package = pkgs.lact.override {
+      libdisplay-info = pkgs-stable.libdisplay-info;
+    };
+  };
   programs.coolercontrol.enable = true;
   environment.etc."coolercontrol/config.toml" = {
     source = ./coolercontrol/config.toml;

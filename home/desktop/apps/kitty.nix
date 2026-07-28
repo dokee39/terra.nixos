@@ -32,6 +32,10 @@
       resize_debounce_time = "0 0";
       placement_strategy = "top-left";
     };
+
+    keybindings = {
+      "ctrl+alt+n" = "launch --type=background --cwd=current ${pkgs.kitty}/bin/kitty --detach";
+    };
   };
 
   xdg.configFile."kitty/kitty.app.png".source = "${self}/assets/rose-pine-kitty-icon.png";

@@ -1,4 +1,4 @@
-{ pkgs, pkgs-stable, lib, ... }:
+{ pkgs, lib, ... }:
 
 let
   pi-bin = lib.getExe pkgs.pi-coding-agent;
@@ -52,7 +52,7 @@ in
         "npm:@aliou/pi-guardrails"
         "npm:pi-rtk-optimizer"
         "npm:pi-cache-optimizer"
-        # "npm:@narumitw/pi-usage"
+        "npm:@narumitw/pi-usage"
         "npm:@diegopetrucci/pi-openai-fast"
       ];
 
@@ -60,8 +60,7 @@ in
     };
   };
 
-  # HACK: rtk 0.43.0 build error
-  home.packages = [ pkgs-stable.rtk pichat ];
+  home.packages = [ pkgs.rtk pichat ];
 
   home.sessionVariables = {
     PI_SKIP_VERSION_CHECK  = "1";

@@ -1,4 +1,4 @@
-{ config, pkgs, lib, inputs, ... }:
+{ config, pkgs, pkgs-stable, lib, inputs, ... }:
 
 {
   imports = [
@@ -12,7 +12,11 @@
 
   programs.niri = {
     enable = true;
-    package = pkgs.niri;
+    # package = pkgs.niri;
+    # HACK: niri build error
+    package = pkgs.niri.override {
+      libdisplay-info = pkgs-stable.libdisplay-info;
+    };
 
     settings = {
       prefer-no-csd = true;
