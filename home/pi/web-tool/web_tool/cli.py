@@ -9,6 +9,9 @@ import sys
 from web_tool.filter_utils import filter_and_rank
 
 
+MAX_RESPONSE_BYTES = 10 * 1024 * 1024
+
+
 class _CLI:
     def __init__(self):
         self.error_occurred = False
@@ -71,7 +74,19 @@ def cmd_fetch(args):
         sys.exit(1)
 
     from curl_cffi import requests
+    from curl_cffi.curl import CURL_WRITEFUNC_ERROR
     import trafilatura
+
+    body = bytearray()
+    response_too_large = False
+
+    def receive(chunk):
+        nonlocal response_too_large
+        if len(body) + len(chunk) > MAX_RESPONSE_BYTES:
+            response_too_large = True
+            return CURL_WRITEFUNC_ERROR
+        body.extend(chunk)
+        return len(chunk)
 
     try:
         resp = requests.get(
@@ -79,8 +94,22 @@ def cmd_fetch(args):
             timeout=60,
             impersonate="firefox",
             allow_redirects=True,
+            content_callback=receive,
         )
         resp.raise_for_status()
+        content_type = resp.headers.get("content-type", "").partition(";")[0].strip().lower()
+        if content_type and not (
+            content_type.startswith("text/")
+            or content_type == "application/xml"
+            or content_type.startswith("application/") and content_type.endswith("+xml")
+        ):
+            reason = f"unsupported content type: {content_type}"
+            if args.json:
+                print(json.dumps({"type": "unsupported_content_type", "reason": reason}, ensure_ascii=False))
+            else:
+                print(f"Warning: {reason}", file=sys.stderr)
+            return
+        resp.content = bytes(body)
         html = resp.text
     except requests.exceptions.HTTPError as e:
         status = e.response.status_code
@@ -101,11 +130,25 @@ def cmd_fetch(args):
         else:
             print(f"Warning: connection failed: {args.url}", file=sys.stderr)
         return
+    except requests.exceptions.RequestException:
+        if not response_too_large:
+            raise
+        reason = "response exceeds 10 MiB limit"
+        if args.json:
+            print(json.dumps({"type": "response_too_large", "reason": reason}, ensure_ascii=False))
+        else:
+            print(f"Warning: {reason}: {args.url}", file=sys.stderr)
+        return
 
     markdown = trafilatura.extract(
         html,
+        url=str(resp.url),
         output_format="markdown",
         include_comments=False,
+        include_links=True,
+        include_tables=True,
+        include_images=False,
+        with_metadata=True,
     )
     if not markdown:
         if args.json:
