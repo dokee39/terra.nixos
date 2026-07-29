@@ -16,6 +16,29 @@ in {
           local keyword = ctx.line:sub(bounds.start_col, bounds.start_col + bounds.length - 1)
           return not keyword:find("[^%w_-]")
         end
+
+        local completion_list = require("blink.cmp.completion.list")
+        local show_completion_list = completion_list.show
+
+        completion_list.show = function(ctx, items_by_source)
+          local lsp_items = items_by_source.lsp
+          local buffer_items = items_by_source.buffer
+
+          if lsp_items and buffer_items then
+            local lsp_labels = {}
+            for _, item in ipairs(lsp_items) do
+              lsp_labels[item.label] = true
+            end
+
+            items_by_source = vim.tbl_extend("force", {}, items_by_source)
+            items_by_source.buffer = vim
+              .iter(buffer_items)
+              :filter(function(item) return not lsp_labels[item.label] end)
+              :totable()
+          end
+
+          return show_completion_list(ctx, items_by_source)
+        end
       '';
 
       settings = {
@@ -84,6 +107,7 @@ in {
 
           providers = {
             lsp = {
+              fallbacks = mkRaw "{}";
               should_show_items = mkRaw ''function(ctx) return is_ascii_keyword(ctx) end'';
               transform_items = mkRaw ''
                 function(_, items)

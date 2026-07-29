@@ -255,9 +255,17 @@ in
         {
           event = "User";
           pattern = "PersistenceSavePre";
-          desc = "Bridge persistence.nvim to barbar session hook";
+          desc = "Prune deleted arguments and bridge persistence.nvim to barbar";
           callback = mkRaw ''
             function()
+              local args = vim.fn.argv()
+              for index = #args, 1, -1 do
+                local bufnr = vim.fn.bufnr(args[index])
+                if bufnr < 0 or vim.fn.buflisted(bufnr) == 0 then
+                  vim.cmd.argdelete({ range = { index, index } })
+                end
+              end
+
               vim.api.nvim_exec_autocmds("User", { pattern = "SessionSavePre" })
             end
           '';
