@@ -20,6 +20,7 @@
       keep-open = true;
 
       osd-bar = false;
+      osd-fractions = true;
       border = false;
       osc = false;
 
