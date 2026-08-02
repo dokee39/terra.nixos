@@ -7,11 +7,11 @@
   },
   "duckduckgo-mcp-server": {
     "type": "source",
-    "version": "v0.5.0",
+    "version": "v0.6.1",
     "owner": "nickclyde",
     "repo": "duckduckgo-mcp-server",
-    "rev": "v0.5.0",
-    "hash": "sha256-zjKe2Hwm2AaF/LnVwJIkA8nO2e19CEB2e5IVkNsK5X4="
+    "rev": "v0.6.1",
+    "hash": "sha256-X99edQE4317/WEadi/QQnLZHpWCMBW2ipa8am4lfO2Q="
   },
   "aegisub": {
     "type": "source",
@@ -23,11 +23,11 @@
   },
   "noctalia": {
     "type": "flake",
-    "version": "v5.0.0-beta.5",
+    "version": "v5.0.0-beta.7",
     "owner": "noctalia-dev",
     "repo": "noctalia",
-    "rev": "3d7b9869950592ff7cf3704f6a53afb169d850db",
-    "hash": "sha256-iq/Eqx62P/JJDpW7CgEsMWWPwOexIWRKXtqKF/drawA="
+    "rev": "c366a35ffc30b011d03fcd122bbe7d22f932fc57",
+    "hash": "sha256-9RlJNIy2DFVm9SB2vwGEBsbHc1r3dIB+K+b+nd6Bdho="
   },
   "maple-bright-regular": {
     "type": "binary",

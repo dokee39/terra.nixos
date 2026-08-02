@@ -87,13 +87,7 @@ in {
       }
     ];
   } // lib.mkIf cfg.enable {
-    # services.displayManager.sessionPackages = [ pkgs.niri ];
-    # HACK: niri build error
-    services.displayManager.sessionPackages = [
-      (pkgs.niri.override {
-        libdisplay-info = pkgs-stable.libdisplay-info;
-      })
-    ];
+    services.displayManager.sessionPackages = [ pkgs.niri ];
     services.displayManager.ly = {
       enable = true;
       x11Support = false;

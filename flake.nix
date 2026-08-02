@@ -40,8 +40,8 @@
       url = "github:lxgw/LxgwBright";
       flake = false;
     };
-    orchis-kde = {
-      url = "github:vinceliuice/Orchis-kde";
+    colloid-kde = {
+      url = "github:vinceliuice/Colloid-kde";
       flake = false;
     };
     rose-pine-zellij = {

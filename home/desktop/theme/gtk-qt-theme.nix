@@ -1,37 +1,39 @@
 { inputs, pkgs, ... }:
 
-{
+let
+  colloid-gtk-theme = pkgs.colloid-gtk-theme.override {
+    tweaks = [ "normal" ];
+  };
+in {
   gtk = {
     enable = true;
+    colorScheme = "dark";
 
     theme = {
-      package = pkgs.orchis-theme;
-      name = "Orchis-Dark";
+      package = colloid-gtk-theme;
+      name = "Colloid-Dark";
     };
 
     iconTheme = {
-      package = pkgs.papirus-icon-theme;
-      name = "Papirus-Dark";
+      package = pkgs.colloid-icon-theme;
+      name = "Colloid-Dark";
     };
 
-    gtk4 = {
-      theme = {
-        package = pkgs.orchis-theme;
-        name = "Orchis-Dark";
-      };
+    gtk4.theme = {
+      package = colloid-gtk-theme;
+      name = "Colloid-Dark";
     };
-  };
-
-  dconf.settings."org/gnome/desktop/interface" = {
-    color-scheme = "prefer-dark";
-    gtk-theme = "Orchis-Dark";
-    icon-theme = "Papirus-Dark";
   };
 
   qt = {
     enable = true;
     style.name = "kvantum";
     platformTheme.name = "kde";
+
+    kvantum = {
+      enable = true;
+      settings.General.theme = "ColloidDark";
+    };
   };
 
   home.packages = with pkgs.kdePackages; [
@@ -39,26 +41,21 @@
     breeze-icons
   ];
 
-  xdg.dataFile."color-schemes/OrchisDark.colors".source =
-    "${inputs.orchis-kde}/color-schemes/OrchisDark.colors";
+  xdg.dataFile."color-schemes/ColloidDark.colors".source =
+    "${inputs.colloid-kde}/color-schemes/ColloidDark.colors";
 
   xdg.configFile = {
-    "Kvantum/OrchisDark/OrchisDark.kvconfig".source =
-      "${inputs.orchis-kde}/Kvantum/Orchis/OrchisDark.kvconfig";
-    "Kvantum/OrchisDark/OrchisDark.svg".source =
-      "${inputs.orchis-kde}/Kvantum/Orchis/OrchisDark.svg";
-
-    "Kvantum/kvantum.kvconfig".text = ''
-      [General]
-      theme=OrchisDark
-    '';
+    "Kvantum/ColloidDark/ColloidDark.kvconfig".source =
+      "${inputs.colloid-kde}/Kvantum/Colloid/ColloidDark.kvconfig";
+    "Kvantum/ColloidDark/ColloidDark.svg".source =
+      "${inputs.colloid-kde}/Kvantum/Colloid/ColloidDark.svg";
 
     "kdeglobals".text = ''
       [General]
-      ColorScheme=OrchisDark
+      ColorScheme=ColloidDark
 
       [Icons]
-      Theme=Papirus-Dark
+      Theme=Colloid-Dark
     '';
   };
 }
