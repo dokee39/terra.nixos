@@ -1,59 +1,77 @@
-## Install from a NixOS liveUSB
-
-After partitioning and formatting the disk, mount the target filesystems. UEFI example:
+## Install from a NixOS live USB
 
 ```bash
 sudo -i
+
+# Wi-Fi only
+nmtui
+
+timedatectl
+
+lsblk
+fdisk /dev/<target-disk>
+```
+
+Use GPT for a new partition table:
+
+```text
+/boot   +512M      EFI System
+/       +120G      Linux filesystem
+/home   remaining  Linux filesystem
+```
+
+Skip `/boot` when reusing an existing EFI system partition.
+
+Check partition names before formatting:
+
+```bash
+lsblk
+
+# Only for a newly created EFI partition
+mkfs.fat -F 32 /dev/<efi-partition>
+
+mkfs.ext4 /dev/<root-partition>
+mkfs.ext4 /dev/<home-partition>
+```
+
+Mount filesystems and run installer:
+
+```bash
 mount /dev/<root-partition> /mnt
-mkdir -p /mnt/boot
-mount /dev/<efi-partition> /mnt/boot
-swapon /dev/<swap-partition>
-```
+mount --mkdir /dev/<efi-partition> /mnt/boot
+mount --mkdir /dev/<home-partition> /mnt/home
 
-Run installer:
+export http_proxy=http://<lan-device-ip>:<port>                                
+export https_proxy="$http_proxy" 
+nix --extra-experimental-features "nix-command flakes" run github:dokee39/terra.nixos#install-minimal -- <hostname> <username>
 
-```bash
-nix run github:dokee39/terra.nixos#install-minimal -- <hostname> <username>
-```
-
-Installer will:
-
-- generate hardware configuration
-- install minimal system
-- copy repository to `/etc/nixos`
-- set repository ownership
-- create `/home/<username>/.config/nixos` symlink to `/etc/nixos`
-- prompt for root and user passwords
-
-Installer does not partition or format disks.
-
-Reboot:
-
-```bash
 reboot
 ```
 
-## Enable default configuration
+## After reboot
 
-After booting into new system, copy host configuration:
-
-```bash
-cp ~/.config/nixos/templates/default.nix ~/.config/nixos/hosts/<hostname>/default.nix
-```
-
-Edit host and hardware settings:
+Reconnect Wi-Fi if needed:
 
 ```bash
-$EDITOR ~/.config/nixos/hosts/<hostname>/default.nix
+impala
 ```
 
-Before enabling secrets, print new machine's SSH host key:
+Continue locally or connect from a trusted machine:
+
+```bash
+ssh <username>@<hostname>.local
+```
+
+Print host and user public keys:
 
 ```bash
 cat /etc/ssh/ssh_host_ed25519_key.pub
+cat ~/.ssh/id_ed25519.pub
 ```
 
-On an existing trusted machine, add this public key and re-encrypt secrets:
+## Rekey secrets
+
+On a trusted machine, add host key to `hosts` and user key to `users`:
 
 ```bash
 cd ~/.config/nixos
@@ -61,12 +79,22 @@ $EDITOR secrets/keys.nix
 RULES=secrets/secrets.nix agenix -r -i <private-key>
 ```
 
-Check and apply configuration:
+Sync `secrets/keys.nix` and `secrets/*.age` back to new machine.
+
+## Enable default configuration
 
 ```bash
+cp ~/.config/nixos/templates/default.nix \
+  ~/.config/nixos/hosts/<hostname>/default.nix
+
+sed -i 's/"user_name"/"<username>"/' \
+  ~/.config/nixos/hosts/<hostname>/default.nix
+
+$EDITOR ~/.config/nixos/hosts/<hostname>/default.nix
+git -C ~/.config/nixos add -- hosts/<hostname>
+
 nix flake check ~/.config/nixos
+
 sudo nixos-rebuild switch \
   --flake ~/.config/nixos#<hostname>
 ```
-
-Minimal configuration temporarily disables secret-backed services. `default.nix` enables them by default.

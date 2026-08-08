@@ -5,4 +5,6 @@
     userName = "user_name";
     secrets.enable = false;
   };
+
+  networking.proxy.default = "install_proxy";
 }

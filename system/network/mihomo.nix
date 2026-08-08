@@ -49,6 +49,7 @@ in
       after = [ "network-online.target" ];
 
       path = with pkgs; [
+        config.services.mihomo.package
         curl
         coreutils
         findutils
@@ -86,7 +87,8 @@ in
         tmp="$(mktemp "$cfg_dir/.config.yaml.tmp.XXXXXX")"
         trap 'rm -f "$tmp"' EXIT
 
-        curl --fail --location --silent --show-error \
+        curl --http1.1 \
+          --fail --location --silent --show-error \
           --connect-timeout 10 \
           --max-time 60 \
           --retry 5 \
@@ -97,13 +99,14 @@ in
         [ -s "$tmp" ] || err "downloaded subscription config is empty"
 
         yq -i '${patchExpr}' "$tmp" || err "failed to patch subscription config"
+        mihomo -t -d "$cfg_dir" -f "$tmp" || err "downloaded config failed validation"
 
         chmod 600 "$tmp" || err "failed to set config permissions"
         chown root:root "$tmp" || err "failed to set config ownership"
 
         mv -f "$tmp" "$cfg" || err "failed to replace config"
 
-        ${pkgs.systemd}/bin/systemctl try-restart mihomo.service || true
+        systemctl restart mihomo.service
       '';
     };
   };

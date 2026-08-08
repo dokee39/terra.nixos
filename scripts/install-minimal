@@ -1,18 +1,9 @@
-set -euo pipefail
-
-usage() {
-  printf 'Usage: install-minimal HOSTNAME USERNAME\n' >&2
-}
-
 die() {
   printf 'install-minimal: %s\n' "$1" >&2
   exit 1
 }
 
-if (( $# != 2 )); then
-  usage
-  exit 2
-fi
+(( $# == 2 )) || die "usage: install-minimal HOSTNAME USERNAME"
 
 hostName="$1"
 userName="$2"
@@ -21,38 +12,28 @@ if (( EUID != 0 )); then
   die "must run as root"
 fi
 
-if [[ ! "$hostName" =~ ^[a-zA-Z0-9][a-zA-Z0-9-]*$ ]]; then
-  die "invalid hostname: $hostName"
-fi
-
-if [[ ! "$userName" =~ ^[a-z_][a-z0-9_-]*$ ]]; then
-  die "invalid username: $userName"
-fi
+installProxy="${http_proxy:-}"
+[[ -n "$installProxy" ]] || die "http_proxy is not set"
 
 mountpoint -q /mnt || die "/mnt is not mounted"
-if [[ -d /sys/firmware/efi ]] && ! mountpoint -q /mnt/boot; then
-  die "/mnt/boot is not mounted on this UEFI system"
-fi
+[[ -d /sys/firmware/efi ]] || die "only UEFI systems are supported"
+mountpoint -q /mnt/boot || die "/mnt/boot is not mounted"
+mountpoint -q /mnt/home || die "/mnt/home is not mounted"
 
-if [[ -e "/mnt/home/$userName/.config/nixos" ]]; then
-  die "target repository already exists: /mnt/home/$userName/.config/nixos"
-fi
-
-workDir="$(mktemp -d)"
-trap 'rm -rf "$workDir"' EXIT
-repoDir="$workDir/terra.nixos"
+repoDir="/mnt/etc/nixos"
 hostDir="$repoDir/hosts/$hostName"
 
+mkdir -p /mnt/etc
+
 printf 'Cloning repository...\n'
-git clone --depth=1 https://github.com/dokee39/terra.nixos.git "$repoDir"
+git clone https://github.com/dokee39/terra.nixos.git "$repoDir"
 
-if [[ -e "$hostDir" ]]; then
-  die "host already exists in repository: $hostName"
-fi
-
-mkdir -p "$hostDir"
+mkdir "$hostDir"
 cp "$repoDir/templates/minimal.nix" "$hostDir/default.nix"
-sed -i "s/\"user_name\"/\"$userName\"/" "$hostDir/default.nix"
+sed -i \
+  -e "s/\"user_name\"/\"$userName\"/" \
+  -e "s|\"install_proxy\"|\"$installProxy\"|" \
+  "$hostDir/default.nix"
 
 printf 'Generating hardware configuration...\n'
 nixos-generate-config \
@@ -60,37 +41,26 @@ nixos-generate-config \
   --show-hardware-config \
   > "$hostDir/hardware.nix"
 
+git -C "$repoDir" add -- "hosts/$hostName"
+
 printf 'Installing NixOS...\n'
 nixos-install \
   --root /mnt \
   --flake "path:$repoDir#$hostName"
 
-printf 'Copying repository to target system...\n'
-targetRepo="/mnt/etc/nixos"
-rm -rf "$targetRepo"
-cp -a "$repoDir" "$targetRepo"
-
-userConfig="/mnt/home/$userName/.config/nixos"
-mkdir -p "$(dirname "$userConfig")"
-ln -s /etc/nixos "$userConfig"
-
 nixos-enter --root /mnt -c \
-  "chown -R $userName:$userName /etc/nixos"
+  "install -d -o $userName -g users /home/$userName/.config &&
+   install -d -m 0700 -o $userName -g users /home/$userName/.ssh &&
+   ln -s /etc/nixos /home/$userName/.config/nixos &&
+   chown -R $userName:users /etc/nixos"
+
+printf 'Generating SSH key for %s...\n' "$userName"
+nixos-enter --root /mnt -c \
+  "runuser -u $userName -- ssh-keygen -q -t ed25519 -N '' \
+     -C $userName@$hostName \
+     -f /home/$userName/.ssh/id_ed25519"
 
 printf 'Set password for %s...\n' "$userName"
 nixos-enter --root /mnt -c "passwd $userName"
 
-cat <<EOF
-
-Installation complete.
-
-After reboot:
-  cp ~/.config/nixos/templates/default.nix \\
-    ~/.config/nixos/hosts/$hostName/default.nix
-  ${EDITOR:-vi} ~/.config/nixos/hosts/$hostName/default.nix
-
-Before enabling secrets:
-  1. Add new machine SSH host key to secrets/keys.nix.
-  2. Re-encrypt required secrets.
-  3. Run nixos-rebuild with the $hostName configuration.
-EOF
+printf '\nInstallation complete. Reboot, then follow /etc/nixos/README.md.\n'

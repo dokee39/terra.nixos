@@ -24,6 +24,8 @@
   home.packages = with pkgs; [
     pkg-config
 
+    tokei
+
     # C/C++
     clang
     clang-tools

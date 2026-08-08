@@ -50,7 +50,7 @@ in {
         "i2c"
       ];
       shell = pkgs.fish;
-      openssh.authorizedKeys.keys = sshKeys.all;
+      openssh.authorizedKeys.keys = sshKeys.users;
     };
 
     time.timeZone = "Asia/Shanghai";

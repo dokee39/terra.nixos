@@ -147,7 +147,6 @@
     apps.x86_64-linux.install-minimal = let
       pkgs = import inputs.nixpkgs {
         system = "x86_64-linux";
-        config.allowUnfree = true;
       };
       installMinimal = pkgs.writeShellApplication {
         name = "install-minimal";
