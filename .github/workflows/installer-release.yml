@@ -1,0 +1,48 @@
+name: installer-release
+
+on:
+  schedule:
+    - cron: "23 3 1 * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: installer-release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: cachix/install-nix-action@v31
+        with:
+          extra_nix_config: |
+            access-tokens = github.com=${{ github.token }}
+
+      - name: Build installer ISO
+        run: nix build .#installer-iso -L
+
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          iso="$(readlink -f result/iso/*.iso)"
+          name="${iso##*/}"
+          checksum="$RUNNER_TEMP/$name.sha256"
+          date="$(date -u +%Y-%m-%d)"
+          tag="installer-$date-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+
+          (cd "$(dirname "$iso")" && sha256sum "$name") > "$checksum"
+
+          gh release create "$tag" \
+            "$iso" \
+            "$checksum" \
+            --target "$GITHUB_SHA" \
+            --title "NixOS installer $date" \
+            --notes "Built from commit $GITHUB_SHA."

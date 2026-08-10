@@ -11,8 +11,10 @@ in
     };
   };
 
-  config = lib.mkIf config.terra.secrets.enable {
+  config = {
     age.secrets.mihomo-subscription-url.file = ../../secrets/mihomo-subscription-url.age;
+
+    environment.systemPackages = [ pkgs.clashtui ];
 
     services.mihomo = {
       enable = true;

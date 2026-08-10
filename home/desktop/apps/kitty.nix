@@ -1,4 +1,4 @@
-{ self, config, pkgs, ... }:
+{ config, pkgs, ... }:
 
 {
   programs.kitty = {
@@ -38,5 +38,5 @@
     };
   };
 
-  xdg.configFile."kitty/kitty.app.png".source = "${self}/assets/rose-pine-kitty-icon.png";
+  xdg.configFile."kitty/kitty.app.png".source = ./kitty-icon.png;
 }

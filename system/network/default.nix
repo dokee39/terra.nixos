@@ -21,7 +21,7 @@
       enable = true;
       settings.Settings.AutoConnect = true;
     };
-    proxy = lib.mkIf config.terra.secrets.enable {
+    proxy = {
       default = lib.mkDefault "http://localhost:7890";
       noProxy = lib.mkDefault "127.0.0.1,localhost,0.0.0.0,::1,api.noctalia.dev";
     };

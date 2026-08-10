@@ -3,7 +3,6 @@
 
   terra = {
     userName = "user_name";
-    secrets.enable = true;
 
     boot.grubTimeOut = 1;
 

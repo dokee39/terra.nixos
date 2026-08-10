@@ -22,12 +22,6 @@ in {
       type = lib.types.str;
       description = "Host name";
     };
-    secrets.enable = lib.mkOption {
-      type = lib.types.bool;
-      default = true;
-      description = "Enable services that require encrypted secrets";
-    };
-
     system = lib.mkOption {
       type = lib.types.str;
       readOnly = true;

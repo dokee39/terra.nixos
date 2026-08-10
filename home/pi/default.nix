@@ -53,7 +53,6 @@ in
         "npm:pi-rtk-optimizer"
         "npm:pi-cache-optimizer"
         "npm:@narumitw/pi-usage"
-        "npm:@diegopetrucci/pi-openai-fast"
       ];
 
       theme = "rose-pine";

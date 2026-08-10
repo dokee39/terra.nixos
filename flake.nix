@@ -87,85 +87,43 @@
   };
 
   outputs = inputs: let
-    fetchFlake = name: src: let
-      srcPath = fetchTree {
-        type = "github";
-        owner = src.owner;
-        repo = src.repo;
-        rev = src.rev;
-        narHash = src.hash;
-      };
-      raw = import (srcPath + "/flake.nix");
-      resolvedInputs = builtins.mapAttrs
-        (n: _: builtins.getAttr n inputs)
-        raw.inputs;
-    in raw.outputs (resolvedInputs // { self = fetchFlake name src; });
-
-    sourcesRaw = builtins.fromJSON (builtins.readFile ./sources.json);
-    sources = builtins.mapAttrs
-      (name: src:
-        if src.type == "flake"
-        then fetchFlake name src
-        else src)
-      sourcesRaw;
-
     lib = inputs.nixpkgs.lib;
-    hosts = builtins.attrNames (builtins.readDir ./hosts);
-    mkHost = hostName: lib.nixosSystem {
-      modules = [
-        ./hosts/${hostName}
-        { terra.hostName = hostName; }
-        ./system
-        inputs.agenix.nixosModules.default
-        inputs.home-manager.nixosModules.home-manager
-        ({ config, ... }: let
-          pkgs-stable = import inputs.nixpkgs-stable {
-            inherit (config.nixpkgs.hostPlatform) system;
-            config.allowUnfree = true;
-          };
-        in {
-          _module.args = {
-            inherit inputs sources pkgs-stable;
-            inherit (inputs) self;
-          };
-          home-manager = {
-            useGlobalPkgs = true;
-            useUserPackages = true;
-            extraSpecialArgs = {
-              inherit inputs sources pkgs-stable;
-              inherit (inputs) self;
-            };
-            sharedModules = [
-              inputs.agenix.homeManagerModules.default
-            ];
-            users.${config.terra.userName} = import ./home;
-          };
-        })
+    system = "x86_64-linux";
+    pkgs = inputs.nixpkgs.legacyPackages.${system};
+
+    sources = import ./sources.nix { inherit inputs; };
+    mkHost = import ./hosts { inherit inputs sources; };
+    hostNames = builtins.attrNames (
+      lib.filterAttrs
+        (_: type: type == "directory")
+        (builtins.readDir ./hosts)
+    );
+
+    installerSystem = import ./installer { inherit inputs; };
+
+    initConfig = pkgs.writeShellApplication {
+      name = "init-config";
+      runtimeInputs = with pkgs; [
+        coreutils
+        git
+        inetutils
+        nixos-install-tools
       ];
+      text = builtins.readFile ./scripts/init-config;
     };
   in {
-    apps.x86_64-linux.install-minimal = let
-      pkgs = import inputs.nixpkgs {
-        system = "x86_64-linux";
-      };
-      installMinimal = pkgs.writeShellApplication {
-        name = "install-minimal";
-        runtimeInputs = with pkgs; [
-          coreutils
-          git
-          gnused
-          nix
-          nixos-install-tools
-          util-linux
-        ];
-        text = builtins.readFile ./scripts/install-minimal;
-      };
-    in {
-      type = "app";
-      program = "${installMinimal}/bin/install-minimal";
-      meta.description = "Install a minimal Terra NixOS system";
+    nixosConfigurations = lib.genAttrs hostNames mkHost;
+
+    packages.${system} = {
+      installer-iso = installerSystem.config.system.build.isoImage;
     };
 
-    nixosConfigurations = lib.genAttrs hosts mkHost;
+    apps.${system} = {
+      init-config = {
+        type = "app";
+        program = lib.getExe initConfig;
+        meta.description = "Initialize Terra NixOS configuration";
+      };
+    };
   };
 }

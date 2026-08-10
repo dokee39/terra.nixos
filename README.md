@@ -1,13 +1,16 @@
-## Install from a NixOS live USB
+## Build installer ISO
+
+Build on any x86_64 Linux system with Nix:
+
+```bash
+nix build .#installer-iso
+ls result/iso
+```
+
+## Install from the live USB
 
 ```bash
 sudo -i
-
-# Wi-Fi only
-nmtui
-
-timedatectl
-
 lsblk
 fdisk /dev/<target-disk>
 ```
@@ -20,37 +23,37 @@ Use GPT for a new partition table:
 /home   remaining  Linux filesystem
 ```
 
-Skip `/boot` when reusing an existing EFI system partition.
-
-Check partition names before formatting:
+Skip creating a new EFI partition when reusing an existing one. Check partition names before formatting:
 
 ```bash
 lsblk
 
 # Only for a newly created EFI partition
-mkfs.fat -F 32 /dev/<efi-partition>
+mkfs.fat -F 32 -n NIXOS_BOOT /dev/<efi-partition>
 
-mkfs.ext4 /dev/<root-partition>
-mkfs.ext4 /dev/<home-partition>
+# For an existing FAT EFI partition without a label
+fatlabel /dev/<efi-partition> NIXOS_BOOT
+
+mkfs.ext4 -L nixos-root /dev/<root-partition>
+mkfs.ext4 -L nixos-home /dev/<home-partition>
 ```
 
-Mount filesystems and run installer:
+Mount filesystems and install the system already contained in the ISO:
 
 ```bash
 mount /dev/<root-partition> /mnt
 mount --mkdir /dev/<efi-partition> /mnt/boot
 mount --mkdir /dev/<home-partition> /mnt/home
 
-export http_proxy=http://<lan-device-ip>:<port>                                
-export https_proxy="$http_proxy" 
-nix --extra-experimental-features "nix-command flakes" run github:dokee39/terra.nixos#install-minimal -- <hostname> <username>
-
+install-bootstrap <hostname> <username>
 reboot
 ```
 
-## After reboot
+Installation does not require network access.
 
-Reconnect Wi-Fi if needed:
+## Connect to the installed system
+
+Connect Wi-Fi if needed:
 
 ```bash
 impala
@@ -62,29 +65,48 @@ Continue locally or connect from a trusted machine:
 ssh <username>@<hostname>.local
 ```
 
-Print host and user public keys:
+Install a Mihomo configuration and start the service:
+
+```bash
+sudo install -Dm600 /path/to/config.yaml \
+  /var/lib/private/mihomo/config.yaml
+sudo systemctl restart mihomo
+
+clashtui
+```
+
+## Rekey secrets
+
+On the new machine, print host and user public keys:
 
 ```bash
 cat /etc/ssh/ssh_host_ed25519_key.pub
 cat ~/.ssh/id_ed25519.pub
 ```
 
-## Rekey secrets
-
-On a trusted machine, add host key to `hosts` and user key to `users`:
+On a trusted machine, add host key to `hosts` and user key to `users`, then rekey and push:
 
 ```bash
-cd ~/.config/nixos
-$EDITOR secrets/keys.nix
-RULES=secrets/secrets.nix agenix -r -i <private-key>
+cd ~/.config/nixos/secrets
+$EDITOR keys.nix
+agenix -r
+git add -- keys.nix *.age
+git commit -m "feat: rekey secrets for <hostname>"
+git push
 ```
 
-Sync `secrets/keys.nix` and `secrets/*.age` back to new machine.
+## Initialize the configuration repository
 
-## Enable default configuration
+On the new machine:
 
 ```bash
-cp ~/.config/nixos/templates/default.nix \
+nix run github:dokee39/terra.nixos#init-config
+```
+
+## Enable the full configuration
+
+```bash
+cp ~/.config/nixos/hosts/host-template.nix \
   ~/.config/nixos/hosts/<hostname>/default.nix
 
 sed -i 's/"user_name"/"<username>"/' \

@@ -1,0 +1,65 @@
+die() {
+  printf 'install-bootstrap: %s\n' "$1" >&2
+  exit 1
+}
+
+(( $# == 2 )) || die "usage: install-bootstrap HOSTNAME USERNAME"
+
+hostName="$1"
+userName="$2"
+
+[[ "$hostName" =~ ^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?$ ]] ||
+  die "invalid hostname: $hostName"
+[[ "$userName" =~ ^[a-z_][a-z0-9_-]{0,30}$ ]] ||
+  die "invalid username: $userName"
+
+(( EUID == 0 )) || die "must run as root"
+[[ -d /sys/firmware/efi ]] || die "only UEFI systems are supported"
+
+check_mount() {
+  local path="$1"
+  local label="$2"
+  local fsType="$3"
+  local source actualLabel actualFsType
+
+  mountpoint -q "$path" || die "$path is not mounted"
+  source="$(findmnt -n -o SOURCE --target "$path")"
+  actualLabel="$(lsblk -dn -o LABEL "$source")"
+  actualFsType="$(findmnt -n -o FSTYPE --target "$path")"
+
+  [[ "$actualLabel" == "$label" ]] ||
+    die "$path must use filesystem label $label"
+  [[ "$actualFsType" == "$fsType" ]] ||
+    die "$path must use filesystem type $fsType"
+}
+
+check_mount /mnt nixos-root ext4
+check_mount /mnt/home nixos-home ext4
+check_mount /mnt/boot NIXOS_BOOT vfat
+
+printf 'Installing NixOS...\n'
+nixos-install \
+  --root /mnt \
+  --system "$targetSystem" \
+  --no-channel-copy \
+  --no-root-password
+
+printf '%s\n' "$hostName" > /mnt/etc/hostname
+
+nixos-enter --root /mnt -c \
+  "useradd --create-home --gid users --groups wheel,networkmanager \
+     --shell /run/current-system/sw/bin/fish $userName"
+
+nixos-enter --root /mnt -c \
+  "install -d -m 0700 -o $userName -g users /home/$userName/.ssh"
+
+printf 'Generating SSH key for %s...\n' "$userName"
+nixos-enter --root /mnt -c \
+  "runuser -u $userName -- ssh-keygen -q -t ed25519 -N '' \
+     -C $userName@$hostName \
+     -f /home/$userName/.ssh/id_ed25519"
+
+printf 'Set password for %s...\n' "$userName"
+nixos-enter --root /mnt -c "passwd $userName"
+
+printf '\nInstallation complete. Reboot to continue.\n'
