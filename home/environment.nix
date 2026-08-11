@@ -18,7 +18,23 @@
 
     SCONSFLAGS = "-j8";
     MAKEFLAGS = "-j";
-  } // lib.optionalAttrs (osConfig.terra.desktop.enable && osConfig.terra.gpu.internal.nvidiaEnabled) {
+  } // lib.optionalAttrs (
+    osConfig.terra.desktop.enable
+    && osConfig.terra.gpu.internal.igpuEnabled
+    && osConfig.terra.gpu.igpu.vendor == "intel"
+  ) {
+    LIBVA_DRIVER_NAME = "iHD";
+  } // lib.optionalAttrs (
+    osConfig.terra.desktop.enable
+    && osConfig.terra.gpu.internal.igpuEnabled
+    && osConfig.terra.gpu.igpu.vendor == "amd"
+  ) {
+    LIBVA_DRIVER_NAME = "radeonsi";
+  } // lib.optionalAttrs (
+    osConfig.terra.desktop.enable
+    && !osConfig.terra.gpu.internal.igpuEnabled
+    && osConfig.terra.gpu.internal.nvidiaEnabled
+  ) {
     LIBVA_DRIVER_NAME = "nvidia";
     NVD_BACKEND = "direct";
   } // lib.optionalAttrs osConfig.terra.desktop.enable {

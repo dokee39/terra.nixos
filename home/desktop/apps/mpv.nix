@@ -1,8 +1,15 @@
-{ pkgs, config, ... }:
+{ pkgs, config, lib, osConfig, ... }:
 
-{
+let
+  gpu = osConfig.terra.gpu;
+in {
   programs.mpv = {
     enable = true;
+    extraMakeWrapperArgs = lib.optionals gpu.internal.igpuEnabled [
+      "--set-default"
+      "VK_LOADER_DRIVERS_SELECT"
+      (if gpu.igpu.vendor == "intel" then "*intel*" else "*radeon*")
+    ];
     scripts = with pkgs.mpvScripts; [
       uosc
       thumbfast
@@ -10,7 +17,8 @@
     ];
     defaultProfiles = [ "high-quality" ];
     config = {
-      hwdec = "nvdec-copy";
+      gpu-api = "vulkan";
+      hwdec = if gpu.internal.igpuEnabled then "vaapi" else "nvdec-copy";
 
       screenshot-directory = "~/Downloads";
       screenshot-template = "%F-%{estimated-frame-number:%P}";

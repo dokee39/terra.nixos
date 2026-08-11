@@ -20,11 +20,14 @@
     };
 
     gpu = {
-      intelIgpu.enable = false;
+      igpu = {
+        enable = true;
+        vendor = "intel";
+        busId = "PCI:0@0:2:0";
+      };
       nvidia = {
         enable = true;
-        prime.intelBusId = null;
-        prime.nvidiaBusId = null;
+        busId = "PCI:1@0:0:0";
       };
     };
 

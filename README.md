@@ -94,7 +94,8 @@ cat /etc/ssh/ssh_host_ed25519_key.pub
 cat ~/.ssh/id_ed25519.pub
 ```
 
-On a trusted machine, add host key to `hosts` and user key to `users`, then rekey and push:
+On a trusted machine, add both keys to `secrets/keys.nix`, add the user key to
+GitHub, then rekey and push:
 
 ```bash
 cd ~/.config/nixos
@@ -118,7 +119,8 @@ git push
 On the new machine:
 
 ```bash
-git clone https://github.com/dokee39/terra.nixos.git ~/nixos-config
+ssh -T git@github.com
+git clone git@github.com:dokee39/terra.nixos.git ~/nixos-config
 sudo cp -a ~/nixos-config/. /etc/nixos/
 sudo chown -R "$USER":users /etc/nixos
 

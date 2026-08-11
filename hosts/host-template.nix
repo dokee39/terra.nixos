@@ -22,11 +22,14 @@
     };
 
     gpu = {
-      intelIgpu.enable = false;
+      igpu = {
+        enable = false;
+        vendor = null;
+        busId = null;
+      };
       nvidia = {
         enable = false;
-        prime.intelBusId = null;
-        prime.nvidiaBusId = null;
+        busId = null;
       };
     };
 

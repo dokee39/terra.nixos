@@ -1,30 +1,38 @@
-{ lib, config, ... }:
+{ lib, config, pkgs, ... }:
 
 let
   cfg = config.terra.gpu;
   gpu = cfg.internal;
+  igpuDriver = if cfg.igpu.vendor == "intel" then "modesetting" else "amdgpu";
 in {
   options.terra = {
     gpu = {
-      intelIgpu.enable = lib.mkEnableOption "Intel integrated GPU";
+      igpu = {
+        enable = lib.mkEnableOption "integrated GPU";
+
+        vendor = lib.mkOption {
+          type = lib.types.nullOr (lib.types.enum [ "intel" "amd" ]);
+          default = null;
+          example = "intel";
+          description = "Integrated GPU vendor.";
+        };
+
+        busId = lib.mkOption {
+          type = lib.types.nullOr lib.types.str;
+          default = null;
+          example = "PCI:0@0:2:0";
+          description = "Integrated GPU PCI bus ID used for NVIDIA PRIME offload.";
+        };
+      };
 
       nvidia = {
         enable = lib.mkEnableOption "NVIDIA GPU";
 
-        prime = {
-          intelBusId = lib.mkOption {
-            type = lib.types.nullOr lib.types.str;
-            default = null;
-            example = "PCI:0@0:2:0";
-            description = "Intel iGPU PCI bus ID used for NVIDIA PRIME offload.";
-          };
-
-          nvidiaBusId = lib.mkOption {
-            type = lib.types.nullOr lib.types.str;
-            default = null;
-            example = "PCI:1@0:0:0";
-            description = "NVIDIA GPU PCI bus ID used for NVIDIA PRIME offload.";
-          };
+        busId = lib.mkOption {
+          type = lib.types.nullOr lib.types.str;
+          default = null;
+          example = "PCI:1@0:0:0";
+          description = "NVIDIA GPU PCI bus ID used for PRIME offload.";
         };
       };
     };
@@ -36,7 +44,7 @@ in {
         internal = true;
       };
 
-      intelIgpuEnabled = lib.mkOption {
+      igpuEnabled = lib.mkOption {
         type = lib.types.bool;
         readOnly = true;
         internal = true;
@@ -59,23 +67,27 @@ in {
   config = lib.mkMerge [
     {
       terra.gpu.internal = {
-        enabled = cfg.intelIgpu.enable || cfg.nvidia.enable;
-        intelIgpuEnabled = cfg.intelIgpu.enable;
+        enabled = cfg.igpu.enable || cfg.nvidia.enable;
+        igpuEnabled = cfg.igpu.enable;
         nvidiaEnabled = cfg.nvidia.enable;
-        primeOffloadEnabled = cfg.intelIgpu.enable && cfg.nvidia.enable;
+        primeOffloadEnabled = cfg.igpu.enable && cfg.nvidia.enable;
       };
 
       assertions = [
         {
-          assertion = (!config.terra.desktop.enable) || cfg.internal.enabled;
+          assertion = (!config.terra.desktop.enable) || gpu.enabled;
           message = "A GPU must be enabled when terra.desktop.enable is true.";
         }
         {
-          assertion = (!cfg.internal.primeOffloadEnabled) || (
-            cfg.nvidia.prime.intelBusId != null && 
-            cfg.nvidia.prime.nvidiaBusId != null
+          assertion = (!gpu.igpuEnabled) || cfg.igpu.vendor != null;
+          message = "An iGPU vendor must be set when the integrated GPU is enabled.";
+        }
+        {
+          assertion = (!gpu.primeOffloadEnabled) || (
+            cfg.igpu.busId != null &&
+            cfg.nvidia.busId != null
           );
-          message = "Both PRIME bus IDs must be set when Intel iGPU and NVIDIA are enabled together.";
+          message = "Both GPU bus IDs must be set when the iGPU and NVIDIA GPU are enabled together.";
         }
       ];
     }
@@ -85,6 +97,10 @@ in {
         enable = true;
         enable32Bit = true;
       };
+    })
+
+    (lib.mkIf (gpu.igpuEnabled && cfg.igpu.vendor == "intel") {
+      hardware.graphics.extraPackages = [ pkgs.intel-media-driver ];
     })
 
     (lib.mkIf gpu.nvidiaEnabled {
@@ -97,14 +113,17 @@ in {
     })
 
     (lib.mkIf gpu.primeOffloadEnabled {
-      services.xserver.videoDrivers = [ "modesetting" "nvidia" ];
+      services.xserver.videoDrivers = [ igpuDriver "nvidia" ];
 
       hardware.nvidia.powerManagement.finegrained = true;
       hardware.nvidia.prime = {
         offload.enable = true;
         offload.enableOffloadCmd = true;
-        intelBusId = cfg.nvidia.prime.intelBusId;
-        nvidiaBusId = cfg.nvidia.prime.nvidiaBusId;
+        nvidiaBusId = cfg.nvidia.busId;
+      } // lib.optionalAttrs (cfg.igpu.vendor == "intel") {
+        intelBusId = cfg.igpu.busId;
+      } // lib.optionalAttrs (cfg.igpu.vendor == "amd") {
+        amdgpuBusId = cfg.igpu.busId;
       };
     })
   ];
