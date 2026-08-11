@@ -11,7 +11,7 @@ ls result/iso
 
 ```bash
 sudo -i
-lsblk
+lsblk -f
 fdisk /dev/<target-disk>
 ```
 
@@ -26,8 +26,6 @@ Use GPT for a new partition table:
 Skip creating a new EFI partition when reusing an existing one. Check partition names before formatting:
 
 ```bash
-lsblk
-
 # Only for a newly created EFI partition
 mkfs.fat -F 32 -n NIXOS_BOOT /dev/<efi-partition>
 
@@ -51,6 +49,17 @@ reboot
 
 Installation does not require network access.
 
+To update an existing bootstrap from a newer live USB, mount the existing
+filesystems without formatting them, then run:
+
+```bash
+install-bootstrap
+reboot
+```
+
+This updates only the installed NixOS generation and preserves hostname, users,
+passwords, SSH keys, `hardware.nix`, and `/home`.
+
 ## Connect to the installed system
 
 Connect Wi-Fi if needed:
@@ -59,23 +68,24 @@ Connect Wi-Fi if needed:
 impala
 ```
 
-Continue locally or connect from a trusted machine:
+Transfer files and connect from a trusted machine:
 
 ```bash
+sudo scp /path/to/config.yaml <username>@<hostname>.local:~/config.yaml
+scp <username>@<hostname>.local:~/hardware.nix /tmp/hardware.nix
 ssh <username>@<hostname>.local
 ```
 
 Install a Mihomo configuration and start the service:
 
 ```bash
-sudo install -Dm600 /path/to/config.yaml \
-  /var/lib/private/mihomo/config.yaml
+sudo install -Dm600 ~/config.yaml /var/lib/private/mihomo/config.yaml
 sudo systemctl restart mihomo
 
 clashtui
 ```
 
-## Rekey secrets
+## Prepare the full configuration
 
 On the new machine, print host and user public keys:
 
@@ -87,36 +97,35 @@ cat ~/.ssh/id_ed25519.pub
 On a trusted machine, add host key to `hosts` and user key to `users`, then rekey and push:
 
 ```bash
-cd ~/.config/nixos/secrets
-$EDITOR keys.nix
-agenix -r
-git add -- keys.nix *.age
-git commit -m "feat: rekey secrets for <hostname>"
+cd ~/.config/nixos
+git pull --ff-only
+
+mkdir hosts/<hostname>
+cp hosts/host-template.nix hosts/<hostname>/default.nix
+cp /tmp/hardware.nix hosts/<hostname>
+
+$EDITOR # secrets/keys.nix hosts/<hostname>/default.nix ...
+
+(cd secrets && agenix -r)
+
+git add .
+git commit -m "feat: add new host: <hostname>"
 git push
 ```
 
-## Initialize the configuration repository
+## Initialize and enable the full configuration
 
 On the new machine:
 
 ```bash
-nix run github:dokee39/terra.nixos#init-config
-```
+git clone https://github.com/dokee39/terra.nixos.git ~/nixos-config
+sudo cp -a ~/nixos-config/. /etc/nixos/
+sudo chown -R "$USER":users /etc/nixos
 
-## Enable the full configuration
+mkdir -p ~/.config
+ln -s /etc/nixos ~/.config/nixos
 
-```bash
-cp ~/.config/nixos/hosts/host-template.nix \
-  ~/.config/nixos/hosts/<hostname>/default.nix
+sudo nixos-rebuild switch --flake /etc/nixos#<hostname>
 
-sed -i 's/"user_name"/"<username>"/' \
-  ~/.config/nixos/hosts/<hostname>/default.nix
-
-$EDITOR ~/.config/nixos/hosts/<hostname>/default.nix
-git -C ~/.config/nixos add -- hosts/<hostname>
-
-nix flake check ~/.config/nixos
-
-sudo nixos-rebuild switch \
-  --flake ~/.config/nixos#<hostname>
+rm -v -rf ~/nixos-config ~/config.yaml ~/hardware.nix
 ```

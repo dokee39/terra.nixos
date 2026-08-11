@@ -49,10 +49,6 @@
       init.defaultBranch = "main";
     };
   };
-  programs.gh = {
-    enable = true;
-    settings.git_protocol = "ssh";
-  };
 
   services.udiskie.enable = true;
 

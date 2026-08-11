@@ -89,7 +89,6 @@
   outputs = inputs: let
     lib = inputs.nixpkgs.lib;
     system = "x86_64-linux";
-    pkgs = inputs.nixpkgs.legacyPackages.${system};
 
     sources = import ./sources.nix { inherit inputs; };
     mkHost = import ./hosts { inherit inputs sources; };
@@ -100,30 +99,10 @@
     );
 
     installerSystem = import ./installer { inherit inputs; };
-
-    initConfig = pkgs.writeShellApplication {
-      name = "init-config";
-      runtimeInputs = with pkgs; [
-        coreutils
-        git
-        inetutils
-        nixos-install-tools
-      ];
-      text = builtins.readFile ./scripts/init-config;
-    };
   in {
     nixosConfigurations = lib.genAttrs hostNames mkHost;
 
-    packages.${system} = {
-      installer-iso = installerSystem.config.system.build.isoImage;
-    };
-
-    apps.${system} = {
-      init-config = {
-        type = "app";
-        program = lib.getExe initConfig;
-        meta.description = "Initialize Terra NixOS configuration";
-      };
-    };
+    packages.${system}.installer-iso =
+      installerSystem.config.system.build.isoImage;
   };
 }

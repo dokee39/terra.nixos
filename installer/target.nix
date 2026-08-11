@@ -3,6 +3,7 @@
 {
   imports = [
     (modulesPath + "/profiles/minimal.nix")
+    ../system/network/common.nix
   ];
 
   system.stateVersion = "25.11";
@@ -33,36 +34,18 @@
     };
   };
 
-  networking = {
-    hostName = "";
-    networkmanager = {
-      enable = true;
-      wifi.backend = "iwd";
-    };
-  };
+  networking.hostName = "";
 
-  services.avahi = {
-    enable = true;
-    publish = {
-      enable = true;
-      addresses = true;
-    };
-  };
+  services.openssh.settings.PasswordAuthentication = true;
 
-  services.openssh = {
-    enable = true;
-    settings = {
-      PermitRootLogin = "no";
-      PasswordAuthentication = true;
-    };
-  };
-
-  programs.fish.enable = true;
+  systemd.services.mihomo.unitConfig.ConditionPathExists =
+    "/var/lib/private/mihomo/config.yaml";
 
   environment.systemPackages = with pkgs; [
     git
-    impala
+    neovim
   ];
+  environment.sessionVariables.EDITOR = "nvim";
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 }

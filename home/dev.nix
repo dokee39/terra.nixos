@@ -24,6 +24,8 @@
   home.packages = with pkgs; [
     pkg-config
 
+    gh
+
     tokei
 
     # C/C++

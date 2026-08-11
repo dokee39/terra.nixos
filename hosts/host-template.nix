@@ -43,11 +43,6 @@
     mihomo.tunDevice = "tun0";
   };
 
-  # networking.proxy = {
-  #   default = "http://localhost:7890";
-  #   noProxy = "127.0.0.1,localhost,0.0.0.0,::1";
-  # };
-
   # system.autoUpgrade = {
   #   enable = false;
   #   flake = "github:dokee39/terra.nixos#${config.terra.hostName}";

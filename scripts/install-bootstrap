@@ -3,15 +3,24 @@ die() {
   exit 1
 }
 
-(( $# == 2 )) || die "usage: install-bootstrap HOSTNAME USERNAME"
+updateOnly=0
+case $# in
+  0)
+    updateOnly=1
+    ;;
+  2)
+    hostName="$1"
+    userName="$2"
 
-hostName="$1"
-userName="$2"
-
-[[ "$hostName" =~ ^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?$ ]] ||
-  die "invalid hostname: $hostName"
-[[ "$userName" =~ ^[a-z_][a-z0-9_-]{0,30}$ ]] ||
-  die "invalid username: $userName"
+    [[ "$hostName" =~ ^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?$ ]] ||
+      die "invalid hostname: $hostName"
+    [[ "$userName" =~ ^[a-z_][a-z0-9_-]{0,30}$ ]] ||
+      die "invalid username: $userName"
+    ;;
+  *)
+    die "usage: install-bootstrap [HOSTNAME USERNAME]"
+    ;;
+esac
 
 (( EUID == 0 )) || die "must run as root"
 [[ -d /sys/firmware/efi ]] || die "only UEFI systems are supported"
@@ -37,18 +46,41 @@ check_mount /mnt nixos-root ext4
 check_mount /mnt/home nixos-home ext4
 check_mount /mnt/boot NIXOS_BOOT vfat
 
-printf 'Installing NixOS...\n'
+if (( updateOnly )); then
+  [[ -e /mnt/etc/NIXOS ]] || die "/mnt is not an existing NixOS system"
+  nixos-enter --root /mnt -c \
+    "test -x /nix/var/nix/profiles/system/bin/switch-to-configuration" ||
+    die "installed system has no valid system profile"
+  printf 'Updating NixOS...\n'
+else
+  printf 'Installing NixOS...\n'
+fi
+
 nixos-install \
   --root /mnt \
   --system "$targetSystem" \
   --no-channel-copy \
-  --no-root-password
+  --no-root-password \
+  --option substituters ""
+
+if (( updateOnly )); then
+  printf '\nUpdate complete. Reboot to continue.\n'
+  exit 0
+fi
 
 printf '%s\n' "$hostName" > /mnt/etc/hostname
 
 nixos-enter --root /mnt -c \
   "useradd --create-home --gid users --groups wheel,networkmanager \
-     --shell /run/current-system/sw/bin/fish $userName"
+     --shell /run/current-system/sw/bin/bash $userName"
+
+printf 'Generating hardware configuration...\n'
+nixos-generate-config \
+  --root /mnt \
+  --show-hardware-config \
+  > "/mnt/home/$userName/hardware.nix"
+nixos-enter --root /mnt -c \
+  "chown $userName:users /home/$userName/hardware.nix"
 
 nixos-enter --root /mnt -c \
   "install -d -m 0700 -o $userName -g users /home/$userName/.ssh"
