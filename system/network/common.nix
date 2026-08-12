@@ -35,10 +35,15 @@ in
       firewall.trustedInterfaces = [ cfg.tunDevice ];
     };
 
-    services.resolved.enable = true;
+    services.resolved = {
+      enable = true;
+      settings.Resolve.MulticastDNS = false;
+    };
 
     services.avahi = {
       enable = true;
+      ipv6 = false;
+      nssmdns4 = true;
       publish = {
         enable = true;
         addresses = true;
