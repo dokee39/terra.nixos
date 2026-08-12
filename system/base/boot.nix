@@ -19,6 +19,8 @@ in {
       enable = true;
       efiSupport = true;
       device = "nodev";
+      splashImage = null;
+      theme = pkgs.minimal-grub-theme;
     };
 
     console = {

@@ -35,4 +35,6 @@
       transmission.enable = true;
     };
   };
+
+  boot.loader.grub.useOSProber = true;
 }
