@@ -22,20 +22,13 @@
     use-xdg-base-directories = true;
   };
 
-  age.secrets.nix-github-pat.file = ../secrets/nix-github-pat.age;
+  age.secrets.nix-github-pat = {
+    file = ../secrets/nix-github-pat.age;
+    owner = config.terra.userName;
+    mode = "0400";
+  };
 
   nix.extraOptions = ''
-    !include /run/nix/access-tokens.conf
+    !include ${config.age.secrets.nix-github-pat.path}
   '';
-
-  system.activationScripts.nixAccessTokens = {
-    deps = [ "agenix" ];
-    text = ''
-      install -d -m 0755 /run/nix
-      umask 177
-      token="$(tr -d '\r\n' < ${config.age.secrets.nix-github-pat.path})"
-      printf 'access-tokens = github.com=%s\n' "$token" > /run/nix/access-tokens.conf
-      chmod 644 /run/nix/access-tokens.conf
-    '';
-  };
 }
