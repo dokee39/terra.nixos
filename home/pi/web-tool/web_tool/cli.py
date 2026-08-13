@@ -98,19 +98,24 @@ def cmd_fetch(args):
         )
         resp.raise_for_status()
         content_type = resp.headers.get("content-type", "").partition(";")[0].strip().lower()
-        if content_type and not (
-            content_type.startswith("text/")
-            or content_type == "application/xml"
-            or content_type.startswith("application/") and content_type.endswith("+xml")
-        ):
-            reason = f"unsupported content type: {content_type}"
+        resp.content = bytes(body)
+        text = resp.text
+
+        unsupported_type = (
+            content_type.startswith(("image/", "audio/", "video/", "font/", "model/"))
+            or content_type == "application/pdf"
+        )
+        if unsupported_type or "\0" in text:
+            reason = (
+                f"unsupported content type: {content_type}"
+                if unsupported_type
+                else "binary content"
+            )
             if args.json:
                 print(json.dumps({"type": "unsupported_content_type", "reason": reason}, ensure_ascii=False))
             else:
                 print(f"Warning: {reason}", file=sys.stderr)
             return
-        resp.content = bytes(body)
-        html = resp.text
     except requests.exceptions.HTTPError as e:
         status = e.response.status_code
         if args.json:
@@ -140,16 +145,19 @@ def cmd_fetch(args):
             print(f"Warning: {reason}: {args.url}", file=sys.stderr)
         return
 
-    markdown = trafilatura.extract(
-        html,
-        url=str(resp.url),
-        output_format="markdown",
-        include_comments=False,
-        include_links=True,
-        include_tables=True,
-        include_images=False,
-        with_metadata=True,
-    )
+    if content_type in ("text/html", "application/xhtml+xml"):
+        markdown = trafilatura.extract(
+            text,
+            url=str(resp.url),
+            output_format="markdown",
+            include_comments=False,
+            include_links=True,
+            include_tables=True,
+            include_images=False,
+            with_metadata=True,
+        )
+    else:
+        markdown = text.strip()
     if not markdown:
         if args.json:
             print(json.dumps({"type": "no_content", "reason": "no extractable content found"}, ensure_ascii=False))
