@@ -16,6 +16,7 @@ in
     ./services/downloads-sorter.nix
     ./services/fcitx5.nix
     ./services/pipewire.nix
+    ./services/syncthing.nix
     ./shell/clipse.nix
     ./shell/launcher.nix
     ./shell/noctalia.nix
