@@ -4,7 +4,7 @@ let
   hostName = osConfig.terra.hostName;
   deviceIds = {
     nixos-pc = "5XIVPM5-HURUR4F-OPDEXMD-M6BL5TG-7YRUWIJ-7AF7IEL-D5KHMGA-NTY5KAD";
-    nixos-laptop = null;
+    nixos-laptop = "E7UZDS7-AHDIXR2-NCCGP3R-VHC3R5Z-XOSA7C3-7HMEJFE-GWW36UI-RLOSRAS";
   };
   peers = lib.filterAttrs
     (name: id: name != hostName && id != null)
