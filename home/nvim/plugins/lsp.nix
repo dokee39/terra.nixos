@@ -88,6 +88,7 @@ in {
       };
 
       wgsl_analyzer.enable = true;
+      tinymist.enable = true;
     };
 
     keymaps = [

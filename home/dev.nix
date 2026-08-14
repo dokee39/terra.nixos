@@ -24,9 +24,6 @@
   home.packages = with pkgs; [
     pkg-config
 
-    gh
-
-    tokei
 
     # C/C++
     clang
@@ -42,7 +39,12 @@
     clippy
     rust-analyzer
 
-    # Lua
+    # Other
     lua5_4
+    typst
+
+    # Utils
+    gh
+    tokei
   ];
 }
