@@ -80,9 +80,9 @@ jobs:
           git diff --cached --name-only | grep -q -E '(^|/)flake\.lock$' && title_parts="flake.lock${title_parts}"
           [ -z "$title_parts" ] && title_parts="dependencies"
           if [ -n "$body" ]; then
-            git commit -m "[bot] chore: update ${title_parts}" -m "$body"
+            git commit -m "chore(deps): update ${title_parts}" -m "$body"
           else
-            git commit -m "[bot] chore: update ${title_parts}"
+            git commit -m "chore(deps): update ${title_parts}"
           fi
           git push origin HEAD:${{ github.ref_name }}
           gh workflow run detect-package-changes.yml \
