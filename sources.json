@@ -23,11 +23,11 @@
   },
   "noctalia": {
     "type": "flake",
-    "version": "v5.0.0-beta.7",
+    "version": "v5.0.0-beta.8",
     "owner": "noctalia-dev",
     "repo": "noctalia",
-    "rev": "c366a35ffc30b011d03fcd122bbe7d22f932fc57",
-    "hash": "sha256-9RlJNIy2DFVm9SB2vwGEBsbHc1r3dIB+K+b+nd6Bdho="
+    "rev": "45e721ba0fb47d6efc00ca47e156237954037c99",
+    "hash": "sha256-qy3Cheg/FQ9ZaBPTIgdq4IkmkNtC6XBpmtC8nT+wU/Y="
   },
   "maple-bright-regular": {
     "type": "binary",
