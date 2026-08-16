@@ -4,7 +4,6 @@ Build on any x86_64 Linux system with Nix:
 
 ```bash
 nix build .#installer-iso
-ls result/iso
 ```
 
 ## Install from the live USB
@@ -123,9 +122,6 @@ ssh -T git@github.com
 git clone git@github.com:dokee39/terra.nixos.git ~/nixos-config
 sudo cp -a ~/nixos-config/. /etc/nixos/
 sudo chown -R "$USER":users /etc/nixos
-
-mkdir -p ~/.config
-ln -s /etc/nixos ~/.config/nixos
 
 sudo nixos-rebuild switch --flake /etc/nixos#<hostname>
 
