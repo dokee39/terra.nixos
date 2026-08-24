@@ -353,7 +353,7 @@ function M.setup()
       return ""
     end
 
-    if not cwd.is_regular or cwd.is_search or cwd.is_archive then
+    if not cwd.spec.is_regular or cwd.spec.is_search then
       return self:cwd()
     end
 
@@ -412,7 +412,7 @@ function M.setup()
 
   local function refresh()
     local cwd = cx.active.current.cwd
-    if not cwd or not cwd.is_regular or cwd.is_search or cwd.is_archive then
+    if not cwd or not cwd.spec.is_regular or cwd.spec.is_search then
       return
     end
 
@@ -423,7 +423,7 @@ function M.setup()
 
   ps.sub("load", function(args)
     local cwd = cx.active.current.cwd
-    if not cwd or not cwd.is_regular or cwd.is_search or cwd.is_archive then
+    if not cwd or not cwd.spec.is_regular or cwd.spec.is_search then
       return
     end
 

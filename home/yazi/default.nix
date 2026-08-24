@@ -31,9 +31,9 @@
     in {
       mgr.prepend_keymap = [
         {
-          on = "S";
+          on = "!";
           run = "shell --block -- ${shellExe}";
-          desc = "Open fish in current directory";
+          desc = "Open shell in current directory";
         }
       ];
     };
