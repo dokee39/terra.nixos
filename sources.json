@@ -1,9 +1,9 @@
 {
   "mikan": {
     "type": "binary",
-    "version": "v2.3.4",
-    "url": "https://github.com/iota9star/mikan_flutter/releases/download/v2.3.4/linux-release.zip",
-    "hash": "sha256-AsrSg5Yx5riuJSBscYz1x0d4Dsm+6Jnm08EhGHSK8Hc="
+    "version": "v2.3.5",
+    "url": "https://github.com/iota9star/mikan_flutter/releases/download/v2.3.5/linux-release.zip",
+    "hash": "sha256-Jei4XJKKXILLwau1F9y5cqAz8JC7BQ4jXuDFR0rAYl4="
   },
   "duckduckgo-mcp-server": {
     "type": "source",
@@ -23,11 +23,11 @@
   },
   "noctalia": {
     "type": "flake",
-    "version": "v5.0.0-beta.9",
+    "version": "v5.0.0-beta.10",
     "owner": "noctalia-dev",
     "repo": "noctalia",
-    "rev": "a064c063f204518619b8c032c944138a0349966b",
-    "hash": "sha256-O07tHqxugZ/XE/90kx/UCZ0YCbHSI88v2ct2ezuCKi4="
+    "rev": "74e6c2790dd8f39bf496e90e479a9ae370846eed",
+    "hash": "sha256-WijEuINvjcXMO/e/zMqwG1lyGiWNosnVt1QY+ko0Rw8="
   },
   "maple-bright-regular": {
     "type": "binary",
