@@ -3,6 +3,7 @@
 
   terra = {
     userName = "user_name";
+    hardware.hasBattery = false;
 
     boot.grubTimeOut = 1;
 

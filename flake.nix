@@ -55,11 +55,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     blink-lib = {
-      url = "github:saghen/blink.lib?rev=b127d48bf8e9ac9cf41f6e0fbead317503f76558";
+      url = "github:saghen/blink.lib";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     blink-cmp = {
-      url = "github:Saghen/blink.cmp?rev=0f54bd78892f587db4dcf100a23eaddfc2a9df7d";
+      url = "github:Saghen/blink.cmp";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.blink-lib.follows = "blink-lib";
     };

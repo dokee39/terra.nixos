@@ -21,14 +21,6 @@
     "rev": "migration04-01",
     "hash": "sha256-sLPVPspyY++FLq5Q72Ij4JiKBKGzVEY1JxUswcuZhN8="
   },
-  "noctalia": {
-    "type": "flake",
-    "version": "v5.0.0-beta.10",
-    "owner": "noctalia-dev",
-    "repo": "noctalia",
-    "rev": "74e6c2790dd8f39bf496e90e479a9ae370846eed",
-    "hash": "sha256-WijEuINvjcXMO/e/zMqwG1lyGiWNosnVt1QY+ko0Rw8="
-  },
   "maple-bright-regular": {
     "type": "binary",
     "version": "v7.9-2.922",

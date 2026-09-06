@@ -3,6 +3,7 @@
 
   terra = {
     userName = "dokee";
+    hardware.hasBattery = true;
 
     desktop = {
       enable = true;

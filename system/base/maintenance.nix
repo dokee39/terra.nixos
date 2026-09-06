@@ -12,10 +12,10 @@
     enable = true;
     notifications.systembus-notify.enable = true;
   };
-  services.journald.extraConfig = ''
-    SystemMaxUse=500M
-    MaxRetentionSec=30day
-  '';
+  services.journald.settings.Journal = {
+    SystemMaxUse = "500M";
+    MaxRetentionSec = "30day";
+  };
   systemd.tmpfiles.rules = [
     "q /var/tmp - - - 30d"
     "e /var/cache - - - 30d"

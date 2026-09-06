@@ -1,8 +1,15 @@
-{ config, inputs, sources, osConfig, ... }:
+{ config, lib, osConfig, ... }:
 
-{
-  imports = [ sources.noctalia.homeModules.default ];
+let
+  homeDir = config.home.homeDirectory;
 
+  hasBattery = osConfig.terra.hardware.hasBattery;
+
+  desktopCfg = osConfig.terra.desktop;
+  primaryMonitor = desktopCfg.primaryMonitor;
+  secondaryMonitors = builtins.filter (name: name != primaryMonitor)
+    (builtins.attrNames desktopCfg.monitors);
+in {
   programs.noctalia = {
     enable = true;
     settings = {
@@ -22,7 +29,7 @@
       };
 
       # ── Wallpaper ──
-      wallpaper.directory = "${config.home.homeDirectory}/Pictures/Wallpapers";
+      wallpaper.directory = "${homeDir}/Pictures/Wallpapers/comic";
 
       # ── Top Bar ──
       bar.main = {
@@ -39,8 +46,7 @@
           "space_20"
           "volume"
           "brightness"
-          "battery"
-          "control-center"
+        ] ++ lib.optional hasBattery "battery" ++ [
           "space_20"
           "notifications"
           "tray"
@@ -63,6 +69,7 @@
         show_instance_count = false;
         inactive_opacity = 0.9;
         inactive_scale = 0.88;
+        margin_edge = 24;
       };
 
       # ── Desktop Widgets ──
@@ -80,17 +87,17 @@
 
       # ── Shell ──
       shell = {
-        avatar_path = "${config.home.homeDirectory}/Pictures/dokee.png";
+        avatar_path = "${homeDir}/Pictures/dokee.png";
         font_family = "Maple Mono NF CN";
         corner_radius_scale = 1.5;
         date_format = "%A, %F";
-        password_style = "random";
+        password_style = "default";
         polkit_agent = true;
         clipboard_enabled = false;
         telemetry_enabled = true;
         screen_time_enabled = true;
         settings_show_advanced = true;
-        animation.speed = 1.5;
+        animation.speed = 1.75;
 
         panel = {
           borders = false;
@@ -103,7 +110,7 @@
         };
 
         screen_corners = {
-          enabled = true;
+          enabled = false;
           size = 30;
         };
       };
@@ -115,7 +122,14 @@
       };
 
       # ── On-Screen Display ──
-      osd.background_opacity = 0.5;
+      osd = {
+        background_opacity = 0.5;
+        position = "top_right";
+        kinds = {
+          keyboard_layout = false;
+          media = false;
+        };
+      };
 
       # ── Idle / Power Management ──
       idle = {
@@ -140,8 +154,10 @@
         };
       };
 
-      # ── Weather ──
-      weather.auto_locate = true;
+      location.auto_locate = false;
+      weather.enabled = false;
+      brightness.enable_ddcutil = true;
+      control_center.hidden_tabs = lib.optional (!hasBattery) "power";
 
       # ── Widgets ──
       widget = {
@@ -152,7 +168,7 @@
         };
         fuzzel = {
           type = "custom_button";
-          command = "fuzzel";
+          actions.left = "exec fuzzel";
           glyph = "apps";
           scale = 1.2;
         };
@@ -180,11 +196,16 @@
           color_2 = "secondary";
         };
 
-        ram.display = "graph";
+        ram.visualization = "graph";
 
-        volume.scroll_step = 2;
-        brightness.scroll_step = 2;
-        control-center.glyph = "adjustments";
+        volume.actions = {
+          scroll_up = "volume-up 2%";
+          scroll_down = "volume-down 2%";
+        };
+        brightness.actions = {
+          scroll_up = "brightness-up 2%";
+          scroll_down = "brightness-down 2%";
+        };
 
         notifications = { };
         tray = {
@@ -204,9 +225,9 @@
         enabled = true;
         schema_version = 1;
         widget_order = [
-          "lockscreen-login-box@${osConfig.terra.desktop.primaryMonitor}"
-          "lockscreen-widget-0000000000000001"
-        ];
+          "lockscreen-login-box@${primaryMonitor}"
+          "lockscreen-widget-clock@${primaryMonitor}"
+        ] ++ map (name: "lockscreen-login-box@${name}") secondaryMonitors;
 
         grid = {
           cell_size = 16;
@@ -215,22 +236,33 @@
         };
 
         widget = {
-          "lockscreen-login-box@${osConfig.terra.desktop.primaryMonitor}" = {
-            box_height = 0.0;
-            box_width = 0.0;
+          "lockscreen-login-box@${primaryMonitor}" = {
+            enabled = true;
+            box_height = 70.0;
+            box_width = 400.0;
             cx = 960.0;
             cy = 957.0;
-            output = osConfig.terra.desktop.primaryMonitor;
+            placement_width = 1920.0;
+            placement_height = 1080.0;
+            output = primaryMonitor;
             rotation = 0.0;
             type = "login_box";
+            settings = {
+              layout = "compact";
+              center_password_text = true;
+              show_login_button = false;
+            };
           };
 
-          "lockscreen-widget-clock@${osConfig.terra.desktop.primaryMonitor}" = {
+          "lockscreen-widget-clock@${primaryMonitor}" = {
+            enabled = true;
             box_height = 128.0;
             box_width = 384.0;
             cx = 1600.0;
             cy = 220.0;
-            output = osConfig.terra.desktop.primaryMonitor;
+            placement_width = 1920.0;
+            placement_height = 1080.0;
+            output = primaryMonitor;
             rotation = 0.0;
             type = "clock";
             settings = {
@@ -240,7 +272,14 @@
               shadow = true;
             };
           };
-        };
+        } // builtins.listToAttrs (map (name:
+          # Noctalia recreates missing login boxes; keep secondary ones explicitly disabled.
+          lib.nameValuePair "lockscreen-login-box@${name}" {
+            type = "login_box";
+            output = name;
+            enabled = false;
+          }
+        ) secondaryMonitors);
       };
     };
   };
