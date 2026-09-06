@@ -6,8 +6,6 @@ For each entry:
     prefetch hash, update entry in place.
   - type "source": check GitHub releases for newer tag,
     prefetch source tarball hash via nix-prefetch-url.
-  - type "flake": check GitHub releases for newer tag,
-    resolve tag to commit SHA, prefetch source tarball hash.
 
 Writes updated sources.json if changes found.
 Prints change summary to stdout.
@@ -46,12 +44,7 @@ def _prefetch(url: str) -> str:
 
 
 def _prefetch_source_tarball(url: str) -> str:
-    """Prefetch source tarball and return SRI hash matching builtins.fetchTree narHash.
-
-    Uses nix-prefetch-url --unpack to compute hash of unpacked tree content
-    rather than the compressed archive, so the result works for both
-    pkgs.fetchFromGitHub (source) and builtins.fetchTree (flake).
-    """
+    """Return an unpacked source tree SRI hash for pkgs.fetchFromGitHub."""
     r = subprocess.run(
         ["nix-prefetch-url", "--unpack", url],
         capture_output=True, text=True, check=True,
@@ -105,34 +98,6 @@ def _update_source(entry: dict) -> bool:
 
     entry["version"] = latest_tag
     entry["rev"] = latest_tag
-    entry["hash"] = new_hash
-    return True
-
-
-def _update_flake(entry: dict) -> bool:
-    """Update flake-type entry: tag resolved to commit SHA for rev."""
-    latest_tag = _check_new_version(
-        entry.get("owner", ""), entry.get("repo", ""), entry["version"]
-    )
-    if latest_tag is None:
-        return False
-
-    try:
-        ref = _gh_api(f"repos/{entry['owner']}/{entry['repo']}/commits/{latest_tag}")
-        commit_sha = ref["sha"]
-    except (subprocess.CalledProcessError, KeyError) as e:
-        print(f"  [skip] tag resolve failed: {e}", file=sys.stderr)
-        return False
-
-    tarball_url = f"https://github.com/{entry['owner']}/{entry['repo']}/archive/{commit_sha}.tar.gz"
-    try:
-        new_hash = _prefetch_source_tarball(tarball_url)
-    except subprocess.CalledProcessError as e:
-        print(f"  [skip] prefetch failed: {e}", file=sys.stderr)
-        return False
-
-    entry["version"] = latest_tag
-    entry["rev"] = commit_sha
     entry["hash"] = new_hash
     return True
 
@@ -200,9 +165,6 @@ def main() -> None:
                 changes.append((name, old_version, entry["version"]))
         elif entry_type == "source":
             if _update_source(entry):
-                changes.append((name, old_version, entry["version"]))
-        elif entry_type == "flake":
-            if _update_flake(entry):
                 changes.append((name, old_version, entry["version"]))
         else:
             print(f"  [skip] unknown type: {entry_type}", file=sys.stderr)

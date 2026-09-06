@@ -90,7 +90,7 @@
     lib = inputs.nixpkgs.lib;
     system = "x86_64-linux";
 
-    sources = import ./sources.nix { inherit inputs; };
+    sources = builtins.fromJSON (builtins.readFile ./sources.json);
     mkHost = import ./hosts { inherit inputs sources; };
     hostNames = builtins.attrNames (
       lib.filterAttrs
