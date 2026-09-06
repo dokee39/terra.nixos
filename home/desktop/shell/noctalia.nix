@@ -157,6 +157,7 @@ in {
       location.auto_locate = false;
       weather.enabled = false;
       brightness.enable_ddcutil = true;
+      battery.warning_threshold = 36;
       control_center.hidden_tabs = lib.optional (!hasBattery) "power";
 
       # ── Widgets ──
@@ -206,6 +207,7 @@ in {
           scroll_up = "brightness-up 2%";
           scroll_down = "brightness-down 2%";
         };
+        battery.hide_when_full = true;
 
         notifications = { };
         tray = {

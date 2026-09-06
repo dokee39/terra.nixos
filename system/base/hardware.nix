@@ -38,7 +38,12 @@
       };
     };
 
-    services.upower.enable = lib.mkDefault config.terra.hardware.hasBattery;
+    services.upower = {
+      enable = config.terra.hardware.hasBattery;
+      percentageLow = 36;
+      percentageCritical = 10;
+      percentageAction = 5;
+    };
     services.auto-cpufreq.enable = true;
   };
 }
