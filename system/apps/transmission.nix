@@ -43,6 +43,7 @@ in {
 
     users.users.${userName}.extraGroups = [ "transmission" ];
     systemd.tmpfiles.rules = [
+      "d /home/${userName}/Downloads 0755 ${userName} users -"
       "L+ /home/${userName}/Downloads/transmission - - - - ${config.services.transmission.settings.download-dir}"
       "L+ /home/${userName}/Downloads/torrents - - - - ${config.services.transmission.settings.watch-dir}"
       "d /var/lib/peerbanhelper 0755 root root -"
