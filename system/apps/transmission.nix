@@ -50,6 +50,11 @@ in {
     ];
 
     systemd.services.transmission.serviceConfig.StateDirectoryMode = "770";
+    # HACK: separate bind mounts force cross-mount copies instead of renames.
+    systemd.services.transmission.serviceConfig.BindPaths = lib.mkForce [
+      "/home/${userName}/.transmission"
+      "/run"
+    ];
     # HACK: nixpkgs misses wantedBy on transmission-setup, so it never runs.
     systemd.services.transmission-setup.wantedBy = [ "transmission.service" ];
 
