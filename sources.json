@@ -1,17 +1,17 @@
 {
   "mikan": {
     "type": "binary",
-    "version": "v2.3.5",
-    "url": "https://github.com/iota9star/mikan_flutter/releases/download/v2.3.5/linux-release.zip",
-    "hash": "sha256-Jei4XJKKXILLwau1F9y5cqAz8JC7BQ4jXuDFR0rAYl4="
+    "version": "v2.3.6",
+    "url": "https://github.com/iota9star/mikan_flutter/releases/download/v2.3.6/linux-release.zip",
+    "hash": "sha256-kr9SAj0s6ZQyg5hOvJpRvIyn17lEvitoLvaGEh56Wpc="
   },
   "duckduckgo-mcp-server": {
     "type": "source",
-    "version": "v0.6.1",
+    "version": "v0.7.0",
     "owner": "nickclyde",
     "repo": "duckduckgo-mcp-server",
-    "rev": "v0.6.1",
-    "hash": "sha256-X99edQE4317/WEadi/QQnLZHpWCMBW2ipa8am4lfO2Q="
+    "rev": "v0.7.0",
+    "hash": "sha256-wI6Q4lBZYzU4VORLwGZowv8D5UfhKaMeqBIQ7u6eRxc="
   },
   "aegisub": {
     "type": "source",
