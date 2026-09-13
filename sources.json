@@ -13,6 +13,14 @@
     "rev": "v0.7.0",
     "hash": "sha256-wI6Q4lBZYzU4VORLwGZowv8D5UfhKaMeqBIQ7u6eRxc="
   },
+  "mcp-sdk": {
+    "type": "source",
+    "version": "v2.1.1",
+    "owner": "modelcontextprotocol",
+    "repo": "python-sdk",
+    "rev": "v2.1.1",
+    "hash": "sha256-v3qS18hgOxLjm+IEa/knkfyh0Cz2QFtyqxXTZJepevU="
+  },
   "aegisub": {
     "type": "source",
     "version": "migration04-01",

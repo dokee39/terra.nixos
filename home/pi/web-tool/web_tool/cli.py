@@ -34,6 +34,7 @@ async def cmd_search(args):
     searcher = DuckDuckGoSearcher(
         safe_search=SafeSearchMode.MODERATE,
         default_region=args.region,
+        ref_url_threshold=0,
     )
 
     ctx = _CLI()
