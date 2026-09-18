@@ -115,10 +115,10 @@ in
       bind.rw = with sloth; [
         (sloth.concat' runtimeDir "/at-spi/bus")
         (sloth.concat' runtimeDir "/dconf")
+        (sloth.concat' runtimeDir "/doc")
       ];
 
       bind.ro = with sloth; [
-        (sloth.concat' runtimeDir "/doc")
         (sloth.concat' xdgConfigHome "/kdeglobals")
         (sloth.concat' xdgConfigHome "/gtk-2.0")
         (sloth.concat' xdgConfigHome "/gtk-3.0")
