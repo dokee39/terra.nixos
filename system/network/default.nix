@@ -11,7 +11,7 @@
   networking = {
     hostName = config.terra.hostName;
     proxy = {
-      default = lib.mkDefault "http://localhost:7890";
+      default = lib.mkDefault "http://127.0.0.1:7890";
       noProxy = lib.mkDefault "127.0.0.1,localhost,0.0.0.0,::1,api.noctalia.dev";
     };
     firewall = lib.mkIf config.home-manager.users.${config.terra.userName}.services.syncthing.enable {

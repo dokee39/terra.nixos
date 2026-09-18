@@ -42,7 +42,6 @@ in
 
     services.avahi = {
       enable = true;
-      ipv6 = false;
       nssmdns4 = true;
       publish = {
         enable = true;
@@ -71,5 +70,10 @@ in
         "${inputs.mmdb}/Country.mmdb" \
         /var/lib/private/mihomo/Country.mmdb
     '';
+
+    services.tailscale = {
+      enable = true;
+      openFirewall = true;
+    };
   };
 }

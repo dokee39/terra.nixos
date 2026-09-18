@@ -76,8 +76,8 @@ in {
       downloadDirPermissions = "770";
 
       settings = {
-        rpc-bind-address = "0.0.0.0";
-        rpc-whitelist = "127.0.0.1,192.168.*.*";
+        rpc-bind-address = "::";
+        rpc-whitelist = "127.0.0.1,192.168.*.*,::1,100.*.*.*,fd7a:115c:a1e0:*"; # tailscale
         umask = "002";
 
         download-dir = "/home/${userName}/.transmission/downloads";

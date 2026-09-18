@@ -24,7 +24,6 @@
   home.packages = with pkgs; [
     pkg-config
 
-
     # C/C++
     clang
     clang-tools
