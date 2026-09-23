@@ -42,7 +42,7 @@ in
       enableAnalytics = false;
 
       defaultProvider = "openai-codex";
-      defaultModel = "gpt-5.6-luna";
+      defaultModel = "gpt-6-luna";
       defaultThinkingLevel = "high";
 
       autocompleteMaxVisible = 10;
