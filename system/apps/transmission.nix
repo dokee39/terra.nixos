@@ -9,7 +9,7 @@ in {
     speed = {
       up = lib.mkOption {
         type = lib.types.ints.unsigned;
-        default = 200;
+        default = 500;
         description = "Normal upload speed in kB/s.";
       };
 

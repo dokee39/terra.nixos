@@ -1,4 +1,4 @@
-{ config, pkgs, ... }: {
+{ config, ... }: {
   imports = [
     ./hardware.nix
   ];
@@ -9,14 +9,7 @@
       wechat.scale = 1.3;
       transmission = {
         enable = true;
-        speed = {
-          up = 200;
-          down = 2000;
-        };
-        alt-speed = {
-          up = 2000;
-          down = 10000;
-        };
+        speed.up = 1000;
       };
     };
 
