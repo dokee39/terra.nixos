@@ -2,20 +2,36 @@
 
 let
   gpu = osConfig.terra.gpu;
+  igpuVendor = if gpu.igpu.vendor == "intel" then "*intel*" else "*radeon*";
+  powerAware = osConfig.terra.hardware.hasBattery && gpu.internal.primeOffloadEnabled;
+  mpvBin = lib.getExe config.programs.mpv.finalPackage;
 in {
+  home.packages = lib.optionals powerAware [
+    (lib.hiPrio (pkgs.writeShellScriptBin "mpv" ''
+      if [[ $(busctl get-property org.freedesktop.UPower \
+        /org/freedesktop/UPower org.freedesktop.UPower OnBattery) == "b false" ]]; then
+        export VK_LOADER_DRIVERS_SELECT='*nvidia*'
+        exec nvidia-offload ${mpvBin} --hwdec=nvdec-copy --profile=high-quality "$@"
+      fi
+
+      export VK_LOADER_DRIVERS_SELECT='${igpuVendor}'
+      exec ${mpvBin} "$@"
+    ''))
+  ];
+
   programs.mpv = {
     enable = true;
     extraMakeWrapperArgs = lib.optionals gpu.internal.igpuEnabled [
       "--set-default"
       "VK_LOADER_DRIVERS_SELECT"
-      (if gpu.igpu.vendor == "intel" then "*intel*" else "*radeon*")
+      igpuVendor
     ];
     scripts = with pkgs.mpvScripts; [
       uosc
       thumbfast
       mpris
     ];
-    defaultProfiles = [ "high-quality" ];
+    defaultProfiles = lib.optionals (!powerAware) [ "high-quality" ];
     config = {
       gpu-api = "vulkan";
       hwdec = if gpu.internal.igpuEnabled then "vaapi" else "nvdec-copy";
