@@ -135,8 +135,9 @@ def _parse_sources(content: str) -> dict[str, dict[str, str]]:
     data = json.loads(content)
     entries: dict[str, dict] = {}
     for name, entry in data.items():
+        version_key = "commit" if entry.get("type") == "flatpak" else "version"
         entries[name] = {
-            "version": entry.get("version", ""),
+            "version": entry.get(version_key, ""),
         }
     return entries
 

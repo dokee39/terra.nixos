@@ -157,6 +157,7 @@ in {
     };
 
     services.dbus.implementation = "broker";
+    services.flatpak.enable = true;
 
     programs.dconf.enable = true;
     security.rtkit.enable = true;

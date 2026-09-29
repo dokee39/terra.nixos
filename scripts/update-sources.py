@@ -6,6 +6,7 @@ For each entry:
     prefetch hash, update entry in place.
   - type "source": check GitHub releases for newer tag,
     prefetch source tarball hash via nix-prefetch-url.
+  - type "flatpak": query the remote ref and update its OSTree commit.
 
 Writes updated sources.json if changes found.
 Prints change summary to stdout.
@@ -30,7 +31,7 @@ def _gh_api(endpoint: str) -> dict:
     return json.loads(r.stdout)
 
 
-def _gh_error(error: subprocess.CalledProcessError) -> str:
+def _command_error(error: subprocess.CalledProcessError) -> str:
     detail = (error.stderr or "").strip()
     return f"{error}: {detail}" if detail else str(error)
 
@@ -70,7 +71,7 @@ def _check_new_version(owner: str, repo: str, current_version: str) -> str | Non
     try:
         release = _gh_api(f"repos/{owner}/{repo}/releases/latest")
     except subprocess.CalledProcessError as e:
-        print(f"  [skip] GitHub API failed: {_gh_error(e)}", file=sys.stderr)
+        print(f"  [skip] GitHub API failed: {_command_error(e)}", file=sys.stderr)
         return None
 
     latest_tag = release.get("tag_name", "")
@@ -126,7 +127,7 @@ def _update_binary(entry: dict) -> bool:
     try:
         release = _gh_api(f"repos/{owner}/{repo_name}/releases/latest")
     except subprocess.CalledProcessError as e:
-        print(f"  [skip] GitHub API failed: {_gh_error(e)}", file=sys.stderr)
+        print(f"  [skip] GitHub API failed: {_command_error(e)}", file=sys.stderr)
         return False
 
     new_url = None
@@ -151,23 +152,49 @@ def _update_binary(entry: dict) -> bool:
     return True
 
 
+def _update_flatpak(entry: dict) -> bool:
+    try:
+        r = subprocess.run(
+            [
+                "flatpak", "remote-info", "--user", "--show-commit",
+                entry["origin"], f"app/{entry['appId']}/x86_64/stable",
+            ],
+            capture_output=True, text=True, check=True,
+        )
+    except subprocess.CalledProcessError as e:
+        print(f"  [skip] Flatpak query failed: {_command_error(e)}", file=sys.stderr)
+        return False
+
+    commit = r.stdout.strip()
+    if commit == entry["commit"]:
+        return False
+
+    entry["commit"] = commit
+    return True
+
+
 def main() -> None:
     sources = json.loads(SOURCES_FILE.read_text())
     changes = []
 
     for name, entry in sources.items():
         entry_type = entry.get("type", "")
-        old_version = entry.get("version", "")
+        version_key = "commit" if entry_type == "flatpak" else "version"
+        old_version = entry.get(version_key, "")
         print(f"Checking {name} ({old_version})...", file=sys.stderr)
 
         if entry_type == "binary":
-            if _update_binary(entry):
-                changes.append((name, old_version, entry["version"]))
+            updated = _update_binary(entry)
         elif entry_type == "source":
-            if _update_source(entry):
-                changes.append((name, old_version, entry["version"]))
+            updated = _update_source(entry)
+        elif entry_type == "flatpak":
+            updated = _update_flatpak(entry)
         else:
             print(f"  [skip] unknown type: {entry_type}", file=sys.stderr)
+            continue
+
+        if updated:
+            changes.append((name, old_version, entry[version_key]))
 
     if changes:
         SOURCES_FILE.write_text(json.dumps(sources, indent=2) + "\n")

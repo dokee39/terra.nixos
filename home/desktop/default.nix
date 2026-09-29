@@ -1,8 +1,8 @@
-{ pkgs, inputs, osConfig, sources, ... }:
+{ pkgs, inputs, sources, ... }:
 
 let
   customPackages = import ./packages {
-    inherit pkgs inputs osConfig sources;
+    inherit pkgs inputs sources;
   };
 in
 
@@ -24,6 +24,7 @@ in
     ./theme/fontconfig.nix
     ./theme/gtk-qt-theme.nix
     ./wm/niri
+    ./apps/flatpak
     ./apps/kitty.nix
     ./apps/misc.nix
     ./apps/nautilus.nix
@@ -53,8 +54,6 @@ in
     ])
     ++ (with customPackages; [
       mikan
-      qq
-      wechat
       aegisub
     ]);
 }

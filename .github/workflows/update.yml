@@ -37,7 +37,11 @@ jobs:
       - name: Update external sources
         env:
           GH_TOKEN: ${{ github.token }}
-        run: python3 scripts/update-sources.py
+        run: |
+          nix shell --inputs-from . nixpkgs#flatpak --command bash -e -c '
+            flatpak remote-add --user --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+            python3 scripts/update-sources.py
+          '
 
       - run: nix flake update
 

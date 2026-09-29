@@ -22,10 +22,7 @@
     };
 
     # --- Packages ---
-    nixpak = {
-      url = "github:nixpak/nixpak";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    nix-flatpak.url = "github:gmodena/nix-flatpak";
 
     # --- Data / Theme ---
     mmdb = {

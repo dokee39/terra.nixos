@@ -1,4 +1,16 @@
 {
+  "qq": {
+    "type": "flatpak",
+    "appId": "com.qq.QQ",
+    "origin": "flathub",
+    "commit": "43b314cd6b9a1a9d3fe79b1502bf04b6328503be39ba1dd10f7b985eb2a57bac"
+  },
+  "wechat": {
+    "type": "flatpak",
+    "appId": "com.tencent.WeChat",
+    "origin": "flathub",
+    "commit": "b6081af2a627a0fb425f82919499f4b68b02f398d04984a100dfd2afe9546d3a"
+  },
   "mikan": {
     "type": "binary",
     "version": "v2.3.6",
