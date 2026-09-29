@@ -76,6 +76,8 @@ in {
       downloadDirPermissions = "770";
 
       settings = {
+        bind-address-ipv6 = "::";
+
         rpc-bind-address = "::";
         rpc-whitelist = "127.0.0.1,192.168.*.*,::1,100.*.*.*,fd7a:115c:a1e0:*"; # tailscale
         umask = "002";
