@@ -6,6 +6,7 @@ in
 {
   imports = [
     inputs.nix-flatpak.homeManagerModules.nix-flatpak
+    ./bottles.nix
     ./qq.nix
     ./wechat.nix
   ];

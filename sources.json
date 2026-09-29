@@ -1,4 +1,10 @@
 {
+  "bottles": {
+    "type": "flatpak",
+    "appId": "com.usebottles.bottles",
+    "origin": "flathub",
+    "commit": "b63354d6e95377f11796244da517df58866c708aeab2b13cf81082ba5a14c1dd"
+  },
   "qq": {
     "type": "flatpak",
     "appId": "com.qq.QQ",

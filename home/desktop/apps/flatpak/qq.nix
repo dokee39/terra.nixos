@@ -1,6 +1,7 @@
 { lib, pkgs, sources, ... }:
 
 let
+  appId = sources.qq.appId;
   launcher = pkgs.writeShellApplication {
     name = "qq";
     runtimeInputs = with pkgs; [ coreutils findutils inotify-tools flatpak ];
@@ -38,7 +39,7 @@ let
         wait "$watcher_pid" "$monitor_pid" 2>/dev/null || true
       ' EXIT
 
-      flatpak run --user com.qq.QQ "$@" &
+      flatpak run --user ${appId} "$@" &
       qq_pid=$!
       trap 'kill -INT "$qq_pid" 2>/dev/null || true; exit 130' INT
       trap 'kill -TERM "$qq_pid" 2>/dev/null || true; exit 143' TERM
@@ -54,17 +55,17 @@ in
 
   services.flatpak = {
     packages = [ { inherit (sources.qq) appId origin commit; } ];
-    overrides."com.qq.QQ".Context.filesystems = [ "xdg-pictures" ];
+    overrides.${appId}.Context.filesystems = [ "xdg-pictures" ];
   };
 
-  xdg.desktopEntries."com.qq.QQ" = {
+  xdg.desktopEntries.${appId} = {
     name = "QQ";
     exec = "${lib.getExe launcher} %U";
-    icon = "com.qq.QQ";
+    icon = appId;
     categories = [ "Network" "InstantMessaging" ];
     settings = {
       StartupWMClass = "QQ";
-      X-Flatpak = "com.qq.QQ";
+      X-Flatpak = appId;
     };
   };
 }

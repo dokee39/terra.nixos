@@ -2,11 +2,12 @@
 
 let
   scale = osConfig.terra.apps.wechat.scale;
+  appId = sources.wechat.appId;
   launcher = pkgs.writeShellApplication {
     name = "wechat";
     runtimeInputs = [ pkgs.flatpak ];
     text = ''
-      flatpak run --user com.tencent.WeChat "$@"
+      flatpak run --user ${appId} "$@"
     '';
   };
 in
@@ -15,7 +16,7 @@ in
 
   services.flatpak = {
     packages = [ { inherit (sources.wechat) appId origin commit; } ];
-    overrides."com.tencent.WeChat" = {
+    overrides.${appId} = {
       Context.filesystems = [ "xdg-download" "xdg-pictures" ];
       Environment = lib.optionalAttrs (scale != null) {
         QT_AUTO_SCREEN_SCALE_FACTOR = "0";
