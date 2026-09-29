@@ -45,10 +45,11 @@ in
       pulsemixer
       hyprpicker
 
-      google-chrome
-      osu-lazer-bin
-      pinta
       xwayland-satellite
+
+      google-chrome
+      pinta
+      osu-lazer-bin
     ])
     ++ (with customPackages; [
       mikan

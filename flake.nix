@@ -20,15 +20,11 @@
       url = "github:sodiboo/niri-flake";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
     # --- Packages ---
     nixpak = {
       url = "github:nixpak/nixpak";
       inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    nautilus-image-converter = {
-      url = "git+https://gitlab.gnome.org/coreyberla/nautilus-image-converter.git?ref=master";
-      flake = false;
     };
 
     # --- Data / Theme ---
@@ -82,6 +78,12 @@
     };
     im-select = {
       url = "github:keaising/im-select.nvim";
+      flake = false;
+    };
+
+    # --- Application ---
+    nautilus-image-converter = {
+      url = "git+https://gitlab.gnome.org/coreyberla/nautilus-image-converter.git?ref=master";
       flake = false;
     };
   };

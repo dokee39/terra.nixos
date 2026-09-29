@@ -1,4 +1,4 @@
-{ lib, pkgs, inputs, osConfig, ... }:
+{ lib, pkgs, inputs, ... }:
 
 let
   mkRaw = lib.nixvim.mkRaw;
@@ -35,7 +35,7 @@ in
       plugins.blink-pairs = {
         enable = true;
         autoLoad = true;
-        package = inputs.blink-pairs.packages.${osConfig.terra.system}.blink-pairs;
+        package = inputs.blink-pairs.packages.${pkgs.stdenv.hostPlatform.system}.blink-pairs;
         settings = {
           mappings.wrap = {
             "<C-b>" = false;

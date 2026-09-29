@@ -1,4 +1,4 @@
-{ pkgs, inputs, config, ... }:
+{ pkgs, inputs, ... }:
 
 {
   programs.fish.enable = true;
@@ -34,7 +34,7 @@
     yq-go
     fd
   ] ++ [
-    inputs.nix-alien.packages.${config.terra.system}.nix-alien
-    inputs.agenix.packages.${config.terra.system}.default
+    inputs.nix-alien.packages.${pkgs.stdenv.hostPlatform.system}.nix-alien
+    inputs.agenix.packages.${pkgs.stdenv.hostPlatform.system}.default
   ];
 }

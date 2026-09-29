@@ -1,4 +1,4 @@
-{ lib, inputs, osConfig, ... }:
+{ lib, pkgs, inputs, ... }:
 let
   mkRaw = lib.nixvim.mkRaw;
 in {
@@ -9,7 +9,7 @@ in {
 
     blink-cmp = {
       enable = true;
-      package = inputs.blink-cmp.packages.${osConfig.terra.system}.blink-cmp;
+      package = inputs.blink-cmp.packages.${pkgs.stdenv.hostPlatform.system}.blink-cmp;
       luaConfig.pre = ''
         local function is_ascii_keyword(ctx)
           local bounds = ctx.get_bounds("full")

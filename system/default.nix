@@ -22,12 +22,6 @@ in {
       type = lib.types.str;
       description = "Host name";
     };
-    system = lib.mkOption {
-      type = lib.types.str;
-      readOnly = true;
-      internal = true;
-      default = pkgs.stdenv.hostPlatform.system;
-    };
   };
 
   config = {
