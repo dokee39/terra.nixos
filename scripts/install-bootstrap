@@ -14,6 +14,8 @@ case $# in
 
     [[ "$hostName" =~ ^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?$ ]] ||
       die "invalid hostname: $hostName"
+    [[ "$hostName" == nixos-?* ]] ||
+      die "hostname must use nixos-<name>: $hostName"
     [[ "$userName" =~ ^[a-z_][a-z0-9_-]{0,30}$ ]] ||
       die "invalid username: $userName"
     ;;

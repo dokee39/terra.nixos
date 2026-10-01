@@ -7,6 +7,21 @@
 .tun."auto-redirect" = true |
 .tun."auto-detect-interface" = true |
 
+.["rule-providers"]."nixos-hosts" = {
+  "type": "inline",
+  "behavior": "classical",
+  "payload": ["DOMAIN-REGEX,^nixos-[^.]+$"]
+} |
+.dns."nameserver-policy"."rule-set:nixos-hosts" = "100.100.100.100#tailscale-direct" |
+
+.proxies += [
+  {
+    "name": "tailscale-direct",
+    "type": "direct",
+    "interface-name": "tailscale0"
+  }
+] |
+
 .["proxy-groups"] |= (
   (. // [])
   | map(
@@ -86,6 +101,9 @@ with(.["proxy-groups"][] | select(.name == "🔰 选择节点");
   )
 ) |
 .rules = (
-  ["PROCESS-NAME-WILDCARD,*transmission*,DIRECT"]
+  [
+    "RULE-SET,nixos-hosts,tailscale-direct",
+    "PROCESS-NAME-WILDCARD,*transmission*,DIRECT"
+  ]
   + (.rules // [])
 )

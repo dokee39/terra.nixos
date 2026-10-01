@@ -46,6 +46,7 @@ install-bootstrap <hostname> <username>
 reboot
 ```
 
+`<hostname>` must use `nixos-<name>` with a non-empty name, e.g. `nixos-pc`.
 Installation does not require network access.
 
 To update an existing bootstrap from a newer live USB, mount the existing
