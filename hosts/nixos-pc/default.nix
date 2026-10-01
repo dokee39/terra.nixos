@@ -5,6 +5,7 @@
 
   terra = {
     userName = "dokee";
+    maintenance.autoUpgrade.enable = true;
     apps = {
       wechat.scale = 1.3;
       transmission = {
@@ -40,14 +41,6 @@
     gpu = {
       nvidia.enable = true;
     };
-  };
-
-  system.autoUpgrade = {
-    enable = true;
-    flake = "github:dokee39/terra.nixos#${config.terra.hostName}";
-    upgrade = false;
-    operation = "boot";
-    dates = "Sun 12:30";
   };
 
   boot.kernelModules = [

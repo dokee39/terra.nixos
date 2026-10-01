@@ -7,6 +7,11 @@
 
     boot.grubTimeOut = 1;
 
+    maintenance.autoUpgrade = {
+      enable = false;
+      mode = "boot";
+    };
+
     desktop = {
       enable = false;
       monitors."eDP-1" = {
@@ -46,12 +51,4 @@
 
     mihomo.tunDevice = "tun0";
   };
-
-  # system.autoUpgrade = {
-  #   enable = false;
-  #   flake = "github:dokee39/terra.nixos#${config.terra.hostName}";
-  #   upgrade = false;
-  #   operation = "boot";
-  #   dates = "Sun 12:30";
-  # };
 }

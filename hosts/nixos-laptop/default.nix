@@ -4,6 +4,7 @@
   terra = {
     userName = "dokee";
     hardware.hasBattery = true;
+    maintenance.autoUpgrade.enable = true;
 
     desktop = {
       enable = true;

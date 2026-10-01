@@ -4,6 +4,10 @@
   terra = {
     userName = "dokee";
     boot.grubTimeOut = 0;
+    maintenance.autoUpgrade = {
+      enable = true;
+      mode = "reboot";
+    };
 
     apps = {
       transmission = {
