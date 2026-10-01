@@ -15,6 +15,7 @@
 
     tree
     vim
+    kitty.terminfo
 
     scowl
 
