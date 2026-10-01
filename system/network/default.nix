@@ -14,9 +14,10 @@
       default = lib.mkDefault "http://127.0.0.1:7890";
       noProxy = lib.mkDefault "127.0.0.1,localhost,0.0.0.0,::1,api.noctalia.dev";
     };
-    firewall = lib.mkIf config.home-manager.users.${config.terra.userName}.services.syncthing.enable {
-      allowedTCPPorts = [ 22000 ];
-      allowedUDPPorts = [ 21027 22000 ];
-    };
+    firewall.interfaces.${config.services.tailscale.interfaceName} =
+      lib.mkIf config.home-manager.users.${config.terra.userName}.services.syncthing.enable {
+        allowedTCPPorts = [ 22000 ];
+        allowedUDPPorts = [ 22000 ];
+      };
   };
 }

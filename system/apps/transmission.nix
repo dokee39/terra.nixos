@@ -72,14 +72,13 @@ in {
     services.transmission = {
       enable = true;
       openPeerPorts = true;
-      openRPCPort = true;
       downloadDirPermissions = "770";
 
       settings = {
         bind-address-ipv6 = "::";
 
         rpc-bind-address = "::";
-        rpc-whitelist = "127.0.0.1,192.168.*.*,::1,100.*.*.*,fd7a:115c:a1e0:*"; # tailscale
+        rpc-whitelist = "127.0.0.1,::1,100.*.*.*,fd7a:115c:a1e0:*"; # tailscale
         umask = "002";
 
         download-dir = "/home/${userName}/.transmission/downloads";
@@ -108,8 +107,15 @@ in {
 
     services.flood = {
       enable = true;
+      host = "0.0.0.0";
       extraArgs = [ "--trurl=http://localhost:9091/transmission/rpc" ];
     };
+
+    networking.firewall.interfaces.${config.services.tailscale.interfaceName}.allowedTCPPorts = [
+      3000
+      9091
+      9898
+    ];
 
     systemd.services.flood.serviceConfig.EnvironmentFile =
       [ config.age.secrets.flood-env.path ];

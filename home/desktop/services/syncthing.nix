@@ -15,7 +15,20 @@ in
     enable = true;
 
     settings = {
-      devices = lib.mapAttrs (_: id: { inherit id; }) peers;
+      devices = lib.mapAttrs (name: id: {
+        inherit id;
+        addresses = [
+          "tcp://${name}:22000"
+          "quic://${name}:22000"
+        ];
+      }) peers;
+
+      options = {
+        globalAnnounceEnabled = false;
+        localAnnounceEnabled = false;
+        relaysEnabled = false;
+        natEnabled = false;
+      };
 
       folders.obsidian = {
         path = "${config.home.homeDirectory}/Documents/obsidian-repos/note";
