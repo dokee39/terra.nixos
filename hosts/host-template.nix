@@ -39,7 +39,7 @@
 
       transmission = {
         enable = false;
-        speed = { up = 200; down = 2000; };
+        speed = { up = 500; down = 2000; };
         alt-speed = { up = 2000; down = 10000; };
       };
     };

@@ -97,7 +97,7 @@ On a trusted machine, add both keys to `secrets/keys.nix`, add the user key to
 GitHub, then rekey and push:
 
 ```bash
-cd ~/.config/nixos
+cd /etc/nixos
 git pull --ff-only
 
 mkdir hosts/<hostname>
@@ -106,7 +106,7 @@ cp /tmp/hardware.nix hosts/<hostname>
 
 $EDITOR # secrets/keys.nix hosts/<hostname>/default.nix ...
 
-(cd secrets && agenix -r)
+bash -c 'cd secrets && agenix -r'
 
 git add .
 git commit -m "feat: add new host: <hostname>"
