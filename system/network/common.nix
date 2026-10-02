@@ -15,6 +15,12 @@ in
       impala
     ];
 
+    # HACK: ARP flux between same-subnet NICs breaks interface-bound connections.
+    boot.kernel.sysctl = {
+      "net.ipv4.conf.all.arp_ignore" = 1;
+      "net.ipv4.conf.all.arp_announce" = 2;
+    };
+
     networking = {
       useDHCP = false;
 
