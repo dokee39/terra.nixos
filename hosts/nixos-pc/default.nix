@@ -34,7 +34,7 @@
           };
           position = { x = -1080; y = 0; };
           scale = 1.33;
-          transform = { rotation = 90; flipped = false; };
+          transform.rotation = 90;
         };
       };
     };

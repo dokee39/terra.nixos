@@ -15,12 +15,6 @@
     };
     nix-alien.url = "github:thiagokokada/nix-alien";
 
-    # --- Desktop / WM ---
-    niri = {
-      url = "github:sodiboo/niri-flake";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     # --- Packages ---
     nix-flatpak.url = "github:gmodena/nix-flatpak";
 

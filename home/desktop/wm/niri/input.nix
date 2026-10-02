@@ -1,17 +1,17 @@
 { ... }:
 
 {
-  programs.niri.settings.input = {
-    power-key-handling.enable = false;
-    workspace-auto-back-and-forth = true;
-    focus-follows-mouse = {
-      enable = true;
-      max-scroll-amount = "0%";
-    };
+  wayland.windowManager.niri.settings.input = {
+    disable-power-key-handling = { };
+    workspace-auto-back-and-forth = { };
+    focus-follows-mouse._props.max-scroll-amount = "0%";
     keyboard = {
-      numlock = true;
-      repeat-rate = 25;
+      numlock = { };
       repeat-delay = 500;
+    };
+    touchpad = {
+      tap = { };
+      natural-scroll = { };
     };
     mouse = {
       scroll-factor = 1.2;

@@ -14,11 +14,12 @@ in {
           mode = lib.mkOption {
             type = lib.types.nullOr (lib.types.submodule {
               options = {
-                width = lib.mkOption { type = lib.types.int; };
-                height = lib.mkOption { type = lib.types.int; };
+                width = lib.mkOption { type = lib.types.ints.positive; };
+                height = lib.mkOption { type = lib.types.ints.positive; };
                 refresh = lib.mkOption {
-                  type = lib.types.nullOr lib.types.number;
+                  type = lib.types.nullOr lib.types.numbers.positive;
                   default = null;
+                  description = "Refresh rate in Hz (exact mode match). null = highest at this resolution.";
                 };
               };
             });
@@ -38,7 +39,7 @@ in {
           };
 
           scale = lib.mkOption {
-            type = lib.types.number;
+            type = lib.types.numbers.positive;
             default = 1;
             description = "Scale factor.";
           };

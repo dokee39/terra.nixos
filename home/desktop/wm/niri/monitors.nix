@@ -2,22 +2,26 @@
 
 let
   monitors = osConfig.terra.desktop.monitors;
-
 in
 {
-  programs.niri.settings.outputs =
-    lib.mapAttrs (name: m:
-      {
+  wayland.windowManager.niri.settings._children =
+    lib.mapAttrsToList (name: m: {
+      output = {
+        _args = [ name ];
         scale = m.scale;
-        transform = m.transform;
-        focus-at-startup = m.primary;
       }
-      // lib.optionalAttrs (m.position != null) { position = m.position; }
+      // lib.optionalAttrs m.primary { focus-at-startup = { }; }
+      // lib.optionalAttrs (m.transform.rotation != 0 || m.transform.flipped) {
+        transform =
+          if m.transform.flipped then
+            "flipped" + lib.optionalString (m.transform.rotation != 0) "-${toString m.transform.rotation}"
+          else
+            toString m.transform.rotation;
+      }
+      // lib.optionalAttrs (m.position != null) { position._props = m.position; }
       // lib.optionalAttrs (m.mode != null) {
-        mode = {
-          width = m.mode.width;
-          height = m.mode.height;
-        } // lib.optionalAttrs (m.mode.refresh != null) { refresh = m.mode.refresh + 0.0; };
-      }
-    ) monitors;
+        mode = "${toString m.mode.width}x${toString m.mode.height}"
+          + lib.optionalString (m.mode.refresh != null) "@${toString m.mode.refresh}";
+      };
+    }) monitors;
 }

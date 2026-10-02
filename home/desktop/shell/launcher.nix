@@ -24,7 +24,7 @@
         input = "fecd5eff";
         selection = "c2ffffff";
         selection-text = "000000ff";
-        match = "c2ffdf";
+        match = "c2ffdfff";
         border = "bba0f0ff";
       };
 

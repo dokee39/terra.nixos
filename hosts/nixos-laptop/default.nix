@@ -14,21 +14,19 @@
           mode = {
             width = 2560;
             height = 1600;
-            refresh = 165;
+            refresh = 165.040;
           };
           position = { x = 0; y = 0; };
           scale = 1.6;
-          transform = { rotation = 0; flipped = false; };
         };
         "HDMI-A-1" = {
           mode = {
             width = 3840;
             height = 2160;
-            refresh = 60;
+            refresh = 60.000;
           };
           position = { x = 0; y = -1080; };
           scale = 2;
-          transform = { rotation = 0; flipped = false; };
         };
       };
     };
