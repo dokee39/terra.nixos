@@ -35,6 +35,16 @@ mkfs.ext4 -L nixos-root /dev/<root-partition>
 mkfs.ext4 -L nixos-home /dev/<home-partition>
 ```
 
+`install-bootstrap` rejects duplicate labels: `nixos-root`, `nixos-home`, and `NIXOS_BOOT`. If an old disk has conflicting labels, verify and unmount its partitions, then remove only those labels:
+
+```bash
+e2label /dev/<old-root-partition> ''
+e2label /dev/<old-home-partition> ''
+fatlabel --reset /dev/<old-efi-partition>
+```
+
+Files and UUIDs are unchanged, but old configurations using these labels must be updated before booting.
+
 Mount filesystems and install the system already contained in the ISO:
 
 ```bash
@@ -46,19 +56,16 @@ install-bootstrap <hostname> <username>
 reboot
 ```
 
-`<hostname>` must use `nixos-<name>` with a non-empty name, e.g. `nixos-pc`.
-Installation does not require network access.
+`<hostname>` must use `nixos-<name>` with a non-empty name, e.g. `nixos-pc`. Installation does not require network access.
 
-To update an existing bootstrap from a newer live USB, mount the existing
-filesystems without formatting them, then run:
+To update an existing bootstrap from a newer live USB, mount the existing filesystems without formatting them, then run:
 
 ```bash
 install-bootstrap
 reboot
 ```
 
-This updates only the installed NixOS generation and preserves hostname, users,
-passwords, SSH keys, `hardware.nix`, and `/home`.
+This updates only the installed NixOS generation and preserves hostname, users, passwords, SSH keys, `hardware.nix`, and `/home`.
 
 ## Connect to the installed system
 
@@ -94,8 +101,7 @@ cat /etc/ssh/ssh_host_ed25519_key.pub
 cat ~/.ssh/id_ed25519.pub
 ```
 
-On a trusted machine, add both keys to `secrets/keys.nix`, add the user key to
-GitHub, then rekey and push:
+On a trusted machine, add both keys to `secrets/keys.nix`, add the user key to GitHub, then rekey and push:
 
 ```bash
 cd /etc/nixos

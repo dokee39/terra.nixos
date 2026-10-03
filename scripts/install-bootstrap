@@ -44,6 +44,13 @@ check_mount() {
     die "$path must use filesystem type $fsType"
 }
 
+for label in nixos-root nixos-home NIXOS_BOOT; do
+  devices="$(lsblk -lnpo NAME --filter "LABEL == \"$label\"")"
+  if [[ "$devices" == *$'\n'* ]]; then
+    die "duplicate filesystem label $label: $devices"
+  fi
+done
+
 check_mount /mnt nixos-root ext4
 check_mount /mnt/home nixos-home ext4
 check_mount /mnt/boot NIXOS_BOOT vfat
