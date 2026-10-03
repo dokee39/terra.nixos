@@ -11,6 +11,7 @@
             { "device.name" = "~alsa_card.*"; }
           ];
           actions."update-props" = {
+            # HACK: Hardware volume control silences the built-in speakers at low levels.
             "api.alsa.soft-mixer" = true;
           };
         }

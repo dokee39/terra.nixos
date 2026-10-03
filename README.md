@@ -101,14 +101,17 @@ cat /etc/ssh/ssh_host_ed25519_key.pub
 cat ~/.ssh/id_ed25519.pub
 ```
 
-On a trusted machine, add both keys to `secrets/keys.nix`, add the user key to GitHub, then rekey and push:
+On a trusted machine, add (or replace) both keys in `secrets/keys.nix`, add the user key to GitHub, then rekey and push:
 
 ```bash
 cd /etc/nixos
 git pull --ff-only
 
+# New hosts only
 mkdir hosts/<hostname>
 cp hosts/host-template.nix hosts/<hostname>/default.nix
+
+# All installs: verify that hardware.nix uses the target disk's UUIDs
 cp /tmp/hardware.nix hosts/<hostname>
 
 $EDITOR # secrets/keys.nix hosts/<hostname>/default.nix ...

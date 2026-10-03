@@ -48,5 +48,8 @@
     };
   };
 
+  # HACK: Restore ALSA Master state; soft-mixer leaves its boot-time mute untouched.
+  hardware.alsa.enablePersistence = true;
+
   boot.loader.grub.useOSProber = true;
 }
