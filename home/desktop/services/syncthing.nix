@@ -3,7 +3,7 @@
 let
   hostName = osConfig.terra.hostName;
   deviceIds = {
-    nixos-pc = "5XIVPM5-HURUR4F-OPDEXMD-M6BL5TG-7YRUWIJ-7AF7IEL-D5KHMGA-NTY5KAD";
+    nixos-pc = "J74FWWZ-TV4FWCN-X4FSE6P-2ZDHZJ7-EOSCXAA-2IPCET3-ZHGAXCU-JNY3DAT";
     nixos-laptop = "E7UZDS7-AHDIXR2-NCCGP3R-VHC3R5Z-XOSA7C3-7HMEJFE-GWW36UI-RLOSRAS";
   };
   peers = lib.filterAttrs
