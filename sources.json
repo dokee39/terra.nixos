@@ -33,11 +33,11 @@
   },
   "mcp-sdk": {
     "type": "source",
-    "version": "v2.2.0",
+    "version": "v2.3.0",
     "owner": "modelcontextprotocol",
     "repo": "python-sdk",
-    "rev": "v2.2.0",
-    "hash": "sha256-nnpNXnQiFSGx5KQBDXHCOH0wE3cznlmI6s7vtchcj3A="
+    "rev": "v2.3.0",
+    "hash": "sha256-CnXi78zYxm0/R4fON/DzRYMSDYM/XM/9SE3s+Cf1BR0="
   },
   "aegisub": {
     "type": "source",
