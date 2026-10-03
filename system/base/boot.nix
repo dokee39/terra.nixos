@@ -13,11 +13,11 @@ in {
   config = {
     boot.kernelPackages = pkgs.linuxPackages_latest;
 
-    boot.loader.efi.canTouchEfiVariables = true;
     boot.loader.timeout = cfg.grubTimeOut;
     boot.loader.grub = {
       enable = true;
       efiSupport = true;
+      efiInstallAsRemovable = true;
       device = "nodev";
       splashImage = null;
       theme = pkgs.minimal-grub-theme;
