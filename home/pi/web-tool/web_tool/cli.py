@@ -12,6 +12,14 @@ from web_tool.filter_utils import filter_and_rank
 MAX_RESPONSE_BYTES = 10 * 1024 * 1024
 
 
+def fail(args, error_type, reason, **details):
+    if args.json:
+        print(json.dumps({"type": error_type, "reason": reason, **details}, ensure_ascii=False))
+    else:
+        print(f"Error: {reason}", file=sys.stderr)
+    sys.exit(1)
+
+
 class _CLI:
     def __init__(self):
         self.error_occurred = False
@@ -42,12 +50,7 @@ async def cmd_search(args):
     results = filter_and_rank(results)
 
     if not results and ctx.error_occurred:
-        msg = f"search failed: {ctx.last_error}"
-        if args.json:
-            print(json.dumps({"type": "search_error", "reason": msg}, ensure_ascii=False))
-        else:
-            print(f"Warning: {msg}", file=sys.stderr)
-        return
+        fail(args, "search_error", f"search failed: {ctx.last_error}")
 
     if args.json:
         data = [
@@ -68,11 +71,7 @@ def cmd_fetch(args):
     from urllib.parse import urlsplit
 
     if urlsplit(args.url).scheme not in ("http", "https"):
-        if args.json:
-            print(json.dumps({"type": "bad_scheme", "reason": f"unsupported URL scheme: {args.url}"}, ensure_ascii=False))
-        else:
-            print(f"Error: unsupported URL scheme: {args.url}", file=sys.stderr)
-        sys.exit(1)
+        fail(args, "bad_scheme", f"unsupported URL scheme: {args.url}")
 
     from curl_cffi import requests
     from curl_cffi.curl import CURL_WRITEFUNC_ERROR
@@ -112,39 +111,18 @@ def cmd_fetch(args):
                 if unsupported_type
                 else "binary content"
             )
-            if args.json:
-                print(json.dumps({"type": "unsupported_content_type", "reason": reason}, ensure_ascii=False))
-            else:
-                print(f"Warning: {reason}", file=sys.stderr)
-            return
+            fail(args, "unsupported_content_type", reason)
     except requests.exceptions.HTTPError as e:
         status = e.response.status_code
-        if args.json:
-            print(json.dumps({"type": "http_error", "reason": f"HTTP {status}", "http_code": status}, ensure_ascii=False))
-        else:
-            print(f"Warning: HTTP {status}", file=sys.stderr)
-        return
+        fail(args, "http_error", f"HTTP {status}", http_code=status)
     except requests.exceptions.Timeout:
-        if args.json:
-            print(json.dumps({"type": "timeout", "reason": "request timed out after 60s"}, ensure_ascii=False))
-        else:
-            print(f"Warning: timeout: {args.url}", file=sys.stderr)
-        return
+        fail(args, "timeout", "request timed out after 60s")
     except requests.exceptions.ConnectionError:
-        if args.json:
-            print(json.dumps({"type": "connection_error", "reason": f"cannot connect to {args.url}"}, ensure_ascii=False))
-        else:
-            print(f"Warning: connection failed: {args.url}", file=sys.stderr)
-        return
+        fail(args, "connection_error", f"cannot connect to {args.url}")
     except requests.exceptions.RequestException:
         if not response_too_large:
             raise
-        reason = "response exceeds 10 MiB limit"
-        if args.json:
-            print(json.dumps({"type": "response_too_large", "reason": reason}, ensure_ascii=False))
-        else:
-            print(f"Warning: {reason}: {args.url}", file=sys.stderr)
-        return
+        fail(args, "response_too_large", "response exceeds 10 MiB limit")
 
     if content_type in ("text/html", "application/xhtml+xml"):
         markdown = trafilatura.extract(
@@ -160,11 +138,7 @@ def cmd_fetch(args):
     else:
         markdown = text.strip()
     if not markdown:
-        if args.json:
-            print(json.dumps({"type": "no_content", "reason": "no extractable content found"}, ensure_ascii=False))
-        else:
-            print("Warning: no extractable content found", file=sys.stderr)
-        return
+        fail(args, "no_content", "no extractable content found")
     if args.json:
         print(json.dumps({"type": "content", "content": markdown.strip()}, ensure_ascii=False))
     else:

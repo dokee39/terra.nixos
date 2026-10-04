@@ -2,7 +2,7 @@ import re
 from urllib.parse import urlsplit
 
 _REMOVE_HOSTNAMES = [
-    # === Chinese content farms ===
+    # Chinese content farms
     r"(.*\.)?csdn\.net$",
     r"(.*\.)?csdn\.com$",
     r"(.*\.)?php\.cn$",
@@ -16,19 +16,19 @@ _REMOVE_HOSTNAMES = [
     r"(.*\.)?it1352\.com$",
     r"(.*\.)?codeleading\.com$",
     r"(.*\.)?kknews\.cc$",
-    # === Low-quality Chinese developer communities / cloud vendors ===
+    # Low-quality Chinese developer communities / cloud vendors
     r"(.*\.)?aliyun\.com$",
     r"(.*\.)?cloud\.tencent\.com$",
     r"(.*\.)?bbs\.huaweicloud\.com$",
     r"(.*\.)?segmentfault\.com$",
     r"(.*\.)?juejin\.cn$",
     r"(.*\.)?jianshu\.com$",
-    # === Chinese junk encyclopedias / Q&A ===
+    # Chinese junk encyclopedias / Q&A
     r"(.*\.)?baike\.baidu\.com$",
     r"(.*\.)?zhidao\.baidu\.com$",
     r"(.*\.)?wenku\.baidu\.com$",
     r"(.*\.)?jingyan\.baidu\.com$",
-    # === English SEO farms / low-quality tutorial sites ===
+    # English SEO farms / low-quality tutorial sites
     r"(.*\.)?w3schools\.com$",
     r"(.*\.)?tutorialspoint\.com$",
     r"(.*\.)?geeksforgeeks\.org$",
@@ -39,11 +39,11 @@ _REMOVE_HOSTNAMES = [
     r"(.*\.)?educba\.com$",
     r"(.*\.)?simplilearn\.com$",
     r"(.*\.)?edureka\.co$",
-    # === Visual/image clutter ===
+    # Visual/image clutter
     r"(.*\.)?pinterest\.com$",
-    # === Outdated or unhelpful official forums ===
+    # Outdated or unhelpful official forums
     r"(.*\.)?answers\.microsoft\.com$",
-    # === Dictionary / reference sites ===
+    # Dictionary / reference sites
     r"(.*\.)?merriam-webster\.com$",
     r"(.*\.)?dictionary\.cambridge\.org$",
     r"(.*\.)?collinsdictionary\.com$",
@@ -72,7 +72,7 @@ _REMOVE_HOSTNAMES = [
 ]
 
 _LOW_PRIORITY_HOSTNAMES = [
-    # === Knowledge Q&A / blogs (occasionally useful but noisy) ===
+    # Knowledge Q&A / blogs (occasionally useful but noisy)
     r"(.*\.)?zhihu\.com$",
     r"(.*\.)?quora\.com$",
     r"(.*\.)?medium\.com$",
@@ -80,16 +80,12 @@ _LOW_PRIORITY_HOSTNAMES = [
     r"(.*\.)?hashnode\.com$",
     r"(.*\.)?dzone\.com$",
     r"(.*\.)?slant\.co$",
-    # === Tutorial sites still having some value (lowered to be observed) ===
+    # Tutorial sites still having some value (lowered to be observed)
     r"(.*\.)?baeldung\.com$",
-    # === Dictionary / reference sites ===
-    r"(.*\.)?en\.wiktionary\.org$",
-    r"(.*\.)?etymonline\.com$",
-    r"(.*\.)?britannica\.com$",
 ]
 
 _HIGH_PRIORITY_HOSTNAMES = [
-    # === Knowledge cornerstones ===
+    # Knowledge cornerstones
     r"(.*\.)?wikipedia\.org$",
     r"(.*\.)?github\.com$",
     r"(.*\.)?stackoverflow\.com$",
@@ -97,7 +93,7 @@ _HIGH_PRIORITY_HOSTNAMES = [
     r"(.*\.)?askubuntu\.com$",
     r"(.*\.)?serverfault\.com$",
     r"(.*\.)?superuser\.com$",
-    # === Official programming language documentation ===
+    # Official programming language documentation
     r"(.*\.)?docs\.python\.org$",
     r"(.*\.)?nodejs\.org$",
     r"(.*\.)?golang\.org$",
@@ -108,7 +104,7 @@ _HIGH_PRIORITY_HOSTNAMES = [
     r"(.*\.)?ruby-doc\.org$",
     r"(.*\.)?elixir-lang\.org$",
     r"(.*\.)?hexdocs\.pm$",
-    # === Frontend & Web standards ===
+    # Frontend & Web standards
     r"(.*\.)?developer\.mozilla\.org$",
     r"(.*\.)?reactjs\.org$",
     r"(.*\.)?react\.dev$",
@@ -117,19 +113,19 @@ _HIGH_PRIORITY_HOSTNAMES = [
     r"(.*\.)?w3\.org$",
     r"(.*\.)?caniuse\.com$",
     r"(.*\.)?web\.dev$",
-    # === Databases ===
+    # Databases
     r"(.*\.)?postgresql\.org$",
     r"(.*\.)?dev\.mysql\.com$",
     r"(.*\.)?sqlite\.org$",
-    r"(.*\.)?mongodb\.com/docs$",
-    # === DevOps / Cloud official sites ===
+    r"(.*\.)?mongodb\.com$",
+    # DevOps / Cloud official sites
     r"(.*\.)?kubernetes\.io$",
     r"(.*\.)?docker\.com$",
     r"(.*\.)?docs\.docker\.com$",
     r"(.*\.)?helm\.sh$",
     r"(.*\.)?terraform\.io$",
     r"(.*\.)?docs\.ansible\.com$",
-    # === Linux / BSD / System ===
+    # Linux / BSD / System
     r"(.*\.)?kernel\.org$",
     r"(.*\.)?wiki\.archlinux\.org$",
     r"(.*\.)?man\.archlinux\.org$",
@@ -147,7 +143,7 @@ _HIGH_PRIORITY_HOSTNAMES = [
     r"(.*\.)?openwrt\.org$",
     r"(.*\.)?freebsd\.org$",
     r"(.*\.)?tldp\.org$",
-    # === Package registries and tools ===
+    # Package registries and tools
     r"(.*\.)?npmjs\.com$",
     r"(.*\.)?pypi\.org$",
     r"(.*\.)?crates\.io$",
@@ -155,19 +151,19 @@ _HIGH_PRIORITY_HOSTNAMES = [
     r"(.*\.)?hub\.docker\.com$",
     r"(.*\.)?pkg\.go\.dev$",
     r"(.*\.)?directory\.fsf\.org$",
-    # === Code hosting & collaboration ===
+    # Code hosting & collaboration
     r"(.*\.)?codeberg\.org$",
     r"(.*\.)?gitlab\.com$",
-    # === AI & ML ===
+    # AI & ML
     r"(.*\.)?huggingface\.co$",
-    # === Tech communities & news ===
+    # Tech communities & news
     r"(.*\.)?lobste\.rs$",
     r"(.*\.)?news\.ycombinator\.com$",
     r"(.*\.)?hackerne\.ws$",
-    # === Documentation & manual pages ===
+    # Documentation & manual pages
     r"(.*\.)?mankier\.com$",
     r"(.*\.)?devdocs\.io$",
-    # === Academic & specifications ===
+    # Academic & specifications
     r"(.*\.)?arxiv\.org$",
     r"(.*\.)?ieeexplore\.ieee\.org$",
     r"(.*\.)?crossref\.org$",
