@@ -5,7 +5,7 @@ let
 
   pi-wrapper = pkgs.writeShellScriptBin "pi" ''
     case "''${1-}" in
-      install|remove|uninstall|update|list|config)
+      install|remove|uninstall|update|list|config|auth|mcp)
         exec ${pi-bin} "$@"
         ;;
     esac
@@ -23,7 +23,6 @@ let
     pi --append-system-prompt ${./APPEND_SYSTEM.md} \
        --append-system-prompt ${./chat-instruction.md} \
        "''${args[@]}"
-    [ "$here" ] || cd - > /dev/null
   '';
 in
 {
@@ -41,9 +40,10 @@ in
       enableInstallTelemetry = false;
       enableAnalytics = false;
 
-      defaultProvider = "openai-codex";
+      defaultProvider = "openai";
       defaultModel = "gpt-6-luna";
       defaultThinkingLevel = "high";
+      defaultTools = [ "+codemode" ];
 
       autocompleteMaxVisible = 10;
 
