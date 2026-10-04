@@ -60,14 +60,4 @@
   systemd.tmpfiles.rules = [
     "w- /sys/bus/platform/drivers/amd_x3d_vcache/AMDI0101:*/amd_x3d_mode - - - - cache"
   ];
-
-  # TODO
-  systemd.settings.Manager = {
-    RuntimeWatchdogSec = "60s";
-    RebootWatchdogSec = "60s";
-  };
-  boot.initrd.kernelModules = [ "pci_stub" ];
-  boot.kernelParams = [
-    "pci-stub.ids=1022:43f7"
-  ];
 }
