@@ -1,21 +1,6 @@
-{ pkgs, lib, ... }:
+{ pkgs, ... }:
 
 let
-  pi-bin = lib.getExe pkgs.pi-coding-agent;
-
-  pi-wrapper = pkgs.writeShellScriptBin "pi" ''
-    case "''${1-}" in
-      install|remove|uninstall|update|list|config|auth|mcp)
-        exec ${pi-bin} "$@"
-        ;;
-    esac
-
-    if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
-      exec ${pi-bin} --extension npm:@ayulab/pi-rewind "$@"
-    fi
-
-    exec ${pi-bin} "$@"
-  '';
   pichat = pkgs.writeShellScriptBin "pichat" ''
     args=(); here=
     for a; do [ "$a" = "--here" ] && here=1 || args+=("$a"); done
@@ -30,7 +15,6 @@ in
 
   programs.pi-coding-agent = {
     enable = true;
-    package = pi-wrapper;
     extraPackages = [ pkgs.nodejs ];
 
     settings = {
@@ -40,7 +24,7 @@ in
       enableInstallTelemetry = false;
       enableAnalytics = false;
 
-      defaultProvider = "openai";
+      defaultProvider = "openai-codex";
       defaultModel = "gpt-6-luna";
       defaultThinkingLevel = "high";
       defaultTools = [ "+codemode" ];
@@ -50,7 +34,7 @@ in
       packages = [
         "npm:@firstpick/pi-themes-bundle"
         "npm:@aliou/pi-guardrails"
-        "npm:pi-rtk-optimizer"
+        "npm:@sherif-fanous/pi-rtk"
         "npm:pi-cache-optimizer"
         "npm:@narumitw/pi-usage"
       ];

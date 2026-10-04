@@ -3,18 +3,6 @@
     "opencode-go": {
       "compat": {
         "sendSessionAffinityHeaders": true
-      },
-      "modelOverrides": {
-        "deepseek-v4-flash": {
-          "compat": {
-            "supportsLongCacheRetention": true
-          }
-        },
-        "deepseek-v4-pro": {
-          "compat": {
-            "supportsLongCacheRetention": true
-          }
-        }
       }
     },
     "deepseek": {
