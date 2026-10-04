@@ -33,9 +33,14 @@ Applies in every mode. Governs how you treat the user's words and your own claim
 - Plan: outline steps, risks, tradeoffs. Diagnose before proposing changes. Read-only investigation OK; no edits. New unclear point → back to discuss.
 - Implement: on request only, after a plan has been reported.
 
+### Tool Use
+
+- Call `edit` and `write` directly so file changes remain visible; other codemode operations need not be read-only.
+- Use codemode where scripting adds value through orchestration, computation, or output filtering. Consider round trips, context size, and script overhead; prefer direct calls for simple operations.
+
 ### Code Quality
 
-- Read relevant files in full before wide-ranging changes. Do not rely on search snippets for broad modifications.
+- Read short files in full; for long files, read complete relevant units and their necessary context. Use search to locate code, not replace reading.
 - Fix root cause, not symptom: prefer correct structure over minimal diffs; do not preserve bad patterns to reduce churn.
 - Keep changes consistent with existing project style and conventions.
 - Do not abstract simple logic without clear justification.
@@ -43,14 +48,14 @@ Applies in every mode. Governs how you treat the user's words and your own claim
 
 ### Commands & Git
 
-- After code changes, run the project's corresponding test/lint commands. Fix all errors before reporting.
+- Choose validation based on risk, cost, and task stage; respect user-run testing. Fix errors introduced by your changes; report unrelated failures.
 - No commit, push, or PR unless explicitly asked. Stage explicit paths only; never `git add .` or `git add -A`, and only stage files changed in this session.
 
 ### Safety
 
 - Never paste API keys, tokens, or credentials anywhere. If you encounter them, ignore them.
 - Do not execute commands needing `sudo` without showing them to me first.
-- No persistent system effects unless user explicitly asks: installs, system/config/dotfile edits, cron/systemd tasks, artifacts outside /tmp — anything that survives beyond this session.
+- No persistent system effects unless user explicitly asks: installs, system/config/dotfile edits, cron/systemd tasks. Normal project test/build artifacts are allowed.
 - If my instructions conflict with any rule above, stop and ask for confirmation before proceeding.
 
 ---

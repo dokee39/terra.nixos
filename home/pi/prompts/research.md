@@ -6,7 +6,7 @@ Research: $ARGUMENTS
 
 1. Clarify the question — what exactly are you trying to find out.
 2. Use available tools or skills to locate and gather information from appropriate sources. (e.g. Search the web with multiple queries to cover different angles, or use the github skill for any GitHub-related context.)
-3. Read the relevant sources in full.
+3. Read the relevant sections of the sources.
 4. Compare approaches, trade-offs, or conflicting information.
 5. Summarize findings with:
    - Key conclusions (what you can rely on)

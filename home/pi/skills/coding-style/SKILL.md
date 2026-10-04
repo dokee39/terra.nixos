@@ -11,7 +11,7 @@ Code is read more than it's written. These rules prevent the most common AI-gene
 
 ### No over-engineering
 
-Don't create classes, factories, or wrappers for things that work as plain functions. Don't wrap default values in a factory function that just spreads them. Wait for the third occurrence before extracting shared logic. Before abstracting: has this pattern appeared three times? No → keep inline.
+Don't create classes, factories, or wrappers for things that work as plain functions. Don't wrap default values in a factory function that just spreads them.
 
 ```python
 # BAD — class for a one-line operation
@@ -58,17 +58,10 @@ else:
 if active == True:
     ...
 
-# BAD
-async def get_user(uid: str):
-    return await fetch_user(uid)
-
 # GOOD
 if user:
     return user.name
 return "anonymous"
-
-def get_user(uid: str):
-    return fetch_user(uid)
 ```
 
 Rust: unnecessary `.clone()` on values not reused. C++: `else` after `return`/`throw`; copy when `const auto&` suffices; `.get()` on `unique_ptr` then dereference when `*ptr` works.
@@ -228,28 +221,15 @@ Rust: named constants over raw bit flags in `#[repr]`; `enum` over `u8` with doc
 
 ### No duplication
 
-Cut-and-paste blocks or repeated utility functions across files. Unify on the third occurrence — duplication is cheaper than the wrong abstraction. When extracting, ensure the duplicated things change for the same reasons.
-
-```python
-# TWO occurrences — tolerate
-def handle_slack(event):
-    user = event.get("user", "unknown")
-
-def handle_api(request):
-    user = request.get("user", "unknown")
-
-# THREE occurrences, same shape, same reason to change — extract
-def extract_user(data):
-    return data.get("user", "unknown")
-```
+Extract shared logic when duplicated code changes for the same reasons and sharing it reduces maintenance cost. Do not unify code solely because it looks similar.
 
 ### No scope creep
 
-Don't modify unrelated files, reintroduce deliberately removed code, or create new files for one-off functions. Default bar for a new file: 3+ functions with a distinct responsibility not covered by any existing file. Before touching a file outside the task scope: does this change belong to the current task? No → stop.
+Don't modify unrelated files or reintroduce deliberately removed code. Create a new file when a distinct responsibility warrants it; otherwise use an existing file. Before touching a file outside the task scope: does this change belong to the current task? No → stop.
 
 ### No structural layering
 
-Don't extend an existing condition, function, or type when the new case is semantically distinct. Split rather than append.
+When extending code, reassess whether the existing structure still fits the current requirements. Restructure affected logic when needed rather than accumulating special cases; keep semantically distinct cases separate.
 
 ```python
 # BAD — same branch accumulates unrelated cases
@@ -263,14 +243,4 @@ if len(items) == 0:
     return "No results"
 if expanded:
     return render_full(text)
-```
-
-```python
-# BAD — function accumulates optional params
-def fetch(url, timeout=30, retries=3, headers=None):
-    ...
-
-# GOOD — group related options
-def fetch(url, timeout=30, **extra):
-    ...
 ```
