@@ -24,6 +24,7 @@ in
     ./theme/fontconfig.nix
     ./theme/gtk-qt-theme.nix
     ./wm/niri
+    ./apps/aegisub.nix
     ./apps/flatpak
     ./apps/kitty.nix
     ./apps/misc.nix
