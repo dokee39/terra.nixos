@@ -60,4 +60,6 @@
   systemd.tmpfiles.rules = [
     "w- /sys/bus/platform/drivers/amd_x3d_vcache/AMDI0101:*/amd_x3d_mode - - - - cache"
   ];
+
+  boot.loader.grub.useOSProber = true;
 }

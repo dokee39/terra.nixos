@@ -11,6 +11,9 @@
     hardware.enableRedistributableFirmware = true;
     hardware.i2c.enable = true;
 
+    # HACK: Restore ALSA Master state; soft-mixer leaves its boot-time mute untouched.
+    hardware.alsa.enablePersistence = true;
+
     hardware.bluetooth.enable = true;
     hardware.bluetooth.settings = {
       LE = {
