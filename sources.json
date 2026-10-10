@@ -3,19 +3,19 @@
     "type": "flatpak",
     "appId": "com.usebottles.bottles",
     "origin": "flathub",
-    "commit": "b63354d6e95377f11796244da517df58866c708aeab2b13cf81082ba5a14c1dd"
+    "commit": "b40a62a47a5c391a56719f5a1eac119d21250f51118a82d2495017f378edc832"
   },
   "qq": {
     "type": "flatpak",
     "appId": "com.qq.QQ",
     "origin": "flathub",
-    "commit": "43b314cd6b9a1a9d3fe79b1502bf04b6328503be39ba1dd10f7b985eb2a57bac"
+    "commit": "752cd5df26138222f009f2593a90cc57918d78851fd15e63e85925248ef1dacd"
   },
   "wechat": {
     "type": "flatpak",
     "appId": "com.tencent.WeChat",
     "origin": "flathub",
-    "commit": "b6081af2a627a0fb425f82919499f4b68b02f398d04984a100dfd2afe9546d3a"
+    "commit": "2509852e989f511bebc79b6b612804ec71f3d96dac84e1afb5df9dbb534b2fee"
   },
   "mikan": {
     "type": "binary",
@@ -33,19 +33,19 @@
   },
   "mcp-sdk": {
     "type": "source",
-    "version": "v2.2.0",
+    "version": "v2.3.0",
     "owner": "modelcontextprotocol",
     "repo": "python-sdk",
-    "rev": "v2.2.0",
-    "hash": "sha256-nnpNXnQiFSGx5KQBDXHCOH0wE3cznlmI6s7vtchcj3A="
+    "rev": "v2.3.0",
+    "hash": "sha256-CnXi78zYxm0/R4fON/DzRYMSDYM/XM/9SE3s+Cf1BR0="
   },
   "aegisub": {
     "type": "source",
-    "version": "migration04-01",
+    "version": "migration05-01",
     "owner": "arch1t3cht",
     "repo": "Aegisub",
-    "rev": "migration04-01",
-    "hash": "sha256-sLPVPspyY++FLq5Q72Ij4JiKBKGzVEY1JxUswcuZhN8="
+    "rev": "migration05-01",
+    "hash": "sha256-olI3bX5jIZZvX39ZSkZV2glwbkeQDUti5dzpJ8M+Cmk="
   },
   "maple-bright-regular": {
     "type": "binary",
