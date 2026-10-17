@@ -21,6 +21,11 @@ in {
       device = "nodev";
       splashImage = null;
       theme = pkgs.minimal-grub-theme;
+      extraEntries = ''
+        menuentry "UEFI Firmware Settings" {
+          fwsetup
+        }
+      '';
     };
 
     console = {
