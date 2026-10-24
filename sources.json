@@ -41,34 +41,34 @@
   },
   "aegisub": {
     "type": "source",
-    "version": "migration05-01",
+    "version": "migration06-01",
     "owner": "arch1t3cht",
     "repo": "Aegisub",
-    "rev": "migration05-01",
-    "hash": "sha256-olI3bX5jIZZvX39ZSkZV2glwbkeQDUti5dzpJ8M+Cmk="
+    "rev": "migration06-01",
+    "hash": "sha256-mfImYPKP/ehr5fHmNLM2xR4kwpWwLJghP0cXo2KZ3Js="
   },
   "maple-bright-regular": {
     "type": "binary",
-    "version": "v7.9-2.922",
-    "url": "https://github.com/bahayonghang/MapleLXGWBright/releases/download/v7.9-2.922/MapleBright-Regular.ttf",
-    "hash": "sha256-wSuewaACIk9Jm0+6QeY3Gw0rn0SHo8suoQg4ihQCAP0="
+    "version": "v7.9-26.10.22",
+    "url": "https://github.com/bahayonghang/MapleLXGWBright/releases/download/v7.9-26.10.22/MapleBright-Regular.ttf",
+    "hash": "sha256-xR2JMUj/mrHYCOpCtF60m+RiHF+S0ZL7y4SOWCWWkUw="
   },
   "maple-bright-medium": {
     "type": "binary",
-    "version": "v7.9-2.922",
-    "url": "https://github.com/bahayonghang/MapleLXGWBright/releases/download/v7.9-2.922/MapleBright-Medium.ttf",
-    "hash": "sha256-YLvPM4um0RhJ6fozxDGTNJpVR+zfhSGBpGdryHe1S68="
+    "version": "v7.9-26.10.22",
+    "url": "https://github.com/bahayonghang/MapleLXGWBright/releases/download/v7.9-26.10.22/MapleBright-Medium.ttf",
+    "hash": "sha256-S1Ni/Cb8a/oSIZMjiwZgn397L1LNfmY5aSqz+v/HHCU="
   },
   "maple-bright-italic": {
     "type": "binary",
-    "version": "v7.9-2.922",
-    "url": "https://github.com/bahayonghang/MapleLXGWBright/releases/download/v7.9-2.922/MapleBright-Italic.ttf",
-    "hash": "sha256-xUoLEg8g3FWA0CTWme37VfEW22tzEOEwIZ8Pu2E7uKA="
+    "version": "v7.9-26.10.22",
+    "url": "https://github.com/bahayonghang/MapleLXGWBright/releases/download/v7.9-26.10.22/MapleBright-Italic.ttf",
+    "hash": "sha256-gwTwjph5s8Ju4ukJaCKpvYFrU2n3VnldvIZ1r9hpKG0="
   },
   "maple-bright-medium-italic": {
     "type": "binary",
-    "version": "v7.9-2.922",
-    "url": "https://github.com/bahayonghang/MapleLXGWBright/releases/download/v7.9-2.922/MapleBright-MediumItalic.ttf",
-    "hash": "sha256-TFUx9P85nG4bu9UfQWo5SjAmAzk25IR17beZtj9lnVM="
+    "version": "v7.9-26.10.22",
+    "url": "https://github.com/bahayonghang/MapleLXGWBright/releases/download/v7.9-26.10.22/MapleBright-MediumItalic.ttf",
+    "hash": "sha256-IPjQHl49WI5XXifY4pOBqfkC2d+Fs/oJveh/jxeI5Uk="
   }
 }
