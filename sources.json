@@ -3,13 +3,13 @@
     "type": "flatpak",
     "appId": "com.usebottles.bottles",
     "origin": "flathub",
-    "commit": "b40a62a47a5c391a56719f5a1eac119d21250f51118a82d2495017f378edc832"
+    "commit": "252c59e4451929e2e18e788f196a892c3d3c8c85231869c5fed0992f99fa016e"
   },
   "qq": {
     "type": "flatpak",
     "appId": "com.qq.QQ",
     "origin": "flathub",
-    "commit": "752cd5df26138222f009f2593a90cc57918d78851fd15e63e85925248ef1dacd"
+    "commit": "7841b4bea1f5ba7c9625b7a70d3248307fb9bbe35671a502d56e7edf54519391"
   },
   "wechat": {
     "type": "flatpak",
