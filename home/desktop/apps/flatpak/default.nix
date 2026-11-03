@@ -2,6 +2,7 @@
 
 let
   appIds = map (package: package.appId) config.services.flatpak.packages;
+  systemctl = "${config.systemd.user.systemctlPath} --user";
 in
 {
   imports = [
@@ -11,14 +12,35 @@ in
     ./wechat.nix
   ];
 
-  services.flatpak.restartOnFailure.enable = false;
+  services.flatpak.restartOnFailure = {
+    enable = true;
+    restartDelay = "30s";
+  };
 
   systemd.user.services.flatpak-managed-install = {
     Install.WantedBy = lib.mkForce [ ];
-    Unit.OnFailure = [ "flatpak-managed-install-failed.service" ];
+    Unit = {
+      After = lib.mkForce [ ];
+      # Let the activation hook handle restarts without blocking Home Manager.
+      X-SwitchMethod = "keep-old";
+      StartLimitIntervalSec = "infinity";
+      StartLimitBurst = 3;
+      OnFailure = [ "flatpak-managed-install-failed.service" ];
+    };
+    # Skip failure notifications during automatic retries.
+    Service.RestartMode = "direct";
   };
 
-  # HACK: nix-flatpak's Home Manager activation hides installation failures.
+  # HACK: nix-flatpak blocks activation on downloads; schedule synchronization asynchronously.
+  home.activation.flatpak-managed-install = lib.mkForce (lib.hm.dag.entryAfter [ "reloadSystemd" ] ''
+    if ${config.systemd.user.systemctlPath} is-system-running -q; then
+      # A glob allows reset-failed to succeed when the unit is not loaded.
+      run ${systemctl} reset-failed 'flatpak-managed-install.*' &&
+        run ${systemctl} restart --no-block flatpak-managed-install.service ||
+        warnEcho "Failed to schedule Flatpak sync. Check the user systemd journal."
+    fi
+  '');
+
   systemd.user.services.flatpak-managed-install-failed = {
     Unit.Description = "Notify about failed Flatpak synchronization";
     Service = {
