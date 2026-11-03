@@ -27,7 +27,6 @@ in
       defaultProvider = "openai-codex";
       defaultModel = "gpt-6-luna";
       defaultThinkingLevel = "high";
-      defaultTools = [ "+codemode" ];
 
       autocompleteMaxVisible = 10;
 

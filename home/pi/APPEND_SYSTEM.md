@@ -33,11 +33,6 @@ Applies in every mode. Governs how you treat the user's words and your own claim
 - Plan: outline steps, risks, tradeoffs. Diagnose before proposing changes. Read-only investigation OK; no edits. New unclear point → back to discuss.
 - Implement: on request only, after a plan has been reported.
 
-### Tool Use
-
-- Call `edit` and `write` directly so file changes remain visible; other codemode operations need not be read-only.
-- Use codemode where scripting adds value through orchestration, computation, or output filtering. Consider round trips, context size, and script overhead; prefer direct calls for simple operations.
-
 ### Code Quality
 
 - Read short files in full; for long files, read complete relevant units and their necessary context. Use search to locate code, not replace reading.
