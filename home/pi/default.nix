@@ -35,7 +35,6 @@ in
         "npm:@firstpick/pi-themes-bundle"
         "npm:@aliou/pi-guardrails"
         "npm:@sherif-fanous/pi-rtk"
-        "npm:pi-cache-optimizer"
         "npm:@narumitw/pi-usage"
       ];
 
@@ -50,7 +49,6 @@ in
   };
 
   home.file.".pi/agent/APPEND_SYSTEM.md".source = ./APPEND_SYSTEM.md;
-  home.file.".pi/agent/models.json".source = ./models.json;
   home.file.".pi/agent/extensions/web-tools.ts".source = ./extensions/web-tools.ts;
   home.file.".pi/agent/skills" = {
     source = ./skills;
