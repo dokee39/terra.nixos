@@ -3,7 +3,7 @@
     "type": "flatpak",
     "appId": "com.usebottles.bottles",
     "origin": "flathub",
-    "commit": "252c59e4451929e2e18e788f196a892c3d3c8c85231869c5fed0992f99fa016e"
+    "commit": "947374f14eba69c78287f48975582529f11316b0a3705073e09c23937128f3af"
   },
   "qq": {
     "type": "flatpak",
