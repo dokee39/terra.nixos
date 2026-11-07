@@ -13,6 +13,9 @@ in {
   config = {
     boot.kernelPackages = pkgs.linuxPackages_latest;
 
+    # HACK: prevent games running via wine from crashing
+    boot.kernelModules = [ "ntsync" ];
+
     boot.loader.timeout = cfg.grubTimeOut;
     boot.loader.grub = {
       enable = true;

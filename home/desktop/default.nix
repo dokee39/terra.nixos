@@ -51,6 +51,7 @@ in
       google-chrome
       pinta
       osu-lazer-bin
+      inputs.aagl.packages.${pkgs.stdenv.hostPlatform.system}.anime-game-launcher
     ])
     ++ (with customPackages; [
       mikan

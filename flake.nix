@@ -73,6 +73,10 @@
     };
 
     # --- Application ---
+    aagl = {
+      url = "github:ezKEa/aagl-gtk-on-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     nautilus-image-converter = {
       url = "git+https://gitlab.gnome.org/coreyberla/nautilus-image-converter.git?ref=master";
       flake = false;
