@@ -30,10 +30,16 @@ in
         natEnabled = false;
       };
 
-      folders.obsidian = {
-        path = "${config.home.homeDirectory}/Documents/obsidian-repos/note";
-        devices = builtins.attrNames peers;
-        ignorePatterns = [ "/.obsidian/workspace.json" ];
+      folders = {
+        obsidian = {
+          path = "${config.home.homeDirectory}/Documents/obsidian-repos/note";
+          devices = builtins.attrNames peers;
+          ignorePatterns = [ "/.obsidian/workspace.json" ];
+        };
+        personal-memory = {
+          path = "${config.home.homeDirectory}/.local/share/pi/personal-memory";
+          devices = builtins.attrNames peers;
+        };
       };
     };
   };
