@@ -107,8 +107,9 @@
 
       # ── Steam games ──
       {
-        match._props.app-id = "^steam_app_[0-9]+$";
+        match._props.app-id = "^steam_(proton|app_[0-9]+)$";
         open-fullscreen = true;
+        opacity = 1.0;
         variable-refresh-rate = true;
       }
     ] ++ map (rule: { layer-rule = rule; }) [
