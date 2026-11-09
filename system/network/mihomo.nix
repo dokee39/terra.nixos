@@ -1,68 +1,50 @@
 { config, lib, pkgs, ... }:
 
-let
-  cfg = config.terra.mihomo;
-in
 {
-  age.secrets.mihomo-subscription-url.file = ../../secrets/mihomo-subscription-url.age;
-
   services.mihomo.webui = pkgs.metacubexd;
+
+  systemd.services.mihomo.serviceConfig = {
+    RuntimeDirectory = "mihomo";
+    RuntimeDirectoryMode = "0700";
+  };
 
   systemd.timers.mihomo-subscription-update = {
     wantedBy = [ "timers.target" ];
     timerConfig = {
       OnBootSec = "45s";
-      OnUnitActiveSec = "1w";
+      OnCalendar = "*-*-* 01,13:19:00 UTC";
       RandomizedDelaySec = "2m";
-      Persistent = true;
-      Unit = "mihomo-subscription-update.service";
     };
   };
 
   systemd.services.mihomo-subscription-update = {
-    description = "Refresh mihomo config from subscription URL";
+    description = "Refresh mihomo config from encrypted subscription";
 
     wants = [ "network-online.target" ];
     after = [ "network-online.target" ];
 
     path = with pkgs; [
-      config.services.mihomo.package
+      age
       curl
       coreutils
-      findutils
-      gnugrep
-      systemd
-      yq-go
+      diffutils
+      jq
     ];
 
     serviceConfig = {
       Type = "oneshot";
-      User = "root";
-      Group = "root";
       UMask = "0077";
-      TimeoutStartSec = "2min";
+      TimeoutStartSec = "10min";
     };
 
-    script = let
-      subUrlFile = config.age.secrets.mihomo-subscription-url.path;
-      patchExpr = builtins.replaceStrings ["__TUN_DEVICE__"] [cfg.tunDevice] (builtins.readFile ./mihomo-patch.yq);
-    in ''
+    script = ''
       set -euo pipefail
 
-      mkdir -p /var/lib/private/mihomo
-
-      err() {
-        echo "mihomo-subscription-update: $1" >&2
-        exit 1
-      }
-
-      url="$(tr -d '\r\n' < ${lib.escapeShellArg subUrlFile})" || err "failed to read subscription URL"
-      [ -n "$url" ] || err "subscription URL is empty"
-
-      cfg="/var/lib/private/mihomo/config.yaml"
+      cfg=${lib.escapeShellArg config.services.mihomo.configFile}
       cfg_dir="$(dirname "$cfg")"
-      tmp="$(mktemp "$cfg_dir/.config.yaml.tmp.XXXXXX")"
-      trap 'rm -f "$tmp"' EXIT
+      mkdir -p "$cfg_dir"
+      tmp="$(mktemp -d "$cfg_dir/.subscription.XXXXXX")"
+      trap 'rm -rf "$tmp"' EXIT
 
       curl --http1.1 \
         --fail --location --silent --show-error \
@@ -70,20 +52,23 @@ in
         --max-time 60 \
         --retry 5 \
         --retry-delay 10 \
-        "$url" \
-        -o "$tmp" || err "failed to download subscription config"
+        "https://raw.githubusercontent.com/dokee39/terra.nixos/subscriptions/nixos.yaml.age" \
+        -o "$tmp/config.yaml.age"
 
-      [ -s "$tmp" ] || err "downloaded subscription config is empty"
+      age --decrypt --identity /etc/ssh/ssh_host_ed25519_key \
+        --output "$tmp/config.yaml" "$tmp/config.yaml.age"
 
-      yq -i '${patchExpr}' "$tmp" || err "failed to patch subscription config"
-      mihomo -t -d "$cfg_dir" -f "$tmp" || err "downloaded config failed validation"
+      if cmp -s "$tmp/config.yaml" "$cfg"; then
+        exit 0
+      fi
 
-      chmod 600 "$tmp" || err "failed to set config permissions"
-      chown root:root "$tmp" || err "failed to set config ownership"
+      jq -Rs '{payload: .}' "$tmp/config.yaml" |
+        curl --unix-socket /run/mihomo/controller.sock \
+          --noproxy '*' --fail --silent --show-error \
+          --request PUT --header 'Content-Type: application/json' \
+          --data-binary @- http://localhost/configs > /dev/null
 
-      mv -f "$tmp" "$cfg" || err "failed to replace config"
-
-      systemctl restart mihomo.service
+      mv -f "$tmp/config.yaml" "$cfg"
     '';
   };
 }

@@ -1,4 +1,5 @@
 .port = 7890 |
+.["external-controller-unix"] = "/run/mihomo/controller.sock" |
 
 .tun.enable = true |
 .tun.device = "tun0" |

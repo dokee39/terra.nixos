@@ -48,7 +48,5 @@
         alt-speed = { up = 2000; down = 10000; };
       };
     };
-
-    mihomo.tunDevice = "tun0";
   };
 }

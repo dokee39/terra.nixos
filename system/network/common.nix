@@ -1,85 +1,75 @@
-{ config, inputs, lib, pkgs, ... }:
+{ inputs, lib, pkgs, ... }:
 
-let
-  cfg = config.terra.mihomo;
-in
 {
-  options.terra.mihomo.tunDevice = lib.mkOption {
-    type = lib.types.str;
-    default = "tun0";
+  environment.systemPackages = with pkgs; [
+    clashtui
+    impala
+  ];
+
+  # HACK: ARP flux between same-subnet NICs breaks interface-bound connections.
+  boot.kernel.sysctl = {
+    "net.ipv4.conf.all.arp_ignore" = 1;
+    "net.ipv4.conf.all.arp_announce" = 2;
   };
 
-  config = {
-    environment.systemPackages = with pkgs; [
-      clashtui
-      impala
-    ];
+  networking = {
+    useDHCP = false;
 
-    # HACK: ARP flux between same-subnet NICs breaks interface-bound connections.
-    boot.kernel.sysctl = {
-      "net.ipv4.conf.all.arp_ignore" = 1;
-      "net.ipv4.conf.all.arp_announce" = 2;
-    };
-
-    networking = {
-      useDHCP = false;
-
-      networkmanager = {
-        enable = true;
-        wifi.backend = "iwd";
-        dns = "systemd-resolved";
-        dhcp = "internal";
-      };
-
-      modemmanager.enable = false;
-
-      wireless.iwd = {
-        enable = true;
-        settings.Settings.AutoConnect = true;
-      };
-
-      firewall.trustedInterfaces = [ cfg.tunDevice ];
-    };
-
-    services.resolved = {
+    networkmanager = {
       enable = true;
-      settings.Resolve.MulticastDNS = false;
+      wifi.backend = "iwd";
+      dns = "systemd-resolved";
+      dhcp = "internal";
     };
 
-    services.avahi = {
+    modemmanager.enable = false;
+
+    wireless.iwd = {
       enable = true;
-      nssmdns4 = true;
-      settings.publish = {
-        disable-publishing = false;
-        publish-addresses = true;
-      };
+      settings.Settings.AutoConnect = true;
     };
 
-    services.openssh = {
-      enable = true;
-      settings = {
-        PermitRootLogin = "no";
-        PasswordAuthentication = lib.mkDefault false;
-      };
-    };
+    firewall.trustedInterfaces = [ "tun0" ];
+  };
 
-    services.mihomo = {
-      enable = true;
-      tunMode = true;
-      processesInfo = true;
-      configFile = "/var/lib/private/mihomo/config.yaml";
-    };
+  services.resolved = {
+    enable = true;
+    settings.Resolve.MulticastDNS = false;
+  };
 
-    system.activationScripts.mihomo-mmdb.text = ''
-      install -d -m 0755 /var/lib/private/mihomo
-      install -m 0644 \
-        "${inputs.mmdb}/Country.mmdb" \
-        /var/lib/private/mihomo/Country.mmdb
-    '';
-
-    services.tailscale = {
-      enable = true;
-      openFirewall = true;
+  services.avahi = {
+    enable = true;
+    nssmdns4 = true;
+    settings.publish = {
+      disable-publishing = false;
+      publish-addresses = true;
     };
+  };
+
+  services.openssh = {
+    enable = true;
+    settings = {
+      PermitRootLogin = "no";
+      PasswordAuthentication = lib.mkDefault false;
+    };
+  };
+
+  services.mihomo = {
+    enable = true;
+    tunMode = true;
+    processesInfo = true;
+    configFile = "/var/lib/private/mihomo/config.yaml";
+  };
+
+  system.activationScripts.mihomo-mmdb.text = ''
+    install -d -m 0755 /var/lib/private/mihomo
+    install -m 0644 \
+      "${inputs.mmdb}/Country.mmdb" \
+      /var/lib/private/mihomo/Country.mmdb
+  '';
+
+  services.tailscale = {
+    enable = true;
+    openFirewall = true;
   };
 }
