@@ -1,0 +1,54 @@
+name: subscriptions
+
+on:
+  schedule:
+    - cron: "19 */12 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: subscriptions
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - uses: cachix/install-nix-action@v31
+        with:
+          extra_nix_config: |
+            access-tokens = github.com=${{ github.token }}
+
+      - name: Build encrypted subscriptions
+        env:
+          MIHOMO_SUBSCRIPTION_URL: ${{ secrets.MIHOMO_SUBSCRIPTION_URL }}
+        run: |
+          nix shell --no-update-lock-file --inputs-from . \
+            nixpkgs#curl nixpkgs#yq-go nixpkgs#mihomo nixpkgs#age \
+            --command bash scripts/subscriptions/build.sh "$RUNNER_TEMP/subscriptions"
+
+      - name: Check out distribution branch
+        uses: actions/checkout@v6
+        with:
+          ref: subscriptions
+          path: distribution
+
+      - name: Publish encrypted subscriptions
+        working-directory: distribution
+        run: |
+          cp "$RUNNER_TEMP/subscriptions/"{android,nixos}.yaml.age .
+
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add android.yaml.age nixos.yaml.age
+          git commit -m "chore(subscriptions): refresh encrypted configs"
+          git push origin HEAD:subscriptions

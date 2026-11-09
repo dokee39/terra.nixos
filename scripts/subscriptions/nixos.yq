@@ -1,0 +1,31 @@
+.port = 7890 |
+
+.tun.enable = true |
+.tun.device = "tun0" |
+.tun.stack = "mixed" |
+.tun."auto-route" = true |
+.tun."auto-redirect" = true |
+.tun."auto-detect-interface" = true |
+
+.["rule-providers"]."nixos-hosts" = {
+  "type": "inline",
+  "behavior": "classical",
+  "payload": ["DOMAIN-REGEX,^nixos-[^.]+$"]
+} |
+.dns."nameserver-policy"."rule-set:nixos-hosts" = "100.100.100.100#tailscale-direct" |
+
+.proxies += [
+  {
+    "name": "tailscale-direct",
+    "type": "direct",
+    "interface-name": "tailscale0"
+  }
+] |
+
+.rules = (
+  [
+    "RULE-SET,nixos-hosts,tailscale-direct",
+    "PROCESS-NAME-WILDCARD,*transmission*,DIRECT"
+  ]
+  + (.rules // [])
+)
