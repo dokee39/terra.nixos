@@ -62,13 +62,16 @@
         exit 0
       fi
 
-      jq -Rs '{payload: .}' "$tmp/config.yaml" |
-        curl --unix-socket /run/mihomo/controller.sock \
-          --noproxy '*' --fail --silent --show-error \
-          --request PUT --header 'Content-Type: application/json' \
-          --data-binary @- http://localhost/configs > /dev/null
-
+      jq -Rs '{payload: .}' "$tmp/config.yaml" > "$tmp/payload.json"
       mv -f "$tmp/config.yaml" "$cfg"
+
+      curl --unix-socket /run/mihomo/controller.sock \
+        --noproxy '*' --fail --silent --show-error \
+        --request PUT --header 'Content-Type: application/json' \
+        --data-binary @"$tmp/payload.json" http://localhost/configs > /dev/null || {
+          echo "new config saved, but API reload failed. Restart mihomo.service manually to apply it." >&2
+          exit 1
+        }
     '';
   };
 }

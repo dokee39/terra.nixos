@@ -123,6 +123,8 @@ git commit -m "feat: add new host: <hostname>"
 git push
 ```
 
+After changing host keys, rerun the `subscriptions` workflow to refresh encryption recipients.
+
 ## Initialize and enable the full configuration
 
 On the new machine:
