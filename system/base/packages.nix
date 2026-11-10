@@ -12,6 +12,7 @@
     curl
     wget
     xh
+    age
 
     tree
     vim
