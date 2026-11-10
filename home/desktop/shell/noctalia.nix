@@ -13,6 +13,8 @@ in {
   programs.noctalia = {
     enable = true;
     settings = {
+      audio.enable_sounds = false;
+
       # ── Visual Theme ──
       theme = {
         builtin = "Rosé Pine";
@@ -94,7 +96,7 @@ in {
         password_style = "default";
         polkit_agent = true;
         clipboard_enabled = false;
-        telemetry_enabled = true;
+        telemetry_enabled = false;
         screen_time_enabled = true;
         settings_show_advanced = true;
         animation.speed = 1.75;
@@ -117,12 +119,14 @@ in {
 
       # ── Notification ──
       notification = {
+        follow_focused_output = true;
         background_opacity = 0.5;
         scale = 0.85;
       };
 
       # ── On-Screen Display ──
       osd = {
+        follow_focused_output = true;
         background_opacity = 0.5;
         position = "top_right";
         kinds = {
