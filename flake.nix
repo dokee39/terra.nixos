@@ -19,10 +19,6 @@
     nix-flatpak.url = "github:gmodena/nix-flatpak";
 
     # --- Data / Theme ---
-    mmdb = {
-      url = "github:alecthw/mmdb_china_ip_list?ref=release";
-      flake = false;
-    };
     lxgw-bright = {
       url = "github:lxgw/LxgwBright";
       flake = false;

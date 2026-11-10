@@ -15,8 +15,6 @@ err() {
 
 cd "$script_dir/../.."
 
-mmdb_dir="$(nix eval --raw --impure --no-update-lock-file \
-  --expr '(builtins.getFlake (toString ./.)).inputs.mmdb.outPath')"
 nix eval --raw --file ./secrets/keys.nix hosts \
   --apply 'keys: builtins.concatStringsSep "\n" keys + "\n"' \
   > "$work_dir/nixos.pub"
@@ -33,8 +31,10 @@ curl --http1.1 \
   -o "$work_dir/provider.yaml" \
   2> /dev/null || err "failed to download provider configuration"
 
-yq eval --exit-status 'tag == "!!map"' "$work_dir/provider.yaml" \
-  > /dev/null 2>&1 || err "provider configuration is not a YAML mapping"
+yq eval --exit-status \
+  '(tag == "!!map") and ((.proxies | tag) == "!!seq") and ((.proxies | length) > 0)' \
+  "$work_dir/provider.yaml" > /dev/null 2>&1 \
+  || err "provider configuration must contain a non-empty proxies list"
 
 for device in android nixos; do
   bash "$script_dir/patch.sh" "$device" "$work_dir/provider.yaml" \
@@ -42,7 +42,6 @@ for device in android nixos; do
     || err "failed to apply $device patches"
 
   mkdir "$work_dir/$device"
-  cp "$mmdb_dir/Country.mmdb" "$work_dir/$device/Country.mmdb"
   mihomo -t -d "$work_dir/$device" -f "$work_dir/$device.yaml" \
     > /dev/null 2>&1 || err "$device configuration failed Mihomo validation"
 

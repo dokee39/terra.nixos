@@ -1,4 +1,4 @@
-{ inputs, lib, pkgs, ... }:
+{ lib, pkgs, ... }:
 
 {
   environment.systemPackages = with pkgs; [
@@ -60,13 +60,6 @@
     processesInfo = true;
     configFile = "/var/lib/private/mihomo/config.yaml";
   };
-
-  system.activationScripts.mihomo-mmdb.text = ''
-    install -d -m 0755 /var/lib/private/mihomo
-    install -m 0644 \
-      "${inputs.mmdb}/Country.mmdb" \
-      /var/lib/private/mihomo/Country.mmdb
-  '';
 
   services.tailscale = {
     enable = true;

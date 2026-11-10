@@ -244,23 +244,6 @@
         "type": "github"
       }
     },
-    "mmdb": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1793922960,
-        "narHash": "sha256-68JgLRjBbVUkbcQrByt8Y4zh+rptySDFp+xRzEcbpjQ=",
-        "owner": "alecthw",
-        "repo": "mmdb_china_ip_list",
-        "rev": "c0d3d952e8982be74773dab12856fc344db5f2f9",
-        "type": "github"
-      },
-      "original": {
-        "owner": "alecthw",
-        "ref": "release",
-        "repo": "mmdb_china_ip_list",
-        "type": "github"
-      }
-    },
     "nautilus-image-converter": {
       "flake": false,
       "locked": {
@@ -432,7 +415,6 @@
         "home-manager": "home-manager",
         "im-select": "im-select",
         "lxgw-bright": "lxgw-bright",
-        "mmdb": "mmdb",
         "nautilus-image-converter": "nautilus-image-converter",
         "navbuddy": "navbuddy",
         "nix-alien": "nix-alien",

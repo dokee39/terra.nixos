@@ -1,0 +1,295 @@
+port: 7890
+socks-port: 7891
+allow-lan: false
+mode: rule
+log-level: info
+external-controller: 127.0.0.1:9090
+unified-delay: true
+
+dns:
+  enable: true
+  use-hosts: true
+  default-nameserver:
+    - 119.29.29.29
+    - 223.5.5.5
+    - 223.6.6.6
+    - 114.114.114.114
+    - 8.8.8.8
+    - tls://223.5.5.5
+    - tls://223.6.6.6
+    - tls://1.12.12.12
+    - tls://120.53.53.53
+  nameserver:
+    - 119.29.29.29
+    - 223.5.5.5
+    - tls://223.5.5.5
+    - tls://223.6.6.6
+    - tls://dot.pub
+    - tls://1.12.12.12
+    - tls://120.53.53.53
+
+proxy-groups:
+  - name: ⚡ 自动切换-日本
+    type: url-test
+    include-all-proxies: true
+    filter: 日本
+    exclude-filter: 免费|下载专用
+    url: https://www.gstatic.com/generate_204
+    expected-status: 204
+    interval: 120
+    tolerance: 100
+    lazy: false
+    timeout: 2000
+    max-failed-times: 3
+  - name: ⚡ 自动切换-香港
+    type: url-test
+    include-all-proxies: true
+    filter: 香港
+    exclude-filter: 免费|下载专用
+    url: https://www.gstatic.com/generate_204
+    expected-status: 204
+    interval: 120
+    tolerance: 100
+    lazy: false
+    timeout: 2000
+    max-failed-times: 3
+  - name: ⚡ 自动切换
+    type: fallback
+    proxies: [⚡ 自动切换-日本, ⚡ 自动切换-香港]
+    url: https://www.gstatic.com/generate_204
+    expected-status: 204
+    interval: 120
+    lazy: false
+    timeout: 2000
+    max-failed-times: 3
+
+  - name: 🔰 选择节点
+    type: select
+    proxies: [⚡ 自动切换, ⚡ 自动切换-日本, ⚡ 自动切换-香港, DIRECT]
+
+  - name: 📺 动画疯
+    type: select
+    proxies: [🔰 选择节点, DIRECT]
+
+  - name: 🚀 测速
+    type: select
+    proxies: [DIRECT, 🔰 选择节点]
+  - name: 🎮 游戏下载
+    type: select
+    proxies: [DIRECT, 🔰 选择节点]
+  - name: 🎮 Steam 商店/社区
+    type: select
+    proxies: [🔰 选择节点, DIRECT]
+  - name: ☁️ OneDrive
+    type: select
+    proxies: [🔰 选择节点, DIRECT]
+  - name: 🇨🇳 国内网站
+    type: select
+    proxies: [DIRECT, 🔰 选择节点]
+  - name: 🛑 拦截广告
+    type: select
+    proxies: [REJECT, DIRECT, 🔰 选择节点]
+
+rule-providers:
+  # Shared formats and 12-hour refresh intervals; cache paths stay independent.
+  reject_non_ip_drop:
+    <<: &classical_text {type: http, behavior: classical, format: text, interval: 43200}
+    url: https://ruleset.skk.moe/Clash/non_ip/reject-drop.txt
+    path: ./ruleset/sukka/reject_non_ip_drop.txt
+  reject_domain:
+    <<: &domain_text {type: http, behavior: domain, format: text, interval: 43200}
+    url: https://ruleset.skk.moe/Clash/domainset/reject.txt
+    path: ./ruleset/sukka/reject_domain.txt
+  reject_extra:
+    <<: *domain_text
+    url: https://ruleset.skk.moe/Clash/domainset/reject_extra.txt
+    path: ./ruleset/sukka/reject_extra.txt
+  sogouinput:
+    <<: *classical_text
+    url: https://ruleset.skk.moe/Clash/non_ip/sogouinput.txt
+    path: ./ruleset/sukka/sogouinput.txt
+  reject_non_ip:
+    <<: *classical_text
+    url: https://ruleset.skk.moe/Clash/non_ip/reject.txt
+    path: ./ruleset/sukka/reject_non_ip.txt
+  reject_non_ip_no_drop:
+    <<: *classical_text
+    url: https://ruleset.skk.moe/Clash/non_ip/reject-no-drop.txt
+    path: ./ruleset/sukka/reject_non_ip_no_drop.txt
+
+  lan_non_ip:
+    <<: *classical_text
+    url: https://ruleset.skk.moe/Clash/non_ip/lan.txt
+    path: ./ruleset/sukka/lan_non_ip.txt
+  direct_non_ip:
+    <<: *classical_text
+    url: https://ruleset.skk.moe/Clash/non_ip/direct.txt
+    path: ./ruleset/sukka/direct_non_ip.txt
+  speedtest:
+    <<: *domain_text
+    url: https://ruleset.skk.moe/Clash/domainset/speedtest.txt
+    path: ./ruleset/sukka/speedtest.txt
+
+  bahamut:
+    <<: &domain_mrs {type: http, behavior: domain, format: mrs, interval: 43200}
+    url: https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/bahamut.mrs
+    path: ./ruleset/meta/bahamut.mrs
+  stream_non_ip:
+    <<: *classical_text
+    url: https://ruleset.skk.moe/Clash/non_ip/stream.txt
+    path: ./ruleset/sukka/stream_non_ip.txt
+
+  ai_non_ip:
+    <<: *classical_text
+    url: https://ruleset.skk.moe/Clash/non_ip/ai.txt
+    path: ./ruleset/sukka/ai_non_ip.txt
+  telegram_non_ip:
+    <<: *classical_text
+    url: https://ruleset.skk.moe/Clash/non_ip/telegram.txt
+    path: ./ruleset/sukka/telegram_non_ip.txt
+  apple_intelligence:
+    <<: *classical_text
+    url: https://ruleset.skk.moe/Clash/non_ip/apple_intelligence.txt
+    path: ./ruleset/sukka/apple_intelligence.txt
+
+  apple_cn:
+    <<: *classical_text
+    url: https://ruleset.skk.moe/Clash/non_ip/apple_cn.txt
+    path: ./ruleset/sukka/apple_cn.txt
+  domestic_non_ip:
+    <<: *classical_text
+    url: https://ruleset.skk.moe/Clash/non_ip/domestic.txt
+    path: ./ruleset/sukka/domestic_non_ip.txt
+  apple_cdn:
+    <<: *domain_text
+    url: https://ruleset.skk.moe/Clash/domainset/apple_cdn.txt
+    path: ./ruleset/sukka/apple_cdn.txt
+  microsoft_cdn:
+    <<: *classical_text
+    url: https://ruleset.skk.moe/Clash/non_ip/microsoft_cdn.txt
+    path: ./ruleset/sukka/microsoft_cdn.txt
+
+  game_download:
+    <<: *domain_text
+    url: https://ruleset.skk.moe/Clash/domainset/game-download.txt
+    path: ./ruleset/sukka/game_download.txt
+  steam:
+    <<: *domain_mrs
+    url: https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/steam.mrs
+    path: ./ruleset/meta/steam.mrs
+  onedrive:
+    <<: *domain_mrs
+    url: https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/onedrive.mrs
+    path: ./ruleset/meta/onedrive.mrs
+
+  cdn_domain:
+    <<: *domain_text
+    url: https://ruleset.skk.moe/Clash/domainset/cdn.txt
+    path: ./ruleset/sukka/cdn_domain.txt
+  download_domain:
+    <<: *domain_text
+    url: https://ruleset.skk.moe/Clash/domainset/download.txt
+    path: ./ruleset/sukka/download_domain.txt
+  cdn_non_ip:
+    <<: *classical_text
+    url: https://ruleset.skk.moe/Clash/non_ip/cdn.txt
+    path: ./ruleset/sukka/cdn_non_ip.txt
+  download_non_ip:
+    <<: *classical_text
+    url: https://ruleset.skk.moe/Clash/non_ip/download.txt
+    path: ./ruleset/sukka/download_non_ip.txt
+  microsoft:
+    <<: *classical_text
+    url: https://ruleset.skk.moe/Clash/non_ip/microsoft.txt
+    path: ./ruleset/sukka/microsoft.txt
+  global_non_ip:
+    <<: *classical_text
+    url: https://ruleset.skk.moe/Clash/non_ip/global.txt
+    path: ./ruleset/sukka/global_non_ip.txt
+
+  lan_ip:
+    <<: *classical_text
+    url: https://ruleset.skk.moe/Clash/ip/lan.txt
+    path: ./ruleset/sukka/lan_ip.txt
+  stream_ip:
+    <<: *classical_text
+    url: https://ruleset.skk.moe/Clash/ip/stream.txt
+    path: ./ruleset/sukka/stream_ip.txt
+  cdn_ip:
+    <<: *classical_text
+    url: https://ruleset.skk.moe/Clash/ip/cdn.txt
+    path: ./ruleset/sukka/cdn_ip.txt
+  download_ip:
+    <<: *classical_text
+    url: https://ruleset.skk.moe/Clash/ip/download.txt
+    path: ./ruleset/sukka/download_ip.txt
+  ai_ip:
+    <<: *classical_text
+    url: https://ruleset.skk.moe/Clash/ip/ai.txt
+    path: ./ruleset/sukka/ai_ip.txt
+  telegram_ip:
+    <<: *classical_text
+    url: https://ruleset.skk.moe/Clash/ip/telegram.txt
+    path: ./ruleset/sukka/telegram_ip.txt
+  domestic_ip:
+    <<: *classical_text
+    url: https://ruleset.skk.moe/Clash/ip/domestic.txt
+    path: ./ruleset/sukka/domestic_ip.txt
+  china_ip:
+    <<: &ipcidr_text {type: http, behavior: ipcidr, format: text, interval: 43200}
+    url: https://ruleset.skk.moe/Clash/ip/china_ip.txt
+    path: ./ruleset/sukka/china_ip.txt
+  china_ip_ipv6:
+    <<: *ipcidr_text
+    url: https://ruleset.skk.moe/Clash/ip/china_ip_ipv6.txt
+    path: ./ruleset/sukka/china_ip_ipv6.txt
+
+rules:
+  - RULE-SET,reject_non_ip_drop,🛑 拦截广告
+  - RULE-SET,reject_domain,🛑 拦截广告
+  - RULE-SET,reject_extra,🛑 拦截广告
+  - RULE-SET,sogouinput,🛑 拦截广告
+  - RULE-SET,reject_non_ip,🛑 拦截广告
+  - RULE-SET,reject_non_ip_no_drop,🛑 拦截广告
+
+  # Academic services must precede generic CDN routing.
+  - RULE-SET,lan_non_ip,DIRECT
+  - RULE-SET,direct_non_ip,DIRECT
+  - RULE-SET,speedtest,🚀 测速
+
+  - RULE-SET,bahamut,📺 动画疯
+  - RULE-SET,stream_non_ip,🔰 选择节点
+  - RULE-SET,ai_non_ip,🔰 选择节点
+  - RULE-SET,telegram_non_ip,🔰 选择节点
+  - RULE-SET,apple_intelligence,🔰 选择节点
+
+  - RULE-SET,apple_cn,🇨🇳 国内网站
+  - RULE-SET,domestic_non_ip,🇨🇳 国内网站
+  - RULE-SET,apple_cdn,🇨🇳 国内网站
+  - RULE-SET,microsoft_cdn,🇨🇳 国内网站
+
+  # Game downloads precede Steam; OneDrive precedes generic downloads.
+  - RULE-SET,game_download,🎮 游戏下载
+  - RULE-SET,steam,🎮 Steam 商店/社区
+  - RULE-SET,onedrive,☁️ OneDrive
+  - RULE-SET,cdn_domain,🔰 选择节点
+  - RULE-SET,download_domain,🔰 选择节点
+  - RULE-SET,cdn_non_ip,🔰 选择节点
+  - RULE-SET,download_non_ip,🔰 选择节点
+  - RULE-SET,microsoft,🔰 选择节点
+  - RULE-SET,global_non_ip,🔰 选择节点
+
+  # Defer IP routing until after domain classification.
+  # Reject multicast before LAN, which includes 224.0.0.0/4.
+  - IP-CIDR,224.0.0.0/4,REJECT,no-resolve
+  - RULE-SET,lan_ip,DIRECT
+  - RULE-SET,stream_ip,🔰 选择节点
+  - RULE-SET,cdn_ip,🔰 选择节点
+  - RULE-SET,download_ip,🔰 选择节点
+  - RULE-SET,ai_ip,🔰 选择节点
+  - RULE-SET,telegram_ip,🔰 选择节点
+  - RULE-SET,domestic_ip,🇨🇳 国内网站
+  - RULE-SET,china_ip,🇨🇳 国内网站
+  - RULE-SET,china_ip_ipv6,🇨🇳 国内网站
+
+  - MATCH,🔰 选择节点
