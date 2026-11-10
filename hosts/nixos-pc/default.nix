@@ -50,6 +50,7 @@
     nct6687d
   ];
 
+  # HACK: Avoid EDIFIER N300 timeouts when resuming from audio suspend.
   services.pipewire.wireplumber.extraConfig."51-no-suspend" = {
     "monitor.alsa.rules" = [{
       matches = [{ "node.name" = "~alsa_output.*"; }];
