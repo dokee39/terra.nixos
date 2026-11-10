@@ -50,6 +50,13 @@
     nct6687d
   ];
 
+  services.pipewire.wireplumber.extraConfig."51-no-suspend" = {
+    "monitor.alsa.rules" = [{
+      matches = [{ "node.name" = "~alsa_output.*"; }];
+      actions."update-props"."session.suspend-timeout-seconds" = 0;
+    }];
+  };
+
   services.lact.enable = true;
   programs.coolercontrol.enable = true;
   environment.etc."coolercontrol/config.toml" = {
