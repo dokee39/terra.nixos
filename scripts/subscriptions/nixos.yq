@@ -11,12 +11,14 @@
 .["rule-providers"]."nixos-hosts" = {
   "type": "inline",
   "behavior": "classical",
-  "payload": ["DOMAIN-REGEX,^nixos-[^.]+$"]
+  "payload": [
+    "DOMAIN-REGEX,^nixos-[^.]+$",
+    "DOMAIN-SUFFIX,taila9e231.ts.net"
+  ]
 } |
 .dns."nameserver-policy" = (
   {
-    "rule-set:nixos-hosts": "100.100.100.100#tailscale-direct",
-    "+.ts.net": "100.100.100.100#tailscale-direct"
+    "rule-set:nixos-hosts": "100.100.100.100#tailscale-direct"
   }
   * .dns."nameserver-policy"
 ) |

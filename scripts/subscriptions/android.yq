@@ -1,1 +1,17 @@
-.
+.proxies += [
+  {
+    "name": "tailscale",
+    "type": "tailscale",
+    "hostname": "android-clash"
+  }
+] |
+
+.dns."nameserver-policy" = (
+  {"+.taila9e231.ts.net": "ts://tailscale"}
+  * .dns."nameserver-policy"
+) |
+
+.rules = (
+  ["DOMAIN-SUFFIX,taila9e231.ts.net,tailscale"]
+  + .rules
+)
