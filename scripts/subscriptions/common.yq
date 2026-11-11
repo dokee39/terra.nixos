@@ -1,8 +1,11 @@
 select(fileIndex == 0) as $base |
 select(fileIndex == 1) as $provider |
+($provider.dns."nameserver-policy" // {}) as $node_dns |
 $base |
 .proxies = $provider.proxies |
-.dns."nameserver-policy" = ($provider.dns."nameserver-policy" // {}) |
+# Node-domain policies must precede rule-set policies.
+.dns."nameserver-policy" = ($node_dns * .dns."nameserver-policy") |
+.dns."proxy-server-nameserver-policy" = $node_dns |
 
 with(.["proxy-groups"][] | select(.name == "🔰 选择节点");
   .proxies += [$provider.proxies[].name]

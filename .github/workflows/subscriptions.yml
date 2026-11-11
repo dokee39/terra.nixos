@@ -2,7 +2,7 @@ name: subscriptions
 
 on:
   schedule:
-    - cron: "19 */12 * * *"
+    - cron: "26 1,13 * * *"
   workflow_dispatch:
 
 permissions:

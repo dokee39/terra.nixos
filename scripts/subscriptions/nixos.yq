@@ -13,7 +13,13 @@
   "behavior": "classical",
   "payload": ["DOMAIN-REGEX,^nixos-[^.]+$"]
 } |
-.dns."nameserver-policy"."rule-set:nixos-hosts" = "100.100.100.100#tailscale-direct" |
+.dns."nameserver-policy" = (
+  {
+    "rule-set:nixos-hosts": "100.100.100.100#tailscale-direct",
+    "+.ts.net": "100.100.100.100#tailscale-direct"
+  }
+  * .dns."nameserver-policy"
+) |
 
 .proxies += [
   {

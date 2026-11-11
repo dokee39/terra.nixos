@@ -8,25 +8,21 @@ unified-delay: true
 
 dns:
   enable: true
+  enhanced-mode: redir-host
   use-hosts: true
-  default-nameserver:
-    - 119.29.29.29
-    - 223.5.5.5
-    - 223.6.6.6
-    - 114.114.114.114
-    - 8.8.8.8
-    - tls://223.5.5.5
-    - tls://223.6.6.6
-    - tls://1.12.12.12
-    - tls://120.53.53.53
-  nameserver:
-    - 119.29.29.29
-    - 223.5.5.5
-    - tls://223.5.5.5
-    - tls://223.6.6.6
-    - tls://dot.pub
-    - tls://1.12.12.12
-    - tls://120.53.53.53
+  default-nameserver: [119.29.29.29, 223.5.5.5]
+  nameserver: &overseas_dns
+    - "https://dns.google/dns-query#⚡ 自动切换"
+    - "https://cloudflare-dns.com/dns-query#⚡ 自动切换"
+  proxy-server-nameserver: &domestic_dns
+    - https://doh.pub/dns-query
+    - https://dns.alidns.com/dns-query
+  nameserver-policy:
+    "rule-set:direct_non_ip,speedtest": *domestic_dns
+    # Specific overseas services precede broader domestic domain suffixes.
+    "rule-set:bahamut,stream_non_ip,ai_non_ip,telegram_non_ip,apple_intelligence": *overseas_dns
+    "rule-set:apple_cn,domestic_non_ip,apple_cdn,microsoft_cdn": *domestic_dns
+    "rule-set:game_download": *domestic_dns
 
 proxy-groups:
   - name: ⚡ 自动切换-日本
