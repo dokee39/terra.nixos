@@ -1,5 +1,14 @@
-{ pkgs, ... }:
+{ pkgs, inputs, ... }:
 
+let
+  kaomojiSource = inputs.fontvibe-kaomoji;
+  python = pkgs.python3.withPackages (ps: [ ps.pypinyin ]);
+  kaomoji = pkgs.runCommand "fcitx5-kaomoji" { } ''
+    mkdir -p $out
+    ${python}/bin/python ${./convert-kaomoji.py} \
+      ${kaomojiSource}/data/core.json > $out/kaomoji.mb
+  '';
+in
 {
   i18n.inputMethod = {
     enable = true;
@@ -15,7 +24,22 @@
         fcitx5-rose-pine
       ];
 
-      settings = {
+      settings = let
+        candidateKeys = {
+          PrevCandidate."0" = "Left";
+          NextCandidate."0" = "Right";
+          PrevPage."0" = "minus";
+          PrevPage."1" = "Shift+Tab";
+          PrevPage."2" = "Up";
+          PrevPage."3" = "KP_Up";
+          PrevPage."4" = "Page_Up";
+          NextPage."0" = "equal";
+          NextPage."1" = "Tab";
+          NextPage."2" = "Down";
+          NextPage."3" = "KP_Down";
+          NextPage."4" = "Next";
+        };
+      in {
         inputMethod = {
           GroupOrder."0" = "Group 1";
 
@@ -29,6 +53,9 @@
           "Groups/0/Items/1".Name = "pinyin";
         };
 
+        globalOptions = pkgs.lib.mapAttrs'
+          (name: pkgs.lib.nameValuePair "Hotkey/${name}")
+          candidateKeys;
 
         addons = {
           pinyin = {
@@ -37,23 +64,11 @@
               CloudPinyinEnabled = "False";
               FirstRun = "False";
             };
-            sections = {
+            sections = candidateKeys // {
               Fuzzy = {
                 EN_ENG = "True";
                 IN_ING = "True";
               };
-              PrevCandidate."0" = "Left";
-              NextCandidate."0" = "Right";
-              PrevPage."0" = "minus";
-              PrevPage."1" = "Shift+Tab";
-              PrevPage."2" = "Up";
-              PrevPage."3" = "KP_Up";
-              PrevPage."4" = "Page_Up";
-              NextPage."0" = "equal";
-              NextPage."1" = "Tab";
-              NextPage."2" = "Down";
-              NextPage."3" = "KP_Down";
-              NextPage."4" = "Next";
             };
           };
 
@@ -75,6 +90,8 @@
 
 
   xdg.dataFile = {
+    "fcitx5/data/quickphrase.d/kaomoji.mb".source = "${kaomoji}/kaomoji.mb";
+
     "fcitx5/pinyin/dictionaries/moegirl.dict".source =
       "${pkgs.fcitx5-pinyin-moegirl}/share/fcitx5/pinyin/dictionaries/moegirl.dict";
 

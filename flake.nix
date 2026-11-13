@@ -19,6 +19,10 @@
     nix-flatpak.url = "github:gmodena/nix-flatpak";
 
     # --- Data / Theme ---
+    fontvibe-kaomoji = {
+      url = "github:Funovate-Technology/fontvibe-kaomoji";
+      flake = false;
+    };
     lxgw-bright = {
       url = "github:lxgw/LxgwBright";
       flake = false;

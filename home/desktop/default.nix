@@ -13,8 +13,8 @@ in
 
   imports = [
     ./mime.nix
+    ./services/fcitx5
     ./services/downloads-sorter.nix
-    ./services/fcitx5.nix
     ./services/pipewire.nix
     ./services/syncthing.nix
     ./shell/clipse.nix

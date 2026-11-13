@@ -192,6 +192,22 @@
         "type": "github"
       }
     },
+    "fontvibe-kaomoji": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1793930189,
+        "narHash": "sha256-fFOg4ocfIMNLtFJtd4B1JFaL5LNuFLnFzOeAYyO8Xmw=",
+        "owner": "Funovate-Technology",
+        "repo": "fontvibe-kaomoji",
+        "rev": "1614b48522dd1079100b4359e4df7ede8b274233",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Funovate-Technology",
+        "repo": "fontvibe-kaomoji",
+        "type": "github"
+      }
+    },
     "home-manager": {
       "inputs": {
         "nixpkgs": [
@@ -412,6 +428,7 @@
         "blink-lib": "blink-lib",
         "blink-pairs": "blink-pairs",
         "colloid-kde": "colloid-kde",
+        "fontvibe-kaomoji": "fontvibe-kaomoji",
         "home-manager": "home-manager",
         "im-select": "im-select",
         "lxgw-bright": "lxgw-bright",
