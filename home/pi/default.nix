@@ -24,8 +24,8 @@ in
       enableInstallTelemetry = false;
       enableAnalytics = false;
 
-      defaultProvider = "openai-codex";
-      defaultModel = "gpt-6-luna";
+      defaultProvider = "google-antigravity";
+      defaultModel = "gemini-4-hydrogen";
       defaultThinkingLevel = "high";
 
       autocompleteMaxVisible = 10;
@@ -35,6 +35,7 @@ in
         "npm:@aliou/pi-guardrails"
         "npm:@sherif-fanous/pi-rtk"
         "npm:@narumitw/pi-usage"
+        "npm:@justjoshn/pi-antigravity-oauth"
       ];
 
       theme = "rose-pine";
