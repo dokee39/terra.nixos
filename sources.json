@@ -9,7 +9,7 @@
     "type": "flatpak",
     "appId": "com.qq.QQ",
     "origin": "flathub",
-    "commit": "7841b4bea1f5ba7c9625b7a70d3248307fb9bbe35671a502d56e7edf54519391"
+    "commit": "b443ff33649f058db5ddb836d02ba156875a4bab6b0422b5846b43391f82296d"
   },
   "wechat": {
     "type": "flatpak",
