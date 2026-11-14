@@ -12,8 +12,8 @@ in
           stages = "static";
           fps = 1;
           background_colour = "#000000";
-          max_width = mkRaw "math.floor(vim.api.nvim_win_get_width(0) / 2)";
-          max_height = mkRaw "math.floor(vim.api.nvim_win_get_height(0) / 4)";
+          max_width = mkRaw "function() return math.floor(vim.o.columns / 2) end";
+          max_height = mkRaw "function() return math.floor(vim.o.lines / 4) end";
         };
       };
     }
@@ -178,29 +178,14 @@ in
               { "searchcount", color = "DiagnosticInfo"  },
               {
                 function()
-                  local line = vim.fn.search([[\s\+$]], "nwc")
-                  return line ~= 0 and ("TW:" .. line) or ""
+                  return vim.b.lualine_tw or ""
                 end,
                 color = "DiagnosticWarn",
               },
               {
-                  function()
-                    local space_line = vim.fn.search([[\v^ +]], "nwc")
-                    local tab_line = vim.fn.search([[\v^\t+]], "nwc")
-                    local same_line = vim.fn.search([[\v^(\t+ | +\t)]], "nwc")
-
-                    local min_line = nil
-
-                    if space_line > 0 and tab_line > 0 then
-                      min_line = math.min(space_line, tab_line)
-                    end
-
-                    if same_line > 0 then
-                      min_line = min_line and math.min(min_line, same_line) or same_line
-                    end
-
-                    return min_line and ("MI:" .. min_line) or ""
-                  end,
+                function()
+                  return vim.b.lualine_mi or ""
+                end,
                 color = "DiagnosticError",
               },
             }'';
@@ -241,6 +226,44 @@ in
           inactive_sections = {};
         };
       };
+      autoCmd = [
+        {
+          event = [ "BufEnter" "TextChanged" "InsertLeave" ];
+          desc = "Cache trailing whitespace and mixed indent line for lualine";
+          callback = mkRaw ''
+            function(args)
+              local buf = args.buf
+              if vim.bo[buf].buftype ~= "" then
+                return
+              end
+
+              local tw_line, space_line, tab_line, mi_line
+              for i, line in ipairs(vim.api.nvim_buf_get_lines(buf, 0, -1, false)) do
+                if not tw_line and line:find("[ \t]$") then
+                  tw_line = i
+                end
+                if not mi_line then
+                  if line:find("^\t+ ") or line:find("^ +\t") then
+                    mi_line = space_line or tab_line or i
+                  elseif not space_line and line:find("^ +") then
+                    space_line = i
+                    mi_line = tab_line
+                  elseif not tab_line and line:find("^\t+") then
+                    tab_line = i
+                    mi_line = space_line
+                  end
+                end
+                if tw_line and mi_line then
+                  break
+                end
+              end
+
+              vim.b[buf].lualine_tw = tw_line and ("TW:" .. tw_line) or nil
+              vim.b[buf].lualine_mi = mi_line and ("MI:" .. mi_line) or nil
+            end
+          '';
+        }
+      ];
     }
     {
       plugins.barbar = {

@@ -95,19 +95,16 @@
               ''}
 
               if ${luaBool trackedOnly} then
-                vim.fn.system({ "git", "-C", cwd, "rev-parse", "--is-inside-work-tree" })
+                local files = vim.fn.systemlist({
+                  "git",
+                  "-C",
+                  cwd,
+                  "ls-files",
+                  "--exclude-standard",
+                  "--cached",
+                })
                 if vim.v.shell_error == 0 then
-                  local files = vim.fn.systemlist({
-                    "git",
-                    "-C",
-                    cwd,
-                    "ls-files",
-                    "--exclude-standard",
-                    "--cached",
-                  })
-                  if vim.v.shell_error == 0 then
-                    opts.search_dirs = files
-                  end
+                  opts.search_dirs = files
                 end
               end
 

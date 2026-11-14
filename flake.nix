@@ -67,10 +67,6 @@
       url = "github:hasansujon786/nvim-navbuddy";
       flake = false;
     };
-    im-select = {
-      url = "github:keaising/im-select.nvim";
-      flake = false;
-    };
 
     # --- Application ---
     aagl = {

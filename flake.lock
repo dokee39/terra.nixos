@@ -228,22 +228,6 @@
         "type": "github"
       }
     },
-    "im-select": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1773872696,
-        "narHash": "sha256-5FXpF7tKpJcF++eBnnd2SJeVGc2k1exa4g/k93Medjw=",
-        "owner": "keaising",
-        "repo": "im-select.nvim",
-        "rev": "963a4e9d528ef8a8d328eeff690593b0146d30e2",
-        "type": "github"
-      },
-      "original": {
-        "owner": "keaising",
-        "repo": "im-select.nvim",
-        "type": "github"
-      }
-    },
     "lxgw-bright": {
       "flake": false,
       "locked": {
@@ -430,7 +414,6 @@
         "colloid-kde": "colloid-kde",
         "fontvibe-kaomoji": "fontvibe-kaomoji",
         "home-manager": "home-manager",
-        "im-select": "im-select",
         "lxgw-bright": "lxgw-bright",
         "nautilus-image-converter": "nautilus-image-converter",
         "navbuddy": "navbuddy",

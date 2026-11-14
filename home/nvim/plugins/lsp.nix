@@ -1,4 +1,4 @@
-{ lib, pkgs, inputs, ... }:
+{ lib, pkgs, inputs, osConfig, ... }:
 
 let
   navbuddy = pkgs.vimUtils.buildVimPlugin {
@@ -20,6 +20,8 @@ in {
     '';
 
     servers = {
+      "*".config.capabilities = mkRaw "require('blink.cmp').get_lsp_capabilities()";
+
       nixd = {
         enable = true;
         config.settings = {
@@ -31,13 +33,13 @@ in {
             options = {
               nixos.expr = ''
                 (builtins.getFlake "/etc/nixos")
-                  .nixosConfigurations."nixos-pc"
+                  .nixosConfigurations."${osConfig.terra.hostName}"
                   .options
               '';
 
               home-manager.expr = ''
                 (builtins.getFlake "/etc/nixos")
-                  .nixosConfigurations."nixos-pc"
+                  .nixosConfigurations."${osConfig.terra.hostName}"
                   .options."home-manager".users.type.getSubOptions []
               '';
             };
@@ -257,7 +259,7 @@ in {
             prompt_position = "top",
           },
           layout_strategy = "flex"
-        }),
+        })
         '';
     };
   };

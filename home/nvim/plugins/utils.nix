@@ -1,4 +1,4 @@
-{ lib, pkgs, inputs, ... }:
+{ lib, pkgs, inputs, osConfig, ... }:
 
 let
   faster-jk = pkgs.vimUtils.buildVimPlugin {
@@ -15,11 +15,6 @@ let
     pname = "search-replace.nvim";
     version = "unstable-${inputs.search-replace.lastModifiedDate}";
     src = inputs.search-replace;
-  };
-  im-select = pkgs.vimUtils.buildVimPlugin {
-    pname = "im-select.nvim";
-    version = "unstable-${inputs.im-select.lastModifiedDate}";
-    src = inputs.im-select;
   };
   mkRaw = lib.nixvim.mkRaw;
 in
@@ -113,8 +108,8 @@ in
         }
       ];
     }
-    {
-      extraPlugins = [ im-select ];
+    (lib.mkIf osConfig.terra.desktop.enable {
+      extraPlugins = [ pkgs.vimPlugins.im-select-nvim ];
       extraConfigLua = ''require('im_select').setup({
         default_im_select  = "keyboard-us",
         default_command = "fcitx5-remote",
@@ -123,7 +118,7 @@ in
         keep_quiet_on_no_binary = false,
         async_switch_im = true
       })'';
-    }
+    })
     {
       globals.loaded_netrwPlugin = 1;
       plugins.yazi = {

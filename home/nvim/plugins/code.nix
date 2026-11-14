@@ -52,10 +52,7 @@ in
       };
     }
     {
-      plugins.treesitter-textobjects = {
-        enable = true;
-        settings.move.set_jumps = true;
-      };
+      plugins.treesitter-textobjects.enable = true;
     }
     {
       plugins.mini-ai = {
@@ -108,11 +105,6 @@ in
     }
     {
       plugins.nvim-surround.enable = true;
-    }
-    {
-      plugins.marks = {
-        enable = true;
-      };
       keymaps = [
         {
           mode = [ "x" ];
@@ -127,6 +119,9 @@ in
           options.desc = "Add a surrounding pair around a visual selection, on new lines";
         }
       ];
+    }
+    {
+      plugins.marks.enable = true;
     }
     {
       plugins.sleuth.enable = true;

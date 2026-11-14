@@ -5,10 +5,9 @@
 
   programs.nixvim = {
     enable = true;
-    nixpkgs.source = inputs.nixpkgs;
+    nixpkgs.useGlobalPackages = true;
     _module.args = { inherit inputs osConfig; };
     imports = [
-      { nixpkgs.config.allowUnfree = true; }
       ./option.nix
       ./keymap.nix
       ./theme.nix
