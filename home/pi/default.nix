@@ -15,6 +15,15 @@ in
 
   programs.pi-coding-agent = {
     enable = true;
+    # HACK: FXXK GOOGLE
+    package = pkgs.pi-coding-agent.overrideAttrs (old: {
+      postPatch = (old.postPatch or "") + ''
+        substituteInPlace packages/coding-agent/src/core/system-prompt.ts \
+          --replace-fail \
+          'You are a coding assistant running inside pi, a coding agent harness.' \
+          'You are a coding assistant.'
+      '';
+    });
     extraPackages = [ pkgs.nodejs ];
 
     settings = {
