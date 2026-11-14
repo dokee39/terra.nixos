@@ -52,7 +52,7 @@
       options.desc = "move the line up";
     }
     {
-      mode = "v";
+      mode = "x";
       key = "<M-j>";
       action = ":m '>+1<CR>gv=gv";
       options = {
@@ -61,7 +61,7 @@
       };
     }
     {
-      mode = "v";
+      mode = "x";
       key = "<M-k>";
       action = ":m '<-2<CR>gv=gv";
       options = {
@@ -136,7 +136,7 @@
       options.remap = true;
     }
     {
-      mode = "v";
+      mode = "x";
       key = "<leader>/";
       action = "gc";
       options.remap = true;

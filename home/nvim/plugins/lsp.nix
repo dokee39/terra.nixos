@@ -12,6 +12,8 @@ let
   };
   mkRaw = lib.nixvim.mkRaw;
 in {
+  extraPackages = [ pkgs.nixfmt ];
+
   lsp = {
     onAttach = ''
       if client.name == "ruff" then
@@ -26,6 +28,7 @@ in {
         enable = true;
         config.settings = {
           nixd = {
+            formatting.command = [ "nixfmt" ];
             nixpkgs.expr = ''
               import ((builtins.getFlake "/etc/nixos").inputs.nixpkgs) { }
             '';
@@ -104,7 +107,11 @@ in {
       {
         key = "K";
         mode = "n";
-        lspBufAction = "hover";
+        action = mkRaw ''
+          function()
+            vim.lsp.buf.hover({ border = "rounded" })
+          end
+        '';
         options.desc = "LSP: hover documentation";
       }
       {
@@ -148,7 +155,10 @@ in {
         key = "gr";
         mode = "n";
         action = mkRaw "require('telescope.builtin').lsp_references";
-        options.desc = "LSP: Telescope [g]oto [r]eferences";
+        options = {
+          desc = "LSP: Telescope [g]oto [r]eferences";
+          nowait = true;
+        };
       }
       {
         key = "gi";

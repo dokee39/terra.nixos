@@ -140,6 +140,22 @@
         "type": "github"
       }
     },
+    "fidget": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1788395528,
+        "narHash": "sha256-WL10HIUCtjFbrMbi+qo1D8nkSQSyxqIdKPBpxhn+ygA=",
+        "owner": "j-hui",
+        "repo": "fidget.nvim",
+        "rev": "9e0201673e08e997e7cf52afca5565c70bd117f3",
+        "type": "github"
+      },
+      "original": {
+        "owner": "j-hui",
+        "repo": "fidget.nvim",
+        "type": "github"
+      }
+    },
     "flake-compat": {
       "flake": false,
       "locked": {
@@ -412,6 +428,7 @@
         "blink-lib": "blink-lib",
         "blink-pairs": "blink-pairs",
         "colloid-kde": "colloid-kde",
+        "fidget": "fidget",
         "fontvibe-kaomoji": "fontvibe-kaomoji",
         "home-manager": "home-manager",
         "lxgw-bright": "lxgw-bright",

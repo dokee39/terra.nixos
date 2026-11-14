@@ -71,7 +71,7 @@
       mkGrep =
         { key, scopeExpr, trackedOnly, fixedStrings, desc }:
         {
-          mode = [ "n" "v" ];
+          mode = [ "n" "x" ];
           inherit key;
           action.__raw = ''
             function()
@@ -83,11 +83,13 @@
 
               local mode = vim.fn.mode()
               if mode:match("[vV\22]") then
-                local reg = vim.fn.getreg("z")
-                local regtype = vim.fn.getregtype("z")
-                vim.cmd([[noautocmd normal! "zy]])
-                opts.default_text = vim.fn.getreg("z")
-                vim.fn.setreg("z", reg, regtype)
+                local lines = vim.fn.getregion(
+                  vim.fn.getpos("v"),
+                  vim.fn.getpos("."),
+                  { type = mode }
+                )
+                opts.default_text = table.concat(lines, "\n")
+                vim.cmd.normal({ "\27", bang = true })
               end
 
               ${lib.optionalString fixedStrings ''
@@ -95,16 +97,17 @@
               ''}
 
               if ${luaBool trackedOnly} then
-                local files = vim.fn.systemlist({
+                local result = vim.system({
                   "git",
                   "-C",
                   cwd,
                   "ls-files",
+                  "-z",
                   "--exclude-standard",
                   "--cached",
-                })
-                if vim.v.shell_error == 0 then
-                  opts.search_dirs = files
+                }):wait()
+                if result.code == 0 then
+                  opts.search_dirs = vim.split(result.stdout, "\0", { trimempty = true })
                 end
               end
 

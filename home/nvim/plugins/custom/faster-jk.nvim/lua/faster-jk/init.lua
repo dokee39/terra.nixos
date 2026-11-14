@@ -53,10 +53,8 @@ end, ns)
 function M.setup(opts)
   opts = opts or {}
 
-  vim.validate({
-    threshold = { opts.threshold, "number", true },
-    max_step = { opts.max_step, "number", true },
-  })
+  vim.validate("threshold", opts.threshold, "number", true)
+  vim.validate("max_step", opts.max_step, "number", true)
 
   M.opts = vim.tbl_extend("force", vim.deepcopy(defaults), opts)
 end

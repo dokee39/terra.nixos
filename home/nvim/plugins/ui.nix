@@ -1,33 +1,46 @@
 { lib, pkgs, inputs, ... }:
 
 let
+  fidget = pkgs.vimUtils.buildVimPlugin {
+    pname = "fidget.nvim";
+    version = "unstable-${inputs.fidget.lastModifiedDate}";
+    src = inputs.fidget;
+  };
   mkRaw = lib.nixvim.mkRaw;
 in
   lib.mkMerge [
     {
-      plugins.notify = {
-        enable = true;
-        autoLoad = true;
-        settings = {
-          stages = "static";
-          fps = 1;
-          background_colour = "#000000";
-          max_width = mkRaw "function() return math.floor(vim.o.columns / 2) end";
-          max_height = mkRaw "function() return math.floor(vim.o.lines / 4) end";
-        };
-      };
+      extraPlugins = [ pkgs.vimPlugins.tiny-cmdline-nvim ];
+      extraConfigLua = ''
+        require('vim._core.ui2').enable({
+          msg = {
+            targets = 'msg',
+            msg = { timeout = 5000, },
+          },
+        })
+        require('tiny-cmdline').setup({
+          position = { y = 3 },
+          width = { value = "70%" },
+          title = { enabled = true },
+          on_reposition = require('tiny-cmdline').adapters.blink,
+        })
+      '';
     }
     {
-      plugins.noice = {
+      plugins.fidget = {
         enable = true;
-        autoLoad = true;
+        package = fidget;
         settings = {
-          presets = {
-            command_palette = true;
-            long_message_to_split = true;
-            lsp_doc_border = true;
+          progress.poll_rate = false;
+          notification = {
+            override_vim_notify = true;
+            view.reflow = "hyphenate";
+            window = {
+              max_width = 0.75;
+              normal_hl = "PmenuSel";
+              winblend = 0;
+            };
           };
-          lsp.progress.enabled = false;
         };
       };
     }

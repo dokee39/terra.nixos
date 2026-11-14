@@ -55,6 +55,10 @@
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.blink-lib.follows = "blink-lib";
     };
+    fidget = {
+      url = "github:j-hui/fidget.nvim";
+      flake = false;
+    };
     beacon = {
       url = "github:DanilaMihailov/beacon.nvim";
       flake = false;

@@ -127,7 +127,7 @@ in
       };
       keymaps = [
         {
-          mode = [ "n" "v" ];
+          mode = [ "n" "x" ];
           key = "<leader>y";
           action = "<CMD>Yazi<CR>";
           options.desc = "[y]azi";

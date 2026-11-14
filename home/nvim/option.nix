@@ -12,6 +12,7 @@
     splitright = true; # open new vertical split right
     termguicolors = true; # enable 24-bit RGB color in the TUI
     showmode = false; # we are experienced, wo don't need the "-- INSERT --" mode hint
+    cmdheight = 0;
     wrap = false;
     scrolloff = 5;
     sidescrolloff = 10;

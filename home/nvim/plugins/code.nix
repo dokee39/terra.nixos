@@ -85,6 +85,9 @@ in
     {
       extraPlugins = [ repeatmove ];
       extraConfigLua = ''
+        vim.keymap.del("n", "[l")
+        vim.keymap.del("n", "]l")
+
         require('repeatmove').setup({
           move = {
             { '[f', ']f' },
@@ -139,6 +142,7 @@ in
     }
     {
       plugins.render-markdown.enable = true;
+      extraPackages = [ pkgs.python3Packages.pylatexenc ];
     }
     {
       plugins.ts-comments.enable = true;

@@ -2,7 +2,6 @@
 let
   mkRaw = lib.nixvim.mkRaw;
 in {
-  performance.combinePlugins.pathsToLink = lib.mkAfter [ "/lib" ];
   plugins = {
     friendly-snippets.enable = true;
     colorful-menu.enable = true;
@@ -45,11 +44,11 @@ in {
         fuzzy.implementation = "rust";
         signature = {
           enabled = true;
-          window.border = "rounded";
-          trigger = {
-            enabled = true;
-            show_on_trigger_character = false;
-            show_on_keyword = true;
+          window = {
+            border = "rounded";
+            winhighlight = "Normal:NormalFloat,FloatBorder:FloatBorder,EndOfBuffer:NormalFloat";
+            max_height = 15;
+            show_documentation = true;
           };
         };
 
@@ -79,7 +78,10 @@ in {
           documentation = {
             auto_show = true;
             auto_show_delay_ms = 50;
-            window.border = "rounded";
+            window = {
+              border = "rounded";
+              winhighlight = "Normal:NormalFloat,FloatBorder:FloatBorder,EndOfBuffer:NormalFloat";
+            };
           };
         };
 
