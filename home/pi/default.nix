@@ -17,12 +17,7 @@ in
     enable = true;
     # HACK: FXXK GOOGLE
     package = pkgs.pi-coding-agent.overrideAttrs (old: {
-      postPatch = (old.postPatch or "") + ''
-        substituteInPlace packages/coding-agent/src/core/system-prompt.ts \
-          --replace-fail \
-          'You are a coding assistant running inside pi, a coding agent harness.' \
-          'You are a coding assistant.'
-      '';
+      patches = (old.patches or [ ]) ++ [ ./system-prompt.patch ];
     });
     extraPackages = [ pkgs.nodejs ];
 
@@ -33,7 +28,7 @@ in
       enableInstallTelemetry = false;
       enableAnalytics = false;
 
-      defaultProvider = "google-antigravity";
+      defaultProvider = "google-oauth-v2";
       defaultModel = "gemini-4-hydrogen";
       defaultThinkingLevel = "high";
 
@@ -44,7 +39,7 @@ in
         "npm:@aliou/pi-guardrails"
         "npm:@sherif-fanous/pi-rtk"
         "npm:@narumitw/pi-usage"
-        "npm:@justjoshn/pi-antigravity-oauth"
+        "npm:@justjoshn/pi-google-oauth-v2"
       ];
 
       theme = "rose-pine";
