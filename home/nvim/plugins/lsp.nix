@@ -135,54 +135,54 @@ in {
       {
         key = "<leader>a";
         mode = [ "n" "x" ];
-        lspBufAction = "code_action";
-        options.desc = "LSP: Code [a]ction";
+        action = mkRaw "require('fzf-lua').lsp_code_actions";
+        options.desc = "LSP: FzfLua Code [a]ction";
       }
 
       {
         key = "gd";
         mode = "n";
-        action = mkRaw "require('telescope.builtin').lsp_definitions";
-        options.desc = "LSP: Telescope [g]oto [d]efinition";
+        action = mkRaw "require('fzf-lua').lsp_definitions";
+        options.desc = "LSP: FzfLua [g]oto [d]efinition";
       }
       {
         key = "gt";
         mode = "n";
-        action = mkRaw "require('telescope.builtin').lsp_type_definitions";
+        action = mkRaw "require('fzf-lua').lsp_typedefs";
         options.desc = "LSP: [g]oto [t]ype Definition";
       }
       {
         key = "gr";
         mode = "n";
-        action = mkRaw "require('telescope.builtin').lsp_references";
+        action = mkRaw "require('fzf-lua').lsp_references";
         options = {
-          desc = "LSP: Telescope [g]oto [r]eferences";
+          desc = "LSP: FzfLua [g]oto [r]eferences";
           nowait = true;
         };
       }
       {
         key = "gi";
         mode = "n";
-        action = mkRaw "require('telescope.builtin').lsp_implementations";
-        options.desc = "LSP: Telescope [g]oto [i]mplementation";
+        action = mkRaw "require('fzf-lua').lsp_implementations";
+        options.desc = "LSP: FzfLua [g]oto [i]mplementation";
       }
       {
         key = "gs";
         mode = "n";
-        action = mkRaw "require('telescope.builtin').lsp_document_symbols";
-        options.desc = "LSP: Telescope [g]oto document [s]ymbols";
+        action = mkRaw "require('fzf-lua').lsp_document_symbols";
+        options.desc = "LSP: FzfLua [g]oto document [s]ymbols";
       }
       {
         key = "gS";
         mode = "n";
-        action = mkRaw "require('telescope.builtin').lsp_dynamic_workspace_symbols";
-        options.desc = "LSP: Telescope [g]oto workspace [S]ymbols";
+        action = mkRaw "require('fzf-lua').lsp_live_workspace_symbols";
+        options.desc = "LSP: FzfLua [g]oto workspace [S]ymbols";
       }
       {
         key = "<leader>D";
         mode = "n";
-        action = mkRaw "require('telescope.builtin').diagnostics";
-        options.desc = "LSP: Telescope list [D]iagnostics";
+        action = mkRaw "require('fzf-lua').diagnostics_workspace";
+        options.desc = "LSP: FzfLua list [D]iagnostics";
       }
     ];
   };
@@ -191,6 +191,7 @@ in {
     enable = true;
     settings = {
       tools.float_win_config.border = "rounded";
+      tools.code_actions.ui_select_fallback = true;
       server = {
         on_attach = mkRaw ''
           function(_, bufnr)
@@ -261,16 +262,52 @@ in {
         sections.mid.size = "32%";
       };
       lsp.auto_attach = true;
-      mappings."/" = mkRaw ''
-        require("nvim-navbuddy.actions").telescope({
-          layout_config = {
-            height = 0.80,
-            width = 0.80,
-            prompt_position = "top",
-          },
-          layout_strategy = "flex"
-        })
+      mappings = lib.genAttrs [ "/" "t" ] (_: {
+        description = "Fuzzy search current level with fzf-lua";
+        callback = mkRaw ''
+          function(display)
+            local fzf = require("fzf-lua")
+            local navic = require("nvim-navic.lib")
+            local nodes = display.focus_node.parent.children
+            local filename = vim.api.nvim_buf_get_name(display.for_buf)
+            local entries = {}
+            for i, node in ipairs(nodes) do
+              local kind = navic.adapt_lsp_num_to_str(node.kind)
+              local pos = node.name_range["start"]
+              -- Keep the buffer location for preview; only the symbol is displayed.
+              entries[i] = string.format("%d\t[%d]%s%s:%d:%d:\t%s %s",
+                i, display.for_buf, fzf.utils.nbsp, filename, pos.line, pos.character + 1,
+                fzf.utils.ansi_from_hl("Navbuddy" .. kind, string.format("%-14s", kind:lower())),
+                node.name)
+            end
+
+            display:close()
+            fzf.fzf_exec(entries, {
+              winopts = {
+                title = " Navbuddy ",
+                height = 0.8,
+                width = 0.8,
+                on_close = vim.schedule_wrap(function()
+                  require("nvim-navbuddy.display").new(display)
+                end),
+              },
+              previewer = "builtin",
+              no_resume = true,
+              fzf_opts = {
+                ["--delimiter"] = "\t",
+                ["--with-nth"] = "3..",
+              },
+              actions = {
+                enter = function(selected)
+                  if selected[1] then
+                    display.focus_node = nodes[tonumber(selected[1]:match("^%d+"))]
+                  end
+                end,
+              },
+            })
+          end
         '';
+      });
     };
   };
 

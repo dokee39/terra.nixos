@@ -4,7 +4,7 @@
   imports = [
     ./ui.nix
     ./utils.nix
-    ./telescope.nix
+    ./fzf-lua.nix
     ./lsp.nix
     ./cmp.nix
     ./code.nix
