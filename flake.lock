@@ -439,8 +439,7 @@
         "nixpkgs": "nixpkgs_2",
         "nixpkgs-stable": "nixpkgs-stable",
         "nixvim": "nixvim",
-        "rose-pine-zellij": "rose-pine-zellij",
-        "search-replace": "search-replace"
+        "rose-pine-zellij": "rose-pine-zellij"
       }
     },
     "rose-pine-zellij": {
@@ -477,22 +476,6 @@
       "original": {
         "owner": "oxalica",
         "repo": "rust-overlay",
-        "type": "github"
-      }
-    },
-    "search-replace": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1694253952,
-        "narHash": "sha256-hEdEBDeHbJc3efgo7djktX4RemAiX8ZvQlJIEoAgkPM=",
-        "owner": "roobert",
-        "repo": "search-replace.nvim",
-        "rev": "d92290a02d97f4e9b8cd60d28b56b403432158d5",
-        "type": "github"
-      },
-      "original": {
-        "owner": "roobert",
-        "repo": "search-replace.nvim",
         "type": "github"
       }
     },

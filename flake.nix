@@ -63,10 +63,6 @@
       url = "github:DanilaMihailov/beacon.nvim";
       flake = false;
     };
-    search-replace = {
-      url = "github:roobert/search-replace.nvim";
-      flake = false;
-    };
     navbuddy = {
       url = "github:hasansujon786/nvim-navbuddy";
       flake = false;

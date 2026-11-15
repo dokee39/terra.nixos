@@ -11,11 +11,6 @@ let
     version = "unstable-${inputs.beacon.lastModifiedDate}";
     src = inputs.beacon;
   };
-  search-replace = pkgs.vimUtils.buildVimPlugin {
-    pname = "search-replace.nvim";
-    version = "unstable-${inputs.search-replace.lastModifiedDate}";
-    src = inputs.search-replace;
-  };
   mkRaw = lib.nixvim.mkRaw;
 in
   lib.mkMerge [
@@ -67,44 +62,20 @@ in
       };
     }
     {
-      extraPlugins = [ search-replace ];
-      extraConfigLua = "require('search-replace').setup()";
+      extraPlugins = [ pkgs.vimPlugins.nvim-rip-substitute ];
+      extraConfigLua = "require('rip-substitute').setup()";
       keymaps = [
         {
           mode = "n";
-          key = "<leader>ro";
-          action = "<CMD>SearchReplaceSingleBufferOpen<CR>";
-          options.desc = "SearchReplace [o]pen";
-        }
-        {
-          mode = "n";
-          key = "<leader>rw";
-          action = "<CMD>SearchReplaceSingleBufferCWord<CR>";
-          options.desc = "SearchReplace [w]ord";
+          key = "<leader>rr";
+          action = mkRaw ''function() require("rip-substitute").sub() end'';
+          options.desc = "[r]ip [r]eplace";
         }
         {
           mode = "x";
           key = "<leader>r";
-          action = "<CMD>SearchReplaceSingleBufferVisualSelection<CR>";
-          options.desc = "SearchReplace [r]eplace";
-        }
-        {
-          mode = "n";
-          key = "<leader>Ro";
-          action = "<CMD>SearchReplaceMultiBufferOpen<CR>";
-          options.desc = "SearchReplace [o]pen MultiBuffer";
-        }
-        {
-          mode = "n";
-          key = "<leader>Rw";
-          action = "<CMD>SearchReplaceMultiBufferCWord<CR>";
-          options.desc = "SearchReplace [w]ord MultiBuffer";
-        }
-        {
-          mode = "x";
-          key = "<leader>R";
-          action = "<CMD>SearchReplaceMultiBufferVisualSelection<CR>";
-          options.desc = "SearchReplace [r]eplace MultiBuffer";
+          action = mkRaw ''function() require("rip-substitute").sub() end'';
+          options.desc = "[r]ip substitute";
         }
       ];
     }
