@@ -9,6 +9,7 @@ in
       output = {
         _args = [ name ];
         scale = m.scale;
+        variable-refresh-rate._props.on-demand = true;
       }
       // lib.optionalAttrs m.primary { focus-at-startup = { }; }
       // lib.optionalAttrs (m.transform.rotation != 0 || m.transform.flipped) {

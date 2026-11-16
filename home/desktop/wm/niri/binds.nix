@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ config, lib, ... }:
 
 let
   b  = key: action:
@@ -13,6 +13,10 @@ let
     lib.nameValuePair key (action // { _props.allow-when-locked = true; });
   blc = cooldown: key: action:
     lib.nameValuePair key (action // { _props = { allow-when-locked = true; cooldown-ms = cooldown; }; });
+  kittyPopup = app: [
+    "env" "KITTY_CACHE_DIRECTORY=${config.xdg.cacheHome}/kitty/${app}-popup"
+    "kitty" "--class" app "-e" app
+  ];
 in {
   wayland.windowManager.niri.settings.binds = lib.listToAttrs [
     # ── Launch ──────────────────────────────────────────────
@@ -20,8 +24,8 @@ in {
     (b   "Mod+Q"       { spawn = [ "kitty" ]; })
     (b   "Mod+R"       { spawn = [ "fuzzel" ]; })
     (b   "Mod+E"       { spawn = [ "nautilus" "--new-window" ]; })
-    (b   "Mod+P"       { spawn = [ "kitty" "--class" "clipse" "-e" "clipse" ]; })
-    (b   "Mod+M"       { spawn = [ "kitty" "-T" "rmpc" "-e" "rmpc" ]; })
+    (b   "Mod+P"       { spawn = kittyPopup "clipse"; })
+    (b   "Mod+M"       { spawn = kittyPopup "rmpc"; })
     (b   "Mod+N"       { spawn = [ "noctalia" "msg" "bar-toggle" ]; })
     (b   "Mod+Shift+P" { spawn = [ "hyprpicker" "-a" ]; })
 
