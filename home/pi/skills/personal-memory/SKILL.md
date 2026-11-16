@@ -1,67 +1,65 @@
 ---
 name: personal-memory
-description: Record and recall the user's background, experiences, preferences, and tentative interpretations to reduce repeated explanations and inform responses.
+description: Preserve personal context and the progress of discussions to reduce repeated explanations and help the user clarify questions, explore options, and make informed choices.
 disable-model-invocation: true
 ---
 
 # Personal memory
 
-Preserve how the user describes themselves. Use relevant experiences and feedback to inform answers. Stay on topic; do not turn ordinary conversation into an analysis of the user.
+Preserve the user's accounts and the progress of past discussions so they do not have to start over. Use relevant context to help them clarify questions, consider alternatives, and make informed choices. Revisit interpretations as circumstances, views, and experience change. Stay on topic; ordinary conversation need not become self-analysis or produce a plan.
 
 ## Workflow
 
-- Read `PROFILE.md` first, then consult experiences relevant to the question. Do not reread unchanged material already in context.
-- Save worthwhile new information before ending the turn. Do not ask for confirmation item by item or interrupt the conversation with a profile questionnaire. If there is nothing new to record, do not write.
-- After saving, briefly note what changed at the end of the response without repeating sensitive details. Report save failures honestly. No update means no status report.
-- Relevant sensitive disclosures may be recorded, but never credentials. If the user says "don't remember this," use it only in the current conversation. If they ask to stop memory use, stop reading and writing memory. Do not import past chats, sync, or share files on your own.
+- Save worthwhile new information before ending the turn; skip writing when there is none. Do not ask for confirmation item by item or interrupt the conversation with a profile questionnaire.
+- Briefly note saved changes at the end of the response without repeating sensitive details, and report write failures. No update means no memory status report.
+- The user's explicit request takes precedence over stored preferences. Ask about missing or potentially outdated information only when it would affect the answer.
+- Relevant sensitive disclosures may be recorded, but never credentials.
+- If the user says "don't remember this," use it only in the current conversation. If they ask to stop memory use, stop reading and writing memory.
+- Do not import past chats, sync, or share files on your own.
 
 ## Files and retrieval
 
-Memory directory: `~/.local/share/pi/personal-memory/`. Resolve `~` to the user's home directory and access files by absolute path.
+Memory directory: `~/.local/share/pi/personal-memory/`.
 
 | File | Contents | When to read |
 | --- | --- | --- |
 | `PROFILE.md` | Current background, goals, explicit preferences, and a topic index of experience files | At the start |
 | `experiences/*.md` | Experiences, impressions, ideas, attempts, and outcomes, organized by topic | When relevant to the question |
-| `REFLECTIONS.md` | Tentative interpretations, evidence, counterexamples, and user feedback | During relevant analysis or review, or when the supporting evidence needs correction |
 
-- If a file does not exist, continue the conversation. Create it when there is content to save, not as an empty placeholder.
-- Find experiences through the topic index; search the experience directory if needed. Read only relevant material rather than loading all memory. Leave unrelated background out of the answer.
-- When looking for connections across topics, start with the index, then read experiences from different topics for evidence both for and against an explanation. Read the user's accounts before earlier interpretations to avoid looking only for confirmation.
-- State what material you actually reviewed. Do not claim to have reviewed "all our discussions" when you have not read them. Ask for missing information only when it would affect the answer.
-- The user's explicit request takes precedence over stored preferences. Do not use previously loaded interpretations to explain unrelated topics.
+- Create files as needed, not as empty placeholders.
+- Use the topic index to find relevant experiences. Read and use only what the question needs; do not reread unchanged material already in context.
+- For cross-topic reviews, examine experiences from different topics, including evidence against an explanation. Earlier discussions may guide what to examine.
+- Make the scope of historical reviews clear; do not imply access to discussions you have not read.
 
 ## What to record
 
-Keep information that may reduce repeated explanations or improve future advice and recommendations:
+Keep memory focused on the person. Leave out local paths, environment settings, and project configuration unless they are necessary to understand a personal experience or preference.
 
 - Explicitly stated background and preferences, including reasons and conditions.
 - Experiences, concerns, goals, and constraints with lasting relevance, and how they change.
-- Methods the user has tried, their results, and conditions that affected those results. Distinguish plans from actual attempts.
-- Ideas and impressions worth revisiting, not just major life events.
+- Methods the user has tried, their results, and conditions that affected those results. Distinguish plans from actual attempts. Keep successes and what helped, not just difficulties or failed attempts.
+- Ideas, impressions, and unresolved questions worth revisiting, not just major life events.
 
 Do not turn passing remarks, temporary requests, or single choices into lasting preferences. Record emotions as part of an experience, not as evidence of personality. Advice you gave is not something the user has necessarily tried; no feedback does not mean it worked.
 
 ## Recording and updates
 
-- Organize long accounts by event. Preserve the background, sequence, effects, and the user's views then and now. Quote key wording exactly; do not put paraphrases in quotation marks. Keep turns of events, exceptions, and contradictions that matter to understanding the account. There is no need to archive the full conversation.
-- Distinguish events, feelings, the user's judgments, and your inferences. Record views about others as "the user believes...", not as established facts. Do not invent motives, causes, diagnoses, or personality judgments.
-- Include the recording date, the event time supplied by the user, and a source reference such as the conversation topic and a key quote. Use the current date for recording. Preserve phrases such as "last year" or "around that time" alongside the date of the account; do not guess precise dates or invent session IDs. Link profile summaries to experience files rather than duplicating their full contents.
-- Read the target file before writing. Extend, merge, or correct existing records rather than duplicating them. A retelling may add detail, but is not new independent evidence.
-- When accounts differ, distinguish corrections, changed circumstances, and different conditions. Keep the profile current and record meaningful changes in the experiences. If the difference matters and you cannot resolve it, ask rather than choosing a version yourself.
-- When correcting an experience, check summaries and interpretations that cite it. When asked to forget something, remove the content and its references without retaining copies in a log. Explain that past sessions and external copies are not deleted by this action.
-- After creating, merging, or deleting experience files, update the index in `PROFILE.md` and any affected references. Index entries describe file topics, not personality judgments.
-- Keep the profile short and details in experience files. Reuse existing topics; split them only when needed. Clean up duplicate and outdated content as part of updates. Do not create a separate maintenance log.
+- Summarize accounts by event, preserving context, effects, and the user's views then and now. Keep key quotes and details that affect the meaning, including exceptions and contradictions; do not archive full conversations.
+- Distinguish events, feelings, the user's judgments, and your inferences. Do not turn judgments into facts or add unsupported motives, causes, diagnoses, or personality claims.
+- Keep the recording date, event time, and source. Preserve uncertainty rather than inventing missing details.
+- When accounts differ, distinguish corrections, changed circumstances, and different conditions. Update the profile when changes are known and record meaningful changes in the experiences. An old account does not establish the user's current situation; a preference does not count as changed merely because it has not been mentioned recently. If the difference matters and you cannot resolve it, ask rather than choosing a version yourself.
+- When correcting an experience, check summaries and recorded discussions that refer to it, including any conclusions that depend on it.
+- When asked to forget something, remove the content and its references from memory without retaining copies in a log. Be clear about the deletion scope.
+- Keep `PROFILE.md` short, linking to details in experience files. Maintain its topic index and affected references when files change.
+- Update existing accounts rather than duplicating them. Merge repeats and correct outdated summaries while preserving history that explains changes. Do not create a separate maintenance log.
 
-## Analysis and interpretations
+## Analysis and discussion
 
 Point out useful connections between experiences without waiting for a dedicated request for analysis. Include only what helps with the current question.
 
-- Ground interpretations in specific experiences. Check for support from independent events, and consider counterexamples and alternative explanations. Do not treat a repetition count as proof or assume every concern has the same underlying cause.
-- Save only interpretations with specific evidence that are worth testing later. Passing associations may be discussed without being recorded.
-- Briefly record the date proposed, the interpretation, where it applies, and references to supporting experiences. Include counterexamples, alternatives, or user feedback when available; update the date when revising. Do not invent content to fill fields. Neither missing feedback nor a lack of known counterexamples counts as support.
-- Store interpretations only in `REFLECTIONS.md`, not in the profile or its index. Before using one again, check the original material and current circumstances. Your earlier analysis, repeated retellings, and the user's silence are not new evidence.
-- Record the user's agreement or correction as their view, not as objective confirmation. If they disagree, revise or withdraw the interpretation. Do not explain disagreement as "not having realized it yet" or keep pressing the same conclusion.
-- Revise or remove unsupported or outdated interpretations. Do not keep using one simply because you proposed it before.
-
-When referring to memory, distinguish the user's past descriptions from your own inferences.
+- Memory is a partial account and may overrepresent times when the user sought help. Missing records are not evidence that something never happened; recurring difficulties do not describe the user's whole life or personality.
+- Use preferences and past choices to inform suggestions, not to restrict the user to familiar options. You may give a clear recommendation with reasons and tradeoffs; do not choose their goals for them.
+- Ground interpretations in specific experiences and identify them as inferences. Consider independent evidence, counterexamples, and alternative explanations; do not assume every concern has the same underlying cause.
+- Do not save interpretations you proposed without discussion. When discussion adds a useful account, correction, or understanding, record it in the relevant experience file. Distinguish what you proposed, what the user thinks, and what remains uncertain; no conclusion is required.
+- Treat past discussion as reference, not new evidence. Check the underlying experiences and current circumstances before reusing a conclusion. Repeated retellings and the user's silence are not new evidence either.
+- The user's agreement records their view, not objective confirmation or a reason to turn an interpretation into a profile fact. If they disagree, revise or withdraw it. Do not explain disagreement as "not having realized it yet" or keep pressing the same conclusion.
