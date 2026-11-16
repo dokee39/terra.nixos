@@ -1,16 +1,6 @@
-{ pkgs, inputs, sources, ... }:
-
-let
-  customPackages = import ./packages {
-    inherit pkgs inputs sources;
-  };
-in
+{ pkgs, inputs, customPackages, ... }:
 
 {
-  _module.args = {
-    inherit customPackages;
-  };
-
   imports = [
     ./mime.nix
     ./services/fcitx5

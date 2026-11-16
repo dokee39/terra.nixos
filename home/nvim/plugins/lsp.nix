@@ -1,6 +1,18 @@
-{ lib, pkgs, inputs, osConfig, ... }:
+{ lib, pkgs, inputs, osConfig, sources, customPackages, ... }:
 
 let
+  clice = pkgs.vimUtils.buildVimPlugin {
+    pname = "clice-nvim";
+    version = sources.clice-nvim.version;
+    src = "${pkgs.fetchFromGitHub {
+      inherit (sources.clice-nvim) owner repo rev hash;
+    }}/editors/nvim";
+    postInstall = ''
+      # Override nvim-lspconfig's bundled config.
+      mkdir -p $out/after
+      mv $out/lsp $out/after/lsp
+    '';
+  };
   navbuddy = pkgs.vimUtils.buildVimPlugin {
     pname = "nvim-navbuddy";
     version = "unstable-${inputs.navbuddy.lastModifiedDate}";
@@ -13,6 +25,7 @@ let
   mkRaw = lib.nixvim.mkRaw;
 in {
   extraPackages = [ pkgs.nixfmt ];
+  extraPlugins = [ clice ];
 
   lsp = {
     onAttach = ''
@@ -61,14 +74,12 @@ in {
         };
       };
 
-      clangd = {
+      clice = {
         enable = true;
-        config = {
-          cmd = [
-            "clangd"
-            "--header-insertion=never"
-            "--experimental-modules-support"
-          ];
+        package = customPackages.clice;
+        config.init_options.code_completion = {
+          insert_includes = false;
+          insert_imports = false;
         };
       };
 

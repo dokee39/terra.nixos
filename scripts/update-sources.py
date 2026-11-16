@@ -123,6 +123,10 @@ def _update_binary(entry: dict) -> bool:
     if latest_tag is None:
         return False
 
+    asset_name = asset_name.replace(
+        entry["version"].removeprefix("v"), latest_tag.removeprefix("v")
+    )
+
     # Refetch to get full release data for asset iteration
     try:
         release = _gh_api(f"repos/{owner}/{repo_name}/releases/latest")

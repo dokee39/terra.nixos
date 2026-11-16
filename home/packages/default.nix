@@ -1,6 +1,10 @@
 { pkgs, inputs, sources, ... }:
 
 {
+  clice = pkgs.callPackage ./clice.nix {
+    source = sources.clice;
+  };
+
   mikan = pkgs.callPackage ./mikan.nix {
     source = sources.mikan;
   };

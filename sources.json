@@ -23,6 +23,20 @@
     "url": "https://github.com/iota9star/mikan_flutter/releases/download/v2.3.6/linux-release.zip",
     "hash": "sha256-kr9SAj0s6ZQyg5hOvJpRvIyn17lEvitoLvaGEh56Wpc="
   },
+  "clice": {
+    "type": "binary",
+    "version": "v1.0.0",
+    "url": "https://github.com/clice-io/clice/releases/download/v1.0.0/clice-1.0.0.x86_64-unknown-linux-gnu.tar.gz",
+    "hash": "sha256-ndGBqsnIHK52slXpU9ohyeYD/FtAZEfrJsler2ftlpo="
+  },
+  "clice-nvim": {
+    "type": "source",
+    "version": "v1.0.0",
+    "owner": "clice-io",
+    "repo": "clice",
+    "rev": "v1.0.0",
+    "hash": "sha256-z7BvAJp6C+8JyqoFcNZRPvFxatPMqDz9ajdpIBZZ8I0="
+  },
   "duckduckgo-mcp-server": {
     "type": "source",
     "version": "v0.7.0",

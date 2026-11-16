@@ -1,6 +1,10 @@
-{ pkgs, lib, osConfig, ... }:
+{ pkgs, lib, osConfig, inputs, sources, ... }:
 
 {
+  _module.args.customPackages = import ./packages {
+    inherit pkgs inputs sources;
+  };
+
   imports = [
     ./shell
     ./environment.nix

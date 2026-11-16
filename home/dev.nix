@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, customPackages, ... }:
 
 {
   programs.direnv = {
@@ -26,7 +26,7 @@
 
     # C/C++
     clang
-    clang-tools
+    customPackages.clice
     gnumake
     cmake
     bear
