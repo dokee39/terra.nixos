@@ -7,7 +7,6 @@
     userName = "dokee";
     maintenance.autoUpgrade.enable = true;
     apps = {
-      wechat.scale = 1.5;
       transmission = {
         enable = true;
         speed.up = 1000;

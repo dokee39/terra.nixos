@@ -40,8 +40,6 @@
     };
 
     apps = {
-      wechat.scale = null;
-
       transmission = {
         enable = false;
         speed = { up = 500; down = 2000; };
