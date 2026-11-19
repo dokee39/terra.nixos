@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, osConfig, ... }:
 
 let
   pichat = pkgs.writeShellScriptBin "pichat" ''
@@ -15,9 +15,14 @@ in
 
   programs.pi-coding-agent = {
     enable = true;
-    # HACK: FXXK GOOGLE
     package = pkgs.pi-coding-agent.overrideAttrs (old: {
+      # HACK: FXXK GOOGLE
       patches = (old.patches or [ ]) ++ [ ./system-prompt.patch ];
+      nativeBuildInputs = old.nativeBuildInputs ++ [ pkgs.makeWrapper ];
+      postFixup = old.postFixup + ''
+        wrapProgramShell $out/bin/pi \
+          --run 'export CLIPROXYAPI_API_KEY="$(<${osConfig.age.secrets.cliproxyapi-api-key.path})"'
+      '';
     });
     extraPackages = [ pkgs.nodejs ];
 
@@ -28,8 +33,8 @@ in
       enableInstallTelemetry = false;
       enableAnalytics = false;
 
-      defaultProvider = "google-oauth-v2";
-      defaultModel = "gemini-4-hydrogen";
+      defaultProvider = "cliproxyapi";
+      defaultModel = "flash";
       defaultThinkingLevel = "high";
 
       autocompleteMaxVisible = 10;
@@ -38,8 +43,8 @@ in
         "npm:@firstpick/pi-themes-bundle"
         "npm:@aliou/pi-guardrails"
         "npm:@sherif-fanous/pi-rtk"
-        "npm:@narumitw/pi-usage"
-        "npm:@justjoshn/pi-google-oauth-v2"
+        "npm:pi-dynamic-context-pruning"
+        "npm:@router-for-me/pi-cliproxyapi-provider"
       ];
 
       theme = "rose-pine";

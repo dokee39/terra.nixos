@@ -34,7 +34,10 @@
 
   services.resolved = {
     enable = true;
-    settings.Resolve.MulticastDNS = false;
+    settings.Resolve = {
+      MulticastDNS = false;
+      LLMNR = false;
+    };
   };
 
   services.avahi = {
