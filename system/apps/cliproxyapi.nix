@@ -1,4 +1,4 @@
-{ config, ... }:
+{ config, pkgs, ... }:
 
 {
   age.secrets.cliproxyapi-api-key = {
@@ -52,5 +52,31 @@
         ];
       };
     };
+  };
+
+  systemd.timers.cliproxyapi-quota-warmup = {
+    wantedBy = [ "timers.target" ];
+    timerConfig = {
+      OnBootSec = "5min";
+      OnUnitActiveSec = "55min";
+    };
+  };
+
+  systemd.services.cliproxyapi-quota-warmup = {
+    after = [ "cliproxyapi.service" ];
+    serviceConfig = {
+      Type = "oneshot";
+      User = config.terra.userName;
+    };
+
+    script = ''
+      for model in gpt-6-luna gemini-4-hydrogen-xhigh gpt-oss-120b-medium gemini-4-argon-high; do
+        ${pkgs.curl}/bin/curl --silent --show-error --fail --max-time 60 --output /dev/null \
+          --variable 'api_key@${config.age.secrets.cliproxyapi-api-key.path}' \
+          --expand-header 'Authorization: Bearer {{api_key:trim}}' \
+          --json "$(printf '{"model":"%s","messages":[{"role":"user","content":"Reply OK."}]}' "$model")" \
+          'http://127.0.0.1:${toString config.services.cliproxyapi.settings.server.port}/v1/chat/completions' || continue
+      done
+    '';
   };
 }
