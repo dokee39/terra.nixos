@@ -20,7 +20,8 @@
     systemd.timers.podman-auto-update = {
       wantedBy = [ "timers.target" ];
       timerConfig = {
-        OnCalendar = "weekly";
+        # HACK: empty entry clears upstream OnCalendar=daily in systemd drop-in.
+        OnCalendar = [ "" "weekly" ];
         Persistent = true;
       };
     };
