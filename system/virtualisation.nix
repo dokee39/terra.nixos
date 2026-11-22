@@ -1,4 +1,4 @@
-{ config, lib, ... }:
+{ config, ... }:
 
 {
   config = {
@@ -17,14 +17,7 @@
 
     networking.firewall.trustedInterfaces = [ "podman0" ];
 
-    systemd.timers.podman-auto-update = {
-      wantedBy = [ "timers.target" ];
-      timerConfig = {
-        # HACK: empty entry clears upstream OnCalendar=daily in systemd drop-in.
-        OnCalendar = [ "" "weekly" ];
-        Persistent = true;
-      };
-    };
+    systemd.timers.podman-auto-update.wantedBy = [ "timers.target" ];
   };
 
 }

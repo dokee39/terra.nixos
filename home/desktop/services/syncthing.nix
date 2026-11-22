@@ -37,7 +37,7 @@ in
           ignorePatterns = [ "/.obsidian/workspace.json" ];
         };
         personal-memory = {
-          path = "${config.home.homeDirectory}/.local/share/pi/personal-memory";
+          path = "${config.home.homeDirectory}/Documents/personal-memory";
           devices = builtins.attrNames peers;
         };
       };
