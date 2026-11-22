@@ -3,7 +3,7 @@
     "type": "flatpak",
     "appId": "com.usebottles.bottles",
     "origin": "flathub",
-    "commit": "947374f14eba69c78287f48975582529f11316b0a3705073e09c23937128f3af"
+    "commit": "fdc78f6089d23f2d2e688b162936e4d580c384bf47f048dbd06a0a7c7ec6be33"
   },
   "qq": {
     "type": "flatpak",
@@ -15,7 +15,7 @@
     "type": "flatpak",
     "appId": "com.tencent.WeChat",
     "origin": "flathub",
-    "commit": "a63c3bcf435a257874efe777fa927e45730788169be274acb28ee81d7444d3d8"
+    "commit": "aefa450c5865df4b41d96b39c133d1cee42a4bc17450561240074444e095a38d"
   },
   "mikan": {
     "type": "binary",
