@@ -13,6 +13,7 @@
     ./nvim
     ./dev.nix
     ./pi
+    ./antigravity.nix
   ] ++ lib.optionals osConfig.terra.desktop.enable [
     ./desktop
   ];
