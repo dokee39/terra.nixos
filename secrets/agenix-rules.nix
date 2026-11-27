@@ -6,4 +6,5 @@ in {
   "cliproxyapi-api-key.age".publicKeys = keys.all;
   "cliproxyapi-panel-key.age".publicKeys = keys.all;
   "deepseek-api-key.age".publicKeys = keys.all;
+  "google-ai-studio-api-key.age".publicKeys = keys.all;
 }

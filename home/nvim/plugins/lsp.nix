@@ -210,10 +210,6 @@ in {
               vim.cmd.RustLsp({ "hover", "actions" })
             end, { buffer = bufnr, desc = "Rust hover actions" })
 
-            vim.keymap.set("n", "<leader>a", function()
-              vim.cmd.RustLsp("codeAction")
-            end, { buffer = bufnr, desc = "Rust code action" })
-
             vim.keymap.set("n", "<leader>e", function()
               vim.cmd.RustLsp("explainError")
             end, { buffer = bufnr, desc = "Rust explain error" })

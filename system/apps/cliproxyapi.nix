@@ -9,6 +9,8 @@
     ../../secrets/cliproxyapi-panel-key.age;
   age.secrets.deepseek-api-key.file =
     ../../secrets/deepseek-api-key.age;
+  age.secrets.google-ai-studio-api-key.file =
+    ../../secrets/google-ai-studio-api-key.age;
 
   services.cliproxyapi = {
     enable = true;
@@ -25,28 +27,60 @@
         {
           name = "deepseek";
           base-url = "https://api.deepseek.com";
-          priority = -20;
+          priority = -50;
           keys = [ { api-key._secret = config.age.secrets.deepseek-api-key.path; } ];
           models = [
             {
               name = "deepseek-flash";
               alias = "flash";
             }
+            {
+              name = "deepseek-flash";
+              alias = "translate";
+            }
+          ];
+        }
+      ];
+      api-keys.gemini = [
+        {
+          name = "google-ai-studio";
+          priority = -100;
+          keys = [ { api-key._secret = config.age.secrets.google-ai-studio-api-key.path; } ];
+          models = [
+            {
+              name = "gemini-4-hydrogen";
+              alias = "flash";
+            }
+            {
+              name = "gemini-4-neon";
+              max-context-length = 1048576;
+              thinking.levels = [ "low" "medium" "high" "xhigh" ];
+            }
+          ];
+        }
+        {
+          name = "google-ai-studio-translate";
+          priority = 50;
+          keys = [ { api-key._secret = config.age.secrets.google-ai-studio-api-key.path; } ];
+          prefix = "kiss";
+          models = [
+            {
+              name = "gemini-4-hydrogen";
+              alias = "translate";
+            }
           ];
         }
       ];
       oauth.model-alias = {
-        antigravity = [
-          {
-            name = "gemini-4-hydrogen-xhigh";
-            alias = "flash";
-            fork = true;
-          }
-        ];
         codex = [
           {
             name = "gpt-6-luna";
             alias = "flash";
+            fork = true;
+          }
+          {
+            name = "gpt-6-luna";
+            alias = "translate";
             fork = true;
           }
         ];
@@ -70,7 +104,7 @@
     };
 
     script = ''
-      for model in gpt-6-luna gemini-4-hydrogen-xhigh gpt-oss-120b-medium gemini-4-argon-high; do
+      for model in gpt-6-luna; do
         ${pkgs.curl}/bin/curl --silent --show-error --fail --max-time 60 --output /dev/null \
           --variable 'api_key@${config.age.secrets.cliproxyapi-api-key.path}' \
           --expand-header 'Authorization: Bearer {{api_key:trim}}' \
