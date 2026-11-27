@@ -60,10 +60,9 @@
   home.packages = with pkgs; [
     hexyl
     glow
-
     nix-output-monitor
-
     tlrc
+    libnotify
   ];
 
   services.tldr-update = {

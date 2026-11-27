@@ -59,6 +59,7 @@ in
 
   home.file.".pi/agent/APPEND_SYSTEM.md".source = ./APPEND_SYSTEM.md;
   home.file.".pi/agent/extensions/web-tools.ts".source = ./extensions/web-tools.ts;
+  home.file.".pi/agent/extensions/notify.ts".source = ./extensions/notify.ts;
   home.file.".pi/agent/skills" = {
     source = ./skills;
     recursive = true;
