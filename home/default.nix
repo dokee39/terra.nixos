@@ -60,7 +60,6 @@
   home.packages = with pkgs; [
     hexyl
     glow
-    nix-output-monitor
     tlrc
     libnotify
   ];

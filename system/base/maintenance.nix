@@ -29,6 +29,11 @@ in {
       options = "--delete-older-than 14d";
     };
 
+   programs.nh = {
+     enable = true;
+     flake = "/etc/nixos";
+   };
+
     services.fstrim.enable = true;
     services.smartd = {
       enable = true;
