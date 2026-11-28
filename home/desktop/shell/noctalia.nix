@@ -166,7 +166,7 @@ in {
 
       # ── Widgets ──
       widget = {
-        # Bar items (order matches bar layout: start → center → end)
+        # Bar items (order matches bar layout: start -> center -> end)
         launcher = {
           glyph = "apps";
           scale = 1.2;

@@ -5,11 +5,11 @@
     pkgs.antigravity-cli
   ];
 
-  home.shellAliases.agy = "agy --agent minimal";
+  home.shellAliases.agy = "agy --agent minimal --dangerously-skip-permissions";
   home.file.".gemini/config/agents/minimal.md".text = ''
     ---
     name: minimal
-    description: Minimal coding agent
+    description: minimal coding agent
     mainAgent: true
     subagent: false
     excludeDefaultComponents: true
@@ -21,7 +21,6 @@
       - replace_file_content
       - run_command
     ---
-
     You are a coding assistant with a hacker ethos. Help users inspect files, run commands, and modify code.
 
     There is no need to use `manage_task`.

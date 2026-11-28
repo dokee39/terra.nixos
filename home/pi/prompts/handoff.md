@@ -1,46 +1,45 @@
 ---
 description: Generate a handoff document, save to /tmp, and copy to clipboard.
-argument-hint: "<custom instruction>"
+argument-hint: "[optional focus]"
 ---
 Generate a handoff document: $ARGUMENTS
 
-1. Write a forward-looking document — the end state and the path ahead, not a transcript. Omit dead ends, abandoned approaches, and trial-and-error unless their lessons fit a section below (e.g., why an approach was abandoned goes in Key Decisions; a gotcha discovered goes in Critical Context).
+1. Write for the next session: capture current state and what remains, leaving out chat history and dead ends unless they explain a key decision or gotcha.
 
-2. Use the following format. Adapt sections as needed — skip empty ones.
+2. Use this format, skipping empty sections:
 
   ## Task Background
-  [Why this work exists — original request, problem context, and initial requirements]
-  
+  [Goal, problem context, and core requirements]
+
   ## Constraints & Preferences
-  - [Rules and requirements stated by the user]
-  
+  - [Rules and preferences stated by the user]
+
   ## Key Decisions
-  - **[Decision]**: [Rationale]
-  
+  - [Decision] — [Why, including rejected options if relevant]
+
   ## Current State
   ### Done
-  - [x] [What is currently in place and still relevant]
-  
+  - [x] [What is in place and verified]
+
   ### In Progress
-  - [ ] [Current work]
-  
+  - [ ] [Active or unfinished work]
+
   ### Blocked
-  - [Issues, if any]
-  
+  - [Open blockers or questions]
+
   ## Critical Context
-  - [Non-obvious facts, gotchas, and discovered knowledge needed to continue — not user-stated rules]
-  
+  - [Non-obvious facts, gotchas, or unconfirmed assumptions needed to continue]
+
   ## Next Steps
-  1. [What should happen next]
-  
+  1. [What to do next]
+
   <read-files>
-  path/to/file1.ts
+  path/to/relevant.ts
   </read-files>
-  
+
   <modified-files>
   path/to/changed.ts
   </modified-files>
 
-3. Write the document to `/tmp/pi-handoff-[descriptive name].md`.
-4. Copy to clipboard with `wl-copy < /tmp/pi-handoff-[name].md` using the `bash` tool.
-5. Report the file path.
+3. Write to `/tmp/pi-handoff-<slug>.md` and copy with `wl-copy < /tmp/pi-handoff-<slug>.md`.
+4. Reply with the file path only.

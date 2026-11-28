@@ -204,7 +204,7 @@ def main() -> None:
         SOURCES_FILE.write_text(json.dumps(sources, indent=2) + "\n")
         print("### Sources Updated ###")
         for name, old, new in changes:
-            print(f"{name}: {old} \u2192 {new}")
+            print(f"{name}: {old} -> {new}")
         print(f"Updated {len(changes)} source(s).")
     else:
         print("No sources updates found.", file=sys.stderr)

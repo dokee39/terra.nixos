@@ -18,10 +18,9 @@
     sidescrolloff = 10;
 
     # tab
-    # tabstop = 4; # number of visual spaces per TAB
-    # softtabstop = 4; # number of spacesin tab when editing
-    # shiftwidth = 4; # insert 4 spaces on a tab
-    # expandtab = true; # tabs are spaces, mainly because of python
+    tabstop = 4; # number of visual spaces per TAB
+    shiftwidth = 4; # insert 4 spaces on a tab
+    softtabstop = -1; # number of spacesin tab when editing
     shiftround = true;
     autoindent = true;
     smartindent = true;
